@@ -5,6 +5,14 @@ Client::Client(void)
 
 }
 
+Client::Client(int fd)
+{
+    this->fd = fd;
+    isAuthenticated = false;
+    _nickname= "" ;
+    _username= "" ;
+}
+
 Client::Client(const Client &other)
 {
     (void) other;

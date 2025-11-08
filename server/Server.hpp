@@ -14,7 +14,7 @@ class Client;
 class Server
 {
     private:
-    char buffer[1024];
+    // std::string             lineCmd;
     int						port;
     int						serverId;
     std::string             password;
@@ -25,7 +25,7 @@ class Server
     
     std::vector<struct pollfd> poll_fds;
     std::map<int, Client>	ClientsInfo;
-    
+    int ReadClientMessage(std::string &line);
     void PrepareServerSocket(); // -->1 creat  socket  --2 socket option 3 non  blocking socket --- 4
     void waitConnection();
     void ConfigureSocket();
@@ -34,10 +34,6 @@ class Server
     int stringToPort(std::string &string);
     void ListenSocket();
     public:
-        char *get_buffer()
-        {
-            return this->buffer;
-        }
         void  StartServer();
         Server(void);
         Server(std::string &port,std::string &password);

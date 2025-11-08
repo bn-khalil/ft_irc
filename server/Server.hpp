@@ -26,6 +26,8 @@ class Server
     std::vector<struct pollfd> poll_fds;
     std::map<int, Client>	ClientsInfo;
     int ReadClientMessage(std::string &line);
+    void AddClient();
+    void GetClientEvents();
     void PrepareServerSocket(); // -->1 creat  socket  --2 socket option 3 non  blocking socket --- 4
     void waitConnection();
     void ConfigureSocket();

@@ -55,11 +55,89 @@ Server::Server(const Server &other)
     (void)other;
 }
 
+void Server::AddClient()
+{
+    int ClientSocketFd = accept(serverId, NULL, NULL);
+    if (ClientSocketFd < 0)
+    {
+        std::cerr << "ClientSocketFd \n";
+        return;
+    }
+    if (fcntl(ClientSocketFd, F_SETFL, O_NONBLOCK) < 0)
+    {
+        std::cerr << "FcntlFailedException  \n";
+        close(ClientSocketFd);
+        return;
+    }
+
+    pollfd ClientPollfd;
+    ClientPollfd.fd = ClientSocketFd;
+    ClientPollfd.events = POLLIN;
+    ClientPollfd.revents = 0;
+
+    poll_fds.push_back(ClientPollfd);
+
+    Client client(ClientSocketFd);
+    ClientsInfo[ClientSocketFd] = client;
+
+    std::cout << "client number " << ClientSocketFd << " connect" << std::endl;
+}
+
+void Server::GetClientEvents()
+{
+    for (size_t i = 0; i < poll_fds.size(); i++)
+    {
+        if (poll_fds[i].revents & POLLIN)
+        {
+            if (i == 0) // server event // later add autentification and add class dyal client
+                AddClient();
+            else
+            {
+                char buffer[1024];
+                bzero(buffer, 1024);
+                std::string str_buffer;
+
+                Client &client = ClientsInfo[poll_fds[i].fd];
+                int bytes_read = recv(poll_fds[i].fd, buffer, sizeof(buffer) - 1, 0);
+
+                if (bytes_read > 0)
+                {
+                    std::string str_buffer(buffer, bytes_read);
+
+                    if (str_buffer.find('\n') == std::string::npos)
+                        client.setlineCmd(client.getlineCmd().append(str_buffer));
+                    else
+                    {
+                        client.setlineCmd(client.getlineCmd().append(str_buffer));
+                        std::cout << "the cmd to parse is [" << client.getlineCmd() << "]" << std::endl;
+                        std::string j = "";
+                        client.setlineCmd(j);
+                    }
+                }
+                else if (bytes_read == 0)
+                {
+                    std::cout << "client number " << poll_fds[i].fd << " disconnect" << std::endl;
+                    close(poll_fds[i].fd);
+                    ClientsInfo.erase(poll_fds[i].fd);
+                    poll_fds.erase(poll_fds.begin() + i);
+                    i--;
+                }
+                else
+                {
+                    // std::cout << "hhhh\n";
+                    ; // error machi fga3 lacase
+                }
+            }
+        }
+    }
+}
+
 void Server::waitConnection()
 {
     while (true)
     {
         int num_event = poll(&poll_fds[0], poll_fds.size(), 0);
+
         if (num_event == -1)
         {
             perror("poll error");
@@ -72,74 +150,7 @@ void Server::waitConnection()
         }
         else if (num_event > 0)
         {
-            for (size_t i = 0; i < poll_fds.size(); i++)
-            {
-                if (poll_fds[i].revents & POLLIN)
-                {
-                    if (i == 0) // server event // later add autentification and add class dyal client
-                    {
-                        int ClientSocketFd = accept(serverId, NULL, NULL);
-                        if (ClientSocketFd < 0)
-                        {
-                            std::cerr << "ClientSocketFd \n";
-                            continue;
-                        }
-                        if (fcntl(ClientSocketFd, F_SETFL, O_NONBLOCK) < 0)
-                        {
-                            std::cerr << "FcntlFailedException  \n";
-                            close(ClientSocketFd);
-                            continue;
-                        }
-
-                        pollfd ClientPollfd;
-                        ClientPollfd.fd = ClientSocketFd;
-                        ClientPollfd.events = POLLIN;
-                        ClientPollfd.revents = 0;
-                        poll_fds.push_back(ClientPollfd);
-
-                        Client client(ClientSocketFd);
-                        ClientsInfo[ClientSocketFd] = client;
-                        std::cout << "client number " << ClientSocketFd << " connect" << std::endl;
-                    }
-                    // int read_message_from client (&lineCmd);
-                    else
-                    {
-                        char buffer[1024];
-                        bzero(buffer, 1024);
-                        std::string str_buffer;
-                        Client &client = ClientsInfo[poll_fds[i].fd];
-                        int bytes_read = recv(poll_fds[i].fd, buffer, sizeof(buffer) - 1, 0);
-
-                        if (bytes_read > 0)
-                        {
-                            std::string str_buffer(buffer, bytes_read);
-                            if (str_buffer.find('\n') == std::string::npos)
-                                client.setlineCmd(client.getlineCmd().append(str_buffer));
-                            else
-                            {
-                                client.setlineCmd(client.getlineCmd().append(str_buffer));
-                                std::cout << "the cmd to parse is [" << client.getlineCmd() << "]" << std::endl;
-
-                                std::string j = "";
-                                client.setlineCmd(j);
-                            }
-                        }
-                        else if (bytes_read == 0)
-                        {
-                            std::cout << "client number " << poll_fds[i].fd << " disconnect" << std::endl;
-                            close(poll_fds[i].fd);
-                            ClientsInfo.erase(poll_fds[i].fd);
-                            poll_fds.erase(poll_fds.begin() + i);
-                            i--;
-                        }
-                        else
-                        {
-                            // std::cout << "hhhh\n";
-                            ; // error machi fga3 lacase
-                        }
-                    }
-                }
-            }
+            GetClientEvents();
         }
     }
 }
@@ -169,6 +180,7 @@ void Server::PrepareServerSocket()
     ServerPollfd.fd = serverId;
     ServerPollfd.events = POLLIN;
     ServerPollfd.revents = 0;
+
     poll_fds.push_back(ServerPollfd);
 }
 

@@ -1,8 +1,11 @@
 NAME = ircserv
 
-FLAG = -Wall -Werror -Wextra -std=c++98
+FLAG = -Wall -Werror -Wextra -std=c++98 -fsanitize=address -g
 
 HEADER = server/Authentication.hpp server/Client.hpp server/Server.hpp
+EXP_HEADER = exception/FcntlFailedException.hpp exception/SocketBindFailedException.hpp  exception/SocketFailedToCreatException.hpp  exception/SocketListenFailedException.hpp  exception/SocketOptionFailedException.hpp 
+
+EXP_SRC = exception/FcntlFailedException.cpp exception/SocketBindFailedException.cpp exception/SocketFailedToCreatException.cpp exception/SocketListenFailedException.cpp exception/SocketOptionFailedException.cpp
 
 CPP = c++
 
@@ -11,8 +14,9 @@ CMD_SRC =
 
 SERVER_OBJ = $(SERVER_SRC:.cpp=.o)
 CMD_OBJ = $(CMD_SRC:.cpp=.o)
+EXP_OBJ = $(EXP_SRC:.cpp=.o)
 
-OBJ = $(SERVER_OBJ) $(CMD_OBJ)
+OBJ = $(SERVER_OBJ) $(CMD_OBJ) $(EXP_OBJ)
 
 all: $(NAME)
 

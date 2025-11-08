@@ -26,5 +26,8 @@ int main(int ac,char **av)
     std::string password = av[2];
     Server server(port,password);
     server.StartServer();
+    // std::cout << "the content of buffer is :" <<  server.get_buffer()  << std::endl;
+
+
     
 } 

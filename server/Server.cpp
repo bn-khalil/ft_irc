@@ -81,16 +81,16 @@ void Server::waitConnection()
                         ClientPollfd.events = POLLIN;
                         ClientPollfd.revents=0;
                         poll_fds.push_back(ClientPollfd);
-                        std::cout  << "add client  \n"; 
+                        std::cout  << "client added\n"; 
                     }
                     else
                     {
-                        char buffer[1024];
+                        // char buffer[1024];
                         int bytes_read = recv(poll_fds[i].fd, buffer, sizeof(buffer) - 1, 0);
                         if (bytes_read > 0)
                         {
                             buffer[bytes_read] = '\0';
-                            std::cout << buffer << std::endl;
+                            std::cout << "buffer is " << buffer << std::endl;
                             // std::cout << "buffer\n";
                         }
                         else if (bytes_read == 0)

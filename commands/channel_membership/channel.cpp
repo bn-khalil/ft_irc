@@ -1,5 +1,5 @@
 #include "Channel.hpp"
-#include "Client.hpp"
+#include "../../server/Client.hpp"
 
 void Channel::Add_to_admin(Client *client)
 {

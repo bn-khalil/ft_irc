@@ -14,7 +14,7 @@ class Client
 		~Client();
 
 		Client &		operator=( Client const & rhs );
-
+		int sockfd;
 	private:
 
 };

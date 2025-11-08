@@ -1,7 +1,6 @@
 #include "Channel.hpp"
 #include "Client.hpp"
 
-
 void Channel::Add_to_admin(Client *client)
 {
    operators.insert(client);

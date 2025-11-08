@@ -16,6 +16,7 @@ class Channel
         std::string key;
 
     public :
+        Channel(std::string name);
         void Add_to_admin(Client *c);
         void Add_to_user(Client *c);
         void kick_from_channel(Client *c);

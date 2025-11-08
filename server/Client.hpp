@@ -9,6 +9,8 @@ class Client
         Client(const Client& other);
         Client &operator=(const Client &other);
         ~Client();
+    int fd_Sock;
+    const std::string nickname ;
 };
 
 #endif

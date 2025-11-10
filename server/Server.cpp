@@ -22,6 +22,8 @@ int Server::ReadClientMessage(std::string &line)
     return 0;
 }
 
+
+
 int Server::stringToPort(std::string &string)
 {
     int port = -1;
@@ -82,7 +84,79 @@ void Server::AddClient()
 
     std::cout << "client number " << ClientSocketFd << " connect" << std::endl;
 }
+std::vector<std::string> Server::splitCmd(std::string &str)
+{
+ std::vector<std::string> result;
+    std::stringstream ss(str);
+    std::string item;
 
+    while (ss>>item)
+        result.push_back(item);
+
+    return result;
+}
+void Server::PassCmd(Client &client, std::string password_arg)
+{
+    if (client.Get_isAuthenticated() == true)
+    {
+        //client.getFd(),
+        // "462 :You may not reregister");
+    }
+    if (password_arg.empty())
+    {
+        // "461 PASS :Not enough parameters"
+        return;
+    }
+   if (password_arg != this->password)
+    {
+        //"464 :Password incorrect"
+    }
+    client.SetIsSetPass(true);
+}
+
+void Server::ParseCmd(Client &client)
+{
+    std::vector<std::string> cmds;
+
+    cmds = splitCmd(client.getlineCmd());
+    
+    std::string empty = "";
+    client.setlineCmd(empty);
+
+    if (cmds.size() == 0)
+        return ;
+
+    for (size_t i =0; i < cmds.size() ;i++)
+        std::cout << "cmd is " << cmds[i] <<std::endl;
+
+    if (cmds[0] == "PASS")
+    {
+        if (client.Get_isAuthenticated() == true)
+        {
+            //client.getFd(),
+            // "462 :You may not reregister");
+        }
+
+        std::cout << "PASS commmand"<<std::endl;
+        // pass commmand
+    }
+    else if (cmds[0] == "NICK")
+    {
+
+        std::cout << "NICK commmand"<<std::endl;
+    }
+    else if (cmds[0] == "USER")
+    {
+        std::cout << "USER commmand"<<std::endl;
+
+    }
+    // else if (cmds[0] == "")
+    // else if (cmds[0] == "")
+    // else if (cmds[0] == "")
+    // else if (cmds[0] == "")
+    // else if (cmds[0] == "")
+    // else if (cmds[0] == "")
+}
 void Server::GetClientEvents()
 {
     for (size_t i = 0; i < poll_fds.size(); i++)
@@ -92,7 +166,7 @@ void Server::GetClientEvents()
             if (i == 0) // server event // later add autentification and add class dyal client
                 AddClient();
             else
-            {
+            {   
                 char buffer[1024];
                 bzero(buffer, 1024);
                 std::string str_buffer;
@@ -110,8 +184,9 @@ void Server::GetClientEvents()
                     {
                         client.setlineCmd(client.getlineCmd().append(str_buffer));
                         std::cout << "the cmd to parse is [" << client.getlineCmd() << "]" << std::endl;
-                        std::string j = "";
-                        client.setlineCmd(j);
+                        ParseCmd(client);
+                        // std::string j = "";
+                        // client.setlineCmd(j);
                     }
                 }
                 else if (bytes_read == 0)

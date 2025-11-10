@@ -14,17 +14,16 @@ class Client;
 class Server
 {
     private:
-    // std::string             lineCmd;
+
     int						port;
     int						serverId;
     std::string             password;
     bool                    isGetSignal;
     socklen_t addr_len;
-
-    sockaddr_in  serverConfig;//to bind the server fd and client //this contain
-    
+    sockaddr_in  serverConfig;
     std::vector<struct pollfd> poll_fds;
     std::map<int, Client>	ClientsInfo;
+
     int ReadClientMessage(std::string &line);
     void AddClient();
     void GetClientEvents();
@@ -35,6 +34,11 @@ class Server
     void setupServer();
     int stringToPort(std::string &string);
     void ListenSocket();
+    void ParseCmd(Client &client);
+	void PassCmd(Client &client, std::string password_arg);
+	void NickCmd();
+	void UserCmd();
+    std::vector<std::string> splitCmd(std::string &str);
     public:
         void  StartServer();
         Server(void);
@@ -48,3 +52,4 @@ class Server
 };
 
 #endif
+	

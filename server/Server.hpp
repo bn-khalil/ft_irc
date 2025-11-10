@@ -37,7 +37,7 @@ class Server
     void ListenSocket();
     void ParseCmd(Client &client);
 	void PassCmd(Client &client, std::string password_arg);
-	void NickCmd();
+	void NickCmd(Client &client, std::string password_ar);
 	void UserCmd();
     std::vector<std::string> splitCmd(std::string &str);
     Reply   error;

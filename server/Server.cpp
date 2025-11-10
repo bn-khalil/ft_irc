@@ -15,13 +15,44 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <vector>
+#include <map>
 
 int Server::ReadClientMessage(std::string &line)
 {
     (void)line;
     return 0;
 }
-
+void Server::NickCmd(Client &client, std::string nick_arg)
+{
+    if (client.GetIsSetPass() == false)
+    {
+        // "464 :Password incorrect
+        return ;
+    }
+    else if (nick_arg.empty())
+     {
+        //"431 :No nickname given"
+        return ;
+     }
+    else 
+    {
+        for (std::map<int, Client>::iterator it = ClientsInfo.begin(); it != ClientsInfo.end(); ++it)
+        {
+         if (it->first == client.getfd())
+        {   
+            continue;
+        }
+            if (it->second.GetIsSetNick() == true &&it->second.get_nickname()==nick_arg)
+            {
+                return ;
+                // "433  Nickname is already in use");
+            }
+        }
+    }
+    std::cout << "NICK name is seted " << nick_arg << std::endl;
+    client.set_nickname(nick_arg);
+    client.SetIsSetNick(true);
+}
 
 
 int Server::stringToPort(std::string &string)
@@ -38,16 +69,17 @@ int Server::stringToPort(std::string &string)
     return -1;
 }
 
-Server::Server(void) : password("0123456789")
-{
-}
+Server::Server(void) : password("0123456789") {}
 
 void Server::StartServer()
 {
-    try {
+    try
+    {
         PrepareServerSocket();
         waitConnection();
-    } catch (std::exception &ex) {
+    }
+    catch (std::exception &ex)
+    {
         std::cerr << ex.what() << std::endl;
     }
 }
@@ -84,24 +116,25 @@ void Server::AddClient()
 
     std::cout << "client number " << ClientSocketFd << " connect" << std::endl;
 }
+
 std::vector<std::string> Server::splitCmd(std::string &str)
 {
- std::vector<std::string> result;
+    std::vector<std::string> result;
     std::stringstream ss(str);
     std::string item;
 
-    while (ss>>item)
+    while (ss >> item)
         result.push_back(item);
 
     return result;
 }
+
 void Server::PassCmd(Client &client, std::string password_arg)
 {
-    
     std::cout << password_arg.empty() << std::endl;
     if (client.Get_isAuthenticated() == true)
     {
-        //client.getFd(),
+        // client.getFd(),
         return;
         // "462 :You may not reregister");
     }
@@ -110,12 +143,12 @@ void Server::PassCmd(Client &client, std::string password_arg)
         // "461 PASS :Not enough parameters"
         return;
     }
-   if (password_arg != this->password)
+    if (password_arg != this->password)
     {
         return;
-        //"464 :Password incorrect"
+        // "464 :Password incorrect"
     }
-    std::cout << "daz \n";
+    std::cout << client.getfd() << " " << "daz \n";
     client.SetIsSetPass(true);
 }
 
@@ -124,59 +157,47 @@ void Server::ParseCmd(Client &client)
     std::vector<std::string> cmds;
 
     cmds = splitCmd(client.getlineCmd());
-    
+
     std::string empty = "";
     client.setlineCmd(empty);
 
     if (cmds.size() == 0)
-        return ;
+        return;
 
-    // for (size_t i =0; i < cmds.size() ;i++)
-    //     std::cout << "cmd is " << cmds[i] <<std::endl;
-
-    // std::cout << cmds.size() <<std::endl;
     if (cmds[0] == "PASS")
     {
         if (client.Get_isAuthenticated() == true)
         {
-            //client.getFd(),
-            // "462 :You may not reregister");
         }
-        PassCmd(client,cmds[1]);
-        std::cout << "PASS commmand"<<std::endl;
-        // pass commmand
+        PassCmd(client, cmds[1]);
+        std::cout << "PASS commmand" << std::endl;
     }
     else if (cmds[0] == "NICK")
     {
-
-        std::cout << "NICK commmand"<<std::endl;
+        Server::NickCmd(client,cmds[1]);
+        std::cout << "NICK commmand" << std::endl;
     }
-    else if(cmds[0] == "JOIN")
+
+    else if (cmds[0] == "JOIN")
     {
         join(cmds, &client);
     }
     else if (cmds[0] == "USER")
     {
-        std::cout << "USER commmand"<<std::endl;
-
+        std::cout << "USER commmand" << std::endl;
     }
-    // else if (cmds[0] == "")
-    // else if (cmds[0] == "")
-    // else if (cmds[0] == "")
-    // else if (cmds[0] == "")
-    // else if (cmds[0] == "")
-    // else if (cmds[0] == "")
 }
+
 void Server::GetClientEvents()
 {
     for (size_t i = 0; i < poll_fds.size(); i++)
     {
         if (poll_fds[i].revents & POLLIN)
         {
-            if (i == 0) // server event // later add autentification and add class dyal client
+            if (i == 0)
                 AddClient();
             else
-            {   
+            {
                 char buffer[1024];
                 bzero(buffer, 1024);
                 std::string str_buffer;
@@ -189,14 +210,14 @@ void Server::GetClientEvents()
                     std::string str_buffer(buffer, bytes_read);
 
                     if (str_buffer.find('\n') == std::string::npos)
+                    {
+                        std::cout << "client.getfd()" << client.getfd() << "\n";
                         client.setlineCmd(client.getlineCmd().append(str_buffer));
+                    }
                     else
                     {
                         client.setlineCmd(client.getlineCmd().append(str_buffer));
-                        // std::cout << "the cmd to parse is [" << client.getlineCmd() << "]" << std::endl;
                         ParseCmd(client);
-                        // std::string j = "";
-                        // client.setlineCmd(j);
                     }
                 }
                 else if (bytes_read == 0)
@@ -209,8 +230,6 @@ void Server::GetClientEvents()
                 }
                 else
                 {
-                    // std::cout << "hhhh\n";
-                    ; // error machi fga3 lacase
                 }
             }
         }
@@ -277,9 +296,7 @@ Server &Server::operator=(const Server &other)
     return (*this);
 }
 
-Server::~Server(void)
-{
-}
+Server::~Server(void) {}
 
 Server::Server(std::string &port, std::string &password)
     : port(stringToPort(port)), password(password), isGetSignal(false)

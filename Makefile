@@ -1,6 +1,6 @@
 NAME = ircserv
 
-FLAG = -Wall -Werror -Wextra -std=c++98 -fsanitize=address -g
+FLAG = -Wall -Werror -Wextra -std=c++98 #-fsanitize=address -g
 
 HEADER = server/Authentication.hpp server/Client.hpp server/Server.hpp
 EXP_HEADER = exception/FcntlFailedException.hpp exception/SocketBindFailedException.hpp  exception/SocketFailedToCreatException.hpp  exception/SocketListenFailedException.hpp  exception/SocketOptionFailedException.hpp 

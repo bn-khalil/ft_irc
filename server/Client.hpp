@@ -1,6 +1,7 @@
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
 # include <iostream>
+#include <string>
 
 class Client
 {
@@ -53,12 +54,14 @@ class Client
         bool GetIsSetNick(){
             return isSetNick;
         }
-        
+        std::string get_nickname() { return _nickname;};
+        std::string get_username() { return _username;};
         Client(void);
         Client(const Client& other);
         Client(int fd);
         Client &operator=(const Client &other);
         ~Client();
+        std::string get_Prefix() const;
 };
 
 

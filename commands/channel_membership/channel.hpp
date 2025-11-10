@@ -12,6 +12,7 @@ class Channel
 {
     private:
         //string to save username of Client and obj in value
+        std::string Channel_name;
         std::map<std::string,Client*> operators;
         std::map<std::string,Client*> users;
         std::map<std::string,Client*> invite;
@@ -21,6 +22,7 @@ class Channel
         bool  limit;
         
     public :
+        std::string get_channel_name(){return Channel_name;};
         Channel(std::string name);
         void Add_to_admin(Client *c);
         void Add_to_user(Client *c);
@@ -43,6 +45,6 @@ class Channel
 std::vector<std::string> splite_coma(std::string &strr, char d);
 // void  join(std::vector<std::string> cmds, Client *c);
 
-void sendReply(Client *c, std::string message);
+// void sendReply(Client *c, std::string message);
 
 #endif

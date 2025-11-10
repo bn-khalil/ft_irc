@@ -1,7 +1,5 @@
-#include <cstdio>
-#include <cstring>
+#include <cstddef>
 #include <sstream>
-#include <system_error>
 #include <vector>
 #include "../../server/Client.hpp"
 #include "../../server/Server.hpp"
@@ -12,13 +10,33 @@
                                   // channels.
 //splite by comma
 //check
+//brodcast
 
+// void Server::removeClientFromAllChannels(Client* c)
+// {
+//     std::vector<std::string> find_channel_to_leave;
+//     std::map<std::string, Channel *>::iterator it = this->channel.begin();
+//     while(it != this->channel.end())
+//     {
+//         Channel *ch = it->second;
+//         if(ch->isUserInChannel(c))
+//             find_channel_to_leave.push_back(ch->get_channel_name());
+//         it++;
+//     }
+//     size_t i = 0;
+//     while(++i < find_channel_to_leave.size())
+//     {
+//         if(channel.find(find_channel_to_leave[i]) == channel.end())
+//             continue;
+//     }
+
+// }
 
 bool Channel::isUserInChannel(Client *c)
 {
     return(users.find(c->nickname) != users.end());
 }
-void sendReply(Client *c, std::string msg)
+void Server::sendReply(Client *c, std::string msg)
 {
     
     std::string full_msg = msg + "\r\n";
@@ -104,7 +122,11 @@ void Server::join(std::vector<std::string> cmds, Client *c)
         else if(join->Check_mode('k') == true && key != join->Get_key())
             sendReply(c, ERR_BADCHANNELKEY(c->nickname, one_channel));
         else
+        {
             join->Add_to_user(c);
+            //send msg to all user we have new user 
+            // succsec  one !!
+        }
     }
         i++;
     }

@@ -12,6 +12,12 @@
                                   // channels.
 //splite by comma
 //check
+
+
+bool Channel::isUserInChannel(Client *c)
+{
+    return(users.find(c->nickname) != users.end());
+}
 void sendReply(Client *c, std::string msg)
 {
     

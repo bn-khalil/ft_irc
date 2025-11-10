@@ -34,7 +34,7 @@ class Channel
         std::string  Set_key();
         bool Check_mode(char mode);
         bool isInvited(Client *c);
-        
+        bool isUserInChannel(Client *c);
         bool is_full();
         // void  join(std::vector<std::string> cmds, Client *c);
 

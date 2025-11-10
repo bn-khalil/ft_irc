@@ -1,6 +1,7 @@
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
 # include <iostream>
+#include <string>
 
 class Client
 {
@@ -9,6 +10,7 @@ class Client
         std::string _nickname;
         std::string _username;
         std::string lineCmd;
+        // const std::string nickname ;
     public:
         void setlineCmd( std::string &line)
         {
@@ -18,13 +20,15 @@ class Client
         {
             return lineCmd;
         }
+        std::string get_nickname() {return _nickname;};
+        std::string get_username() {return _username;};
         Client(void);
         Client(const Client& other);
         Client(int fd);
         Client &operator=(const Client &other);
         ~Client();
-    int fd_Sock;
-    const std::string nickname ;
+        std::string  get_Prefix() const;
+        int get_fd() const { return fd;};
 };
 
 

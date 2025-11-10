@@ -151,6 +151,10 @@ void Server::ParseCmd(Client &client)
 
         std::cout << "NICK commmand"<<std::endl;
     }
+    else if(cmds[0] == "JOIN")
+    {
+        join(cmds, &client);
+    }
     else if (cmds[0] == "USER")
     {
         std::cout << "USER commmand"<<std::endl;

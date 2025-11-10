@@ -20,7 +20,22 @@
 //splite by comma
 //check
 //brodcast
-
+void Channel::sendReply(Client *c, std::string msg)
+{
+    std::string full_msg = msg + "\r\n";
+    if(send(c->getfd() , full_msg.c_str() , full_msg.length(), 0) <= 0)
+    {
+        std::cerr << "Client Disconnected" << std::endl;
+    }
+}
+Channel::Channel(std::string name) : Channel_name(name)
+{
+    this->isKeySet = false;
+    this->isInviteOnly = false;
+    this->limit = false;
+    this->num_limite = 0;
+    this->key = "";
+}
 std::string Channel::getNamesList()
 {
     std::string  name = "";
@@ -90,10 +105,11 @@ bool Channel::Check_mode(char mode)
 {
     if(mode == 'k')
         return this->isKeySet;
-    if(mode == 'i')
+    else if(mode == 'i')
         return this->isInviteOnly;
-    if(mode == 'l')
+    else if(mode == 'l')
         return this->limit;
+    return false;
 }
 
 bool Channel::isInvited(Client *c)
@@ -107,7 +123,7 @@ bool Channel::is_full()
 
 void Channel::rm_user_from_channel(Client *c)
 {
-    Channel *chann;
+    // Channel *chann;
     std::map<std::string, Client*>::iterator it_user = users.find(c->get_nickname());
     if(it_user != users.end())
     {
@@ -169,7 +185,7 @@ void Server::sendReply(Client *c, std::string msg)
 {
     
     std::string full_msg = msg + "\r\n";
-    if(send(c->get_fd() , full_msg.c_str() , full_msg.length(), 0) <= 0) //lenght and size
+    if(send(c->getfd() , full_msg.c_str() , full_msg.length(), 0) <= 0) //lenght and size
     {
         std::cerr << "Client Disconnected" << std::endl;
     }
@@ -222,7 +238,7 @@ void Server::join(std::vector<std::string> cmds, Client *c)
 
     if(cmds[1] == "0")
         removeClientFromAllChannels(c);
-    int i = 0;
+    size_t i = 0;
 
     while(i < multi_channel.size())
     {

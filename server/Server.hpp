@@ -40,6 +40,8 @@ class Server
 	void NickCmd();
 	void UserCmd();
     std::vector<std::string> splitCmd(std::string &str);
+    Reply   error;
+
     public:
     
         void  StartServer();
@@ -51,7 +53,8 @@ class Server
         void  kick(std::vector<std::string> cmds, Client *c);
         void  invit(std::vector<std::string> cmds, Client *c);
 		std::map<std::string,Channel*> channel;
-
+        void sendReply(Client *c, std::string msg);
+        void removeClientFromAllChannels(Client *c);    
         ~Server();
 };
 

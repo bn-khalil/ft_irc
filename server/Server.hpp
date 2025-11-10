@@ -8,6 +8,7 @@
 #include <vector>
 #include <netinet/in.h> 
 #include "../commands/channel_membership/channel.hpp"
+#include "../commands/channel_membership/Reply.hpp"
 
 class Client;
 
@@ -40,12 +41,15 @@ class Server
 	void UserCmd();
     std::vector<std::string> splitCmd(std::string &str);
     public:
+    
         void  StartServer();
         Server(void);
         Server(std::string &port,std::string &password);
         Server(const Server& other);
         Server &operator=(const Server &other);
         void  join(std::vector<std::string> cmds, Client *c);
+        void  kick(std::vector<std::string> cmds, Client *c);
+        void  invit(std::vector<std::string> cmds, Client *c);
 		std::map<std::string,Channel*> channel;
 
         ~Server();

@@ -97,9 +97,12 @@ std::vector<std::string> Server::splitCmd(std::string &str)
 }
 void Server::PassCmd(Client &client, std::string password_arg)
 {
+    
+    std::cout << password_arg.empty() << std::endl;
     if (client.Get_isAuthenticated() == true)
     {
         //client.getFd(),
+        return;
         // "462 :You may not reregister");
     }
     if (password_arg.empty())
@@ -109,8 +112,10 @@ void Server::PassCmd(Client &client, std::string password_arg)
     }
    if (password_arg != this->password)
     {
+        return;
         //"464 :Password incorrect"
     }
+    std::cout << "daz \n";
     client.SetIsSetPass(true);
 }
 
@@ -126,9 +131,10 @@ void Server::ParseCmd(Client &client)
     if (cmds.size() == 0)
         return ;
 
-    for (size_t i =0; i < cmds.size() ;i++)
-        std::cout << "cmd is " << cmds[i] <<std::endl;
+    // for (size_t i =0; i < cmds.size() ;i++)
+    //     std::cout << "cmd is " << cmds[i] <<std::endl;
 
+    // std::cout << cmds.size() <<std::endl;
     if (cmds[0] == "PASS")
     {
         if (client.Get_isAuthenticated() == true)
@@ -136,7 +142,7 @@ void Server::ParseCmd(Client &client)
             //client.getFd(),
             // "462 :You may not reregister");
         }
-
+        PassCmd(client,cmds[1]);
         std::cout << "PASS commmand"<<std::endl;
         // pass commmand
     }
@@ -183,7 +189,7 @@ void Server::GetClientEvents()
                     else
                     {
                         client.setlineCmd(client.getlineCmd().append(str_buffer));
-                        std::cout << "the cmd to parse is [" << client.getlineCmd() << "]" << std::endl;
+                        // std::cout << "the cmd to parse is [" << client.getlineCmd() << "]" << std::endl;
                         ParseCmd(client);
                         // std::string j = "";
                         // client.setlineCmd(j);

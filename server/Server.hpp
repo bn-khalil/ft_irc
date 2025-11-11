@@ -56,8 +56,8 @@ class Server
 		std::map<std::string,Channel*> channel;
         void sendReply(Client &c, std::string msg);
         void removeClientFromAllChannels(Client &c);    
-// void sendReply(Client &c, std::string msg);
-void broadcast(const std::string &msg); 
+        // void sendReply(Client &c, std::string msg);
+        void broadcast(const std::string &msg);
         ~Server();
 };
 

@@ -19,6 +19,7 @@ class Channel
         bool isInviteOnly;
         bool  limit;
         unsigned int num_limite;
+
         
     public :
         std::map<std::string,Client*> get_operators_(){return operators_;};
@@ -44,6 +45,7 @@ class Channel
         bool  isEmpty();
         bool    isClientUSER(Client &c) const;
         std::string to_lower(std::string str);
+        void broadcast(const std::string &msg); 
 
 };
 

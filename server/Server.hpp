@@ -56,7 +56,6 @@ class Server
         void sendReply(Client &c, std::string msg);
         void removeClientFromAllChannels(Client &c);    
 // void sendReply(Client &c, std::string msg);
-void broadcast(const std::string &msg); 
         ~Server();
 };
 

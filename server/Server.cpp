@@ -319,19 +319,6 @@ Server::Server(std::string &port, std::string &password)
 
 
 //-------------------------------------------------------------------CHANNEL_PART----------------------------------------------------------------------------------------------
-void Server::broadcast(const std::string &msg)
-{
-
-    std::map<std::string,Client*> op = chan->get_operators_();
-    std::map<std::string,Client*> us = chan->get_users();
-    for(std::map<std::string,Client*>::iterator it = op.begin(); it != us.end();  it++)
-    {
-        Client *c = it->second;
-        sendReply(*c, msg);
-    }
-    
-}
-
 void Server::removeClientFromAllChannels(Client &c)
 {
     std::vector<std::string> channel_to_leave;
@@ -349,7 +336,7 @@ void Server::removeClientFromAllChannels(Client &c)
         if(it1 == channel.end())
             continue;
         Channel *chan = it1->second;
-    //    broadcast( error.MSG_PART(c.get_Prefix(), chan->get_channel_name(), "Leaving") );
+         chan->broadcast( error.MSG_PART(c.get_Prefix(), chan->get_channel_name(), "Leaving") );
         chan->rm_user_from_channel(c);
        if(chan->isEmpty() == true)
        {

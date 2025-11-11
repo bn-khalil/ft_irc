@@ -2,10 +2,7 @@
 
 void Server::join(std::vector<std::string> cmds, Client &c)
 {
-    // exit(1);
-    // std::cout << cmds[1] << std::endl;
-    // exit(1);
-    // c.set_nickname("default");
+
     Channel access("access");
     if(cmds.size() < 2)
     {
@@ -52,7 +49,7 @@ void Server::join(std::vector<std::string> cmds, Client &c)
         channel[one_channel] = join;
         join->Add_to_admin(c);
         join->Add_to_user(c);
-        // broadcast( error.MSG_JOIN(c.get_Prefix(), one_channel) );
+        access.broadcast( error.MSG_JOIN(c.get_Prefix(), one_channel) );
         sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), one_channel));
         sendReply(c, error.RPL_NAMREPLY(c.get_nickname(), one_channel, join->getNamesList()));
         sendReply(c, error.RPL_ENDOFNAMES(c.get_nickname(), one_channel));
@@ -69,8 +66,8 @@ void Server::join(std::vector<std::string> cmds, Client &c)
         else
         {
             join->Add_to_user(c);
-        // broadcast( error.MSG_JOIN(c.get_Prefix(), one_channel) );
-        // sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), one_channel));
+        access.broadcast( error.MSG_JOIN(c.get_Prefix(), one_channel) );
+        sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), one_channel));
         sendReply(c, error.RPL_NAMREPLY(c.get_nickname(), one_channel, join->getNamesList()));
         sendReply(c, error.RPL_ENDOFNAMES(c.get_nickname(), one_channel));
         }

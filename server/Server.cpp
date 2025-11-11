@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <vector>
 #include <map>
+#include "../commands/channel_membership/channel.hpp"
 
 int Server::ReadClientMessage(std::string &line)
 {
@@ -180,7 +181,7 @@ void Server::ParseCmd(Client &client)
 
     else if (cmds[0] == "JOIN")
     {
-        join(cmds, &client);
+        join(cmds, client);
     }
     else if (cmds[0] == "USER")
     {
@@ -303,4 +304,63 @@ Server::Server(std::string &port, std::string &password)
 {
     serverId = -1;
     addr_len = sizeof(sockaddr_in);
+}
+
+
+
+
+
+
+//-------------------------------------------------------------------CHANNEL_PART----------------------------------------------------------------------------------------------
+void Server::broadcast(const std::string &msg)
+{
+
+    std::map<std::string,Client*> op = chan->get_operators_();
+    std::map<std::string,Client*> us = chan->get_users();
+    for(std::map<std::string,Client*>::iterator it = op.begin(); it != us.end();  it++)
+    {
+        Client *c = it->second;
+        sendReply(*c, msg);
+    }
+    
+}
+
+void Server::removeClientFromAllChannels(Client &c)
+{
+    std::vector<std::string> channel_to_leave;
+    std::map<std::string, Channel *>::iterator it = this->channel.begin();
+    while(it != this->channel.end())
+    {
+        Channel *ch = it->second;
+        if(ch->isUserInChannel(c))
+            channel_to_leave.push_back(ch->get_channel_name());
+        it++;
+    }
+    for(size_t i = 0; i < channel_to_leave.size();i++)
+    {
+        std::map<std::string,Channel*>::iterator it1 = channel.find(channel_to_leave[i]);
+        if(it1 == channel.end())
+            continue;
+        Channel *chan = it1->second;
+    //    broadcast( error.MSG_PART(c.get_Prefix(), chan->get_channel_name(), "Leaving") );
+        chan->rm_user_from_channel(c);
+       if(chan->isEmpty() == true)
+       {
+            channel.erase(it1);
+            delete chan;
+       }
+    }
+    
+}
+
+void Server::sendReply(Client &c, std::string msg)
+{
+    
+    std::string full_msg = msg + "\r\n";
+    (void) c;
+    if(send(c.getfd() , full_msg.c_str() , full_msg.length(), 0) <= -1)
+    {
+        std::cerr << "Client Disconnected" << std::endl;
+    }
+    
 }

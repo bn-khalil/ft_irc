@@ -5,12 +5,17 @@
 #include <map>
 #include <vector>
 #include "../../server/Client.hpp"
-
+#include <vector>
+#include "../../server/Client.hpp"
+#include "../../server/Server.hpp"
+#include <sys/socket.h>
+#include "../../server/Client.hpp"
+#include <sys/socket.h>
+#include <map>
 
 class Channel 
 {
     private:
-        //string to save username of Client and obj in value
         std::string Channel_name;
         std::map<std::string,Client*> operators_;
         std::map<std::string,Client*> users;
@@ -28,33 +33,25 @@ class Channel
         unsigned int get_num_limite() {return num_limite;};
         std::string get_channel_name(){return Channel_name;};
         Channel(std::string name);
-        void Add_to_admin(Client *c);
-        void Add_to_user(Client *c);
-        void Add_to_invite(Client *c);
-        void kick_from_channel(Client *c);
-        bool isClientOperator(Client *c) const;
-        void join(std::vector<std::string> cmds, Client *c);
-	    // void sendReply(Client *c, std::string message);
+        void Add_to_admin(Client &c);
+        void Add_to_user(Client &c);
+        void Add_to_invite(Client &c);
+        void kick_from_channel(Client &c);
+        bool isClientOperator(Client &c) const;
+        void join(std::vector<std::string> cmds, Client &c);
 	    std::vector<std::string> splite_coma(std::string &strr, char d);
         std::string  Get_key();
         std::string  Set_key();
         bool Check_mode(char mode);
-        bool isInvited(Client *c);
-        bool isUserInChannel(Client *c);
+        bool isInvited(Client &c);
+        bool isUserInChannel(Client &c);
         bool is_full();
-        void rm_user_from_channel(Client *c);
+        void rm_user_from_channel(Client &c);
         bool  isEmpty();
-        // void broadcast(const std::string &msg);
-        bool    isClientUSER(Client *c) const;
-
-
-        // void  join(std::vector<std::string> cmds, Client *c);
+        bool    isClientUSER(Client &c) const;
+        std::string to_lower(std::string str);
 
 };
-
-std::vector<std::string> splite_coma(std::string &strr, char d);
-// void  join(std::vector<std::string> cmds, Client *c);
-
 
 
 #endif

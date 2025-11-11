@@ -1,17 +1,16 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 #include "Client.hpp"
-# include <iostream>
+// # include <iostream>
 #include <poll.h>
 #include <map>
 #include <string>
 #include <vector>
 #include <netinet/in.h> 
-#include "../commands/channel_membership/channel.hpp"
 #include "../commands/channel_membership/Reply.hpp"
 
 class Client;
-
+class Channel;
 class Server
 {
     private:
@@ -50,13 +49,13 @@ class Server
         Server(std::string &port,std::string &password);
         Server(const Server& other);
         Server &operator=(const Server &other);
-        void  join(std::vector<std::string> cmds, Client *c);
-        void  kick(std::vector<std::string> cmds, Client *c);
-        void  invit(std::vector<std::string> cmds, Client *c);
+        void  join(std::vector<std::string> cmds, Client &c);
+        void  kick(std::vector<std::string> cmds, Client &c);
+        void  invit(std::vector<std::string> cmds, Client &c);
 		std::map<std::string,Channel*> channel;
-        void sendReply(Client *c, std::string msg);
-        void removeClientFromAllChannels(Client *c);    
-// void sendReply(Client *c, std::string msg);
+        void sendReply(Client &c, std::string msg);
+        void removeClientFromAllChannels(Client &c);    
+// void sendReply(Client &c, std::string msg);
 void broadcast(const std::string &msg); 
         ~Server();
 };

@@ -29,7 +29,7 @@ class Client
         }
         int getfd()
         {
-            return fd;
+            return this->fd;
         }
         void Set_isAuthenticated( bool flag)
         {
@@ -54,8 +54,9 @@ class Client
             return isSetNick;
         }
         std::string get_nickname() 
-        { return _nickname;}
-        void set_nickname(std::string &nick) 
+        {
+            return _nickname;}
+        void set_nickname(std::string nick) 
         {_nickname = nick;}
         Client(void);
         Client(int fd);

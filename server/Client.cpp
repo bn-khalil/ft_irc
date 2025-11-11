@@ -13,7 +13,7 @@ Client::Client(int fd)
     std::cout << fd << " set with clien(fd)" << std::endl;
     isAuthenticated = false;
     _nickname= "nickname" ;
-    _username= "" ;
+    _username= "username" ;
 }
 
 Client::Client(const Client &other)

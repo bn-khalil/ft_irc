@@ -2,24 +2,30 @@
 
 void Server::join(std::vector<std::string> cmds, Client &c)
 {
+    // exit(1);
+    // std::cout << cmds[1] << std::endl;
+    // exit(1);
     // c.set_nickname("default");
-    Channel access("access");
-    std::cout << "the nick name is : "<< c.get_nickname() << std::endl;
 
-    if(cmds.size() < 2)
+.    if(cmds.size() < 2)
     {
-        sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "JOIN"));
+        sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "JOIN", "<channel>[,<channel>]+ [<key>[,<key>]+]"));
         return ;
     }
-
+  if(cmds[1] == "0")
+    {
+        std::cout << "testesttesttest" << std::endl;
+        removeClientFromAllChannels(c);
+        // return ;
+    }
     std::vector<std::string> key_channle;
     std::vector<std::string> multi_channel = access.splite_coma(cmds[1], ',');
 
     if(cmds.size() > 2)
         key_channle = access.splite_coma(cmds[2], ',');
 
-    if(cmds[1] == "0")
-        removeClientFromAllChannels(c);
+
+  
     size_t i = 0;
 
     while(i < multi_channel.size())

@@ -1,7 +1,7 @@
 #ifndef REPLY_HPP
 # define REPLY_HPP
 
-# include <iostream>
+// # include <iostream>
 # include <string>
 
 class Reply
@@ -12,7 +12,7 @@ class Reply
 
 		Reply();
 		// --- General Errors ---
-    	std::string ERR_NEEDMOREPARAMS(std::string nick, std::string command);
+    	std::string ERR_NEEDMOREPARAMS(std::string nick, std::string command, std::string more);
     	std::string ERR_NOSUCHCHANNEL(const std::string& nick, const std::string& channel_name);
     	std::string ERR_CHANOPRIVSNEEDED(const std::string& nick, const std::string& channel);
     	std::string ERR_NOTONCHANNEL(const std::string& nick, const std::string& channel);

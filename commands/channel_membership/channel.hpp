@@ -1,17 +1,11 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
-
 #include <map>
 #include <vector>
-#include "../../server/Client.hpp"
-#include <vector>
-#include "../../server/Client.hpp"
 #include "../../server/Server.hpp"
 #include <sys/socket.h>
 #include "../../server/Client.hpp"
-#include <sys/socket.h>
-#include <map>
 
 class Channel 
 {

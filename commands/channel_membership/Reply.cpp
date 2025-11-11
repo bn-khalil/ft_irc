@@ -3,9 +3,13 @@
 Reply::Reply() : server_name("ircserver42.com")
 {
 }
-std::string Reply::ERR_NEEDMOREPARAMS(std::string nick, std::string command)
+std::string Reply::ERR_NEEDMOREPARAMS(std::string nick, std::string command, std::string more)
 {
-    return ":"  + server_name   + " 461 " + nick + " " + command + " :Not enough parameters";
+
+         std::string msg =  ":"  + server_name   + " 461 " + nick + " " + command + " :Not enough parameters\n" + 
+          ":"  + server_name   + " 650 " + nick + " " + command + ":" + more ;
+    
+    return msg;
 }
 std::string Reply::ERR_NOSUCHCHANNEL(const std::string& nick, const std::string& channel_name)
 {

@@ -53,9 +53,14 @@ std::string Reply::RPL_NAMREPLY(const std::string& nick, const std::string& chan
 {
     return ":" + server_name + " 353 " + nick + " = " + channel + " :" + names_list;
 }
+
 std::string Reply::RPL_ENDOFNAMES(const std::string& nick, const std::string& channel)
 {
     return ":" + server_name + " 366 " + nick + " " + channel + " :End of /NAMES list";
+}
+std::string Reply::RPL_ENDOFINVIT(const std::string& nick, const std::string& channel)
+{
+    return ":" + server_name + " 337 " + nick + " : " + channel + " :End of /NAMES list";
 }
 //------------------------------KICK error------------------------------------------------------
 

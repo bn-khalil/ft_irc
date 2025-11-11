@@ -12,8 +12,9 @@ Client::Client(int fd)
     isSetNick=false;
     std::cout << fd << " set with clien(fd)" << std::endl;
     isAuthenticated = false;
-    _nickname= "nickname" ;
-    _username= "username" ;
+    _nickname= "" ;
+    _username= "" ;
+    _hostname= "" ;
 }
 
 Client::Client(const Client &other)
@@ -24,9 +25,9 @@ Client::Client(const Client &other)
 
 
 
-std::string Client::get_Prefix() const
+std::string Client::    get_Prefix() const
 {
-	return ":" + this->_nickname + "!" + this->_username + "@" + this->_nickname;
+	return ":" + this->_nickname + "!" + this->_username + "@" + this->_hostname;
 }
 
 

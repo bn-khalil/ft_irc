@@ -4,7 +4,7 @@
 
 void  Server::kick(std::vector<std::string> cmds, Client &c)
 {
-    Channel *access;
+    Channel access("accses");
     
     if(cmds.size() < 2)
     {
@@ -25,7 +25,7 @@ void  Server::kick(std::vector<std::string> cmds, Client &c)
         return ;
 
     }
-    std::map<std::string, Client*> op = access->get_operators_();
+    std::map<std::string, Client*> op = access.get_operators_();
 
     std::map<std::string , Client*>::iterator it1 = op.find(c.get_nickname());
     if(it1 == op.end())
@@ -33,14 +33,14 @@ void  Server::kick(std::vector<std::string> cmds, Client &c)
         error.ERR_CHANOPRIVSNEEDED(c.get_nickname(), one_channel);
         return ;
     }
-    std::map<std::string, Client*>  us = access->get_users();
+    std::map<std::string, Client*>  us = access.get_users();
 
     std::map<std::string , Client*>::iterator it2 = us.find(c.get_nickname());
-    if(it1 == us.end())
+    if(it2 == us.end())
     {
         error.ERR_USERNOTINCHANNEL(c.get_nickname(), cmds[1] ,one_channel);
         return ;
     }
     removeClientFromAllChannels(c);
-    access->broadcast("CHECK_REFERANCE_MSG");
+    access.broadcast("CHECK_REFERANCE_MSG");
 }

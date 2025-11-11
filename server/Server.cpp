@@ -17,7 +17,7 @@
 #include <vector>
 #include <map>
 #include "../commands/channel_membership/channel.hpp"
-
+#include <arpa/inet.h>
 int Server::ReadClientMessage(std::string &line)
 {
     (void)line;
@@ -92,7 +92,11 @@ Server::Server(const Server &other)
 
 void Server::AddClient()
 {
-    int ClientSocketFd = accept(serverId, NULL, NULL);
+    //------------------fixprefix---------------------
+    sockaddr_in  client_addr;
+    socklen_t    addr_len;
+
+    int ClientSocketFd = accept(serverId,  (struct sockaddr *)&client_addr, &addr_len);
     if (ClientSocketFd < 0)
     {
         std::cerr << "ClientSocketFd \n";
@@ -104,6 +108,7 @@ void Server::AddClient()
         close(ClientSocketFd);
         return;
     }
+    std::string hostname = inet_ntoa(client_addr.sin_addr);
 
     pollfd ClientPollfd;
     ClientPollfd.fd = ClientSocketFd;
@@ -114,7 +119,8 @@ void Server::AddClient()
 
     Client client(ClientSocketFd);
     ClientsInfo[ClientSocketFd] = client;
-
+    client.set_hostname(hostname);
+    //need to add username
     std::cout << "client number " << ClientSocketFd << " connect" << std::endl;
 }
 
@@ -183,10 +189,14 @@ void Server::ParseCmd(Client &client)
     {
         join(cmds, client);
     }
-    // else if(cmds[0] == "KICK" || cmds[0] == "kick")
-    // {
-
-    // }
+    else if(cmds[0] == "KICK" || cmds[0] == "kick")
+    {
+        kick(cmds, client);
+    }
+    else if(cmds[0] == "INVIT" || cmds[0] == "invit")
+    {
+        invit(cmds, client);
+    }
     // else if(cmds[0] == "INVIT" || cmds[0] == "invit")
     // {
 

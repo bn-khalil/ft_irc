@@ -27,7 +27,7 @@ std::string Channel::getNamesList()
     {
         if(operators_.find(it->first) != operators_.end())
             name  = name  + '@';
-        name += it->first;
+        name += it->second->get_nickname();
         name  += " ";
     }
     if(!name.empty())

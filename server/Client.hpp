@@ -9,6 +9,7 @@ class Client
         bool isAuthenticated;
         std::string _nickname;
         std::string _username;
+        std::string _hostname;
         std::string lineCmd;
         bool isSetPass;
         bool isSetNick;
@@ -62,8 +63,15 @@ class Client
         Client(int fd);
         Client(const Client& other);
         ~Client();
+        void set_hostname(std::string hostname){
+            _hostname = hostname;
+        }
+        std::string get_hostname()
+        {
+            return _hostname;
+        }
         std::string get_Prefix() const;
-};
+};  
 
 
 #endif

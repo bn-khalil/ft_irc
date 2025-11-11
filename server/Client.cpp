@@ -22,14 +22,7 @@ Client::Client(const Client &other)
 
 }
 
-Client &Client::operator=(const Client &other)
-{
-    if (&other != this)
-    {
 
-    }
-    return (*this);
-}
 
 std::string Client::get_Prefix() const
 {

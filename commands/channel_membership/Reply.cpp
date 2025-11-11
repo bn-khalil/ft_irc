@@ -1,6 +1,6 @@
 #include "Reply.hpp"
 
-Reply::Reply() : server_name("ircserver42")
+Reply::Reply() : server_name("ircserver42.com")
 {
 }
 std::string Reply::ERR_NEEDMOREPARAMS(std::string nick, std::string command)

@@ -2,5 +2,5 @@
 
 void  Server::kick(std::vector<std::string> cmds, Client &c)
 {
-
+    
 }

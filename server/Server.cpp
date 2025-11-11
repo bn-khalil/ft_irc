@@ -179,10 +179,17 @@ void Server::ParseCmd(Client &client)
         std::cout << "NICK commmand" << std::endl;
     }
 
-    else if (cmds[0] == "JOIN")
+    else if (cmds[0] == "JOIN" || cmds[0] == "join")
     {
         join(cmds, client);
     }
+    // else if(cmds[0] == "KICK" || cmds[0] == "kick")
+    // {
+
+    // }
+    // else if(cmds[0] == "INVIT" || cmds[0] == "invit")
+    // {
+
     else if (cmds[0] == "USER")
     {
         std::cout << "USER commmand" << std::endl;

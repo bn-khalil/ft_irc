@@ -153,6 +153,12 @@ void Server::PassCmd(Client &client, std::string password_arg)
     client.SetIsSetPass(true);
 }
 
+std::string Server::toLower(std::string str) {
+    for (size_t i = 0; i < str.size(); i++)
+        str[i] = std::tolower(str[i]);
+    return str;
+}
+
 void Server::ParseCmd(Client &client)
 {
     std::vector<std::string> cmds;
@@ -161,8 +167,8 @@ void Server::ParseCmd(Client &client)
 
     if (cmds.size() == 0)
         return;
-
-    if (cmds[0] == "PASS")
+    cmds[0] = toLower(cmds[0]);
+    if (cmds[0] == "pass")
     {
         if (client.Get_isAuthenticated() == true)
         {
@@ -170,31 +176,27 @@ void Server::ParseCmd(Client &client)
         PassCmd(client, cmds[1]);
         std::cout << "PASS commmand" << std::endl;
     }
-    else if (cmds[0] == "NICK")
+    else if (cmds[0] == "nick")
     {
         Server::NickCmd(client,cmds[1]);
         std::cout << "NICK commmand" << std::endl;
     }
 
-    else if (cmds[0] == "JOIN" || cmds[0] == "join")
+    else if (cmds[0] == "join")
     {
         join(cmds, client);
     }
-    else if (cmds[0] == "TOPIC" || cmds[0] == "topic")
-    {
-        topic(cmds, client);
-    }
-    // else if(cmds[0] == "KICK" || cmds[0] == "kick")
-    // {
-
-    // }
-    // else if(cmds[0] == "INVIT" || cmds[0] == "invit")
-    // {
-
-    else if (cmds[0] == "USER")
+    else if (cmds[0] == "topic")
+        topic(client);
+    else if (cmds[0] == "mode")
+        mode(cmds, client);
+    else if (cmds[0] == "user")
     {
         std::cout << "USER commmand" << std::endl;
     }
+    else
+        sendReply(client, error.ERR_UNKNOWNCOMMAND_N(client.get_nickname(), cmds[0]));
+    // :*.freenode.net 421 sd SD :Unknown command
     
     std::string empty = "";
     client.setlineCmd(empty);

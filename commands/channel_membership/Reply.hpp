@@ -16,6 +16,7 @@ class Reply
     	std::string ERR_NOSUCHCHANNEL(const std::string& nick, const std::string& channel_name);
     	std::string ERR_CHANOPRIVSNEEDED(const std::string& nick, const std::string& channel);
     	std::string ERR_NOTONCHANNEL(const std::string& nick, const std::string& channel);
+		std::string ERR_UNKNOWNCOMMAND_N(const std::string &nick, const std::string & command);
 
 		// --- General msgs ---
     	std::string RPL_BROADCAST(const std::string& nick, const std::string & command, const std::string & channel, const std::string & message);

@@ -22,8 +22,7 @@ static std::vector<std::string> new_splite(std::string &strr, char d)
     return resulte;
 }
 
-void  Server::topic(std::vector<std::string> cmds, Client &c) {
-    (void)cmds;
+void  Server::topic(Client &c) {
     std::string command = c.getlineCmd();
     if (!command.empty() && command.back() == '\n') {
         command.pop_back();

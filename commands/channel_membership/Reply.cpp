@@ -23,6 +23,14 @@ std::string Reply::ERR_NOTONCHANNEL(const std::string& nick, const std::string& 
 {
     return ":" + server_name + " 442 " + nick + " " + channel + " :You're not on that channel";
 }
+std::string Reply::ERR_UNKNOWNCOMMAND_N(const std::string &nick, const std::string & command) {
+    std::string UpCommand = command;
+    for (size_t i = 0; i < UpCommand.size(); i++)
+        UpCommand[i] = std::toupper(UpCommand[i]);
+    
+    return ":*." + server_name + " 421 " + nick + " " + UpCommand + " :Unknown command";
+}
+    // :*.freenode.net 421 sd SD :Unknown command
 
 // std::string Reply::RPL_BROADCAST(const std::string& nick, const std::string & command, const std::string & channel, const std::string & message) {
 //     return ":" + nick + "!" + host + " " + command + " " + channel + " " + message;

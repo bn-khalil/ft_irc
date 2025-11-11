@@ -60,7 +60,6 @@ class Client
         {_nickname = nick;}
         Client(void);
         Client(int fd);
-        Client &operator=(const Client &other);
         Client(const Client& other);
         ~Client();
         std::string get_Prefix() const;

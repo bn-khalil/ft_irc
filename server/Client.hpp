@@ -12,8 +12,6 @@ class Client
         std::string lineCmd;
         bool isSetPass;
         bool isSetNick;
-        // bool isSetPass;
-        // bool isSetPass;
 
     public:
         void setlineCmd( std::string &line)
@@ -24,9 +22,10 @@ class Client
         {
             return lineCmd;
         }
-        void setfd( int line)
+        void setfd( int fd)
         {
-            fd = line;
+            std::cout << fd << " setfd clien(fd)" << std::endl;
+            this->fd = fd;
         }
         int getfd()
         {
@@ -38,7 +37,7 @@ class Client
         }
         int Get_isAuthenticated()
         {
-            return fd;
+            return isAuthenticated;
         }
         void SetIsSetPass(bool flag)
         {
@@ -54,12 +53,14 @@ class Client
         bool GetIsSetNick(){
             return isSetNick;
         }
-        std::string get_nickname() { return _nickname;};
-        std::string get_username() { return _username;};
+        std::string get_nickname() 
+        { return _nickname;}
+        void set_nickname(std::string &nick) 
+        {_nickname = nick;}
         Client(void);
-        Client(const Client& other);
         Client(int fd);
         Client &operator=(const Client &other);
+        Client(const Client& other);
         ~Client();
         std::string get_Prefix() const;
 };

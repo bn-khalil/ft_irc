@@ -8,8 +8,11 @@ Client::Client(void)
 Client::Client(int fd)
 {
     this->fd = fd;
+    isSetPass=false;
+    isSetNick=false;
+    std::cout << fd << " set with clien(fd)" << std::endl;
     isAuthenticated = false;
-    _nickname= "" ;
+    _nickname= "nickname" ;
     _username= "" ;
 }
 

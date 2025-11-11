@@ -183,6 +183,10 @@ void Server::ParseCmd(Client &client)
     {
         join(cmds, client);
     }
+    else if (cmds[0] == "TOPIC" || cmds[0] == "topic")
+    {
+        topic(cmds, client);
+    }
     // else if(cmds[0] == "KICK" || cmds[0] == "kick")
     // {
 

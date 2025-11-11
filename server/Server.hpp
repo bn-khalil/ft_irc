@@ -52,6 +52,7 @@ class Server
         void  join(std::vector<std::string> cmds, Client &c);
         void  kick(std::vector<std::string> cmds, Client &c);
         void  invit(std::vector<std::string> cmds, Client &c);
+        void  topic(std::vector<std::string> cmds, Client &c);
 		std::map<std::string,Channel*> channel;
         void sendReply(Client &c, std::string msg);
         void removeClientFromAllChannels(Client &c);    

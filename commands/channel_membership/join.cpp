@@ -7,7 +7,7 @@ void Server::join(std::vector<std::string> cmds, Client &c)
     // exit(1);
     // c.set_nickname("default");
 
-.    if(cmds.size() < 2)
+    if(cmds.size() < 2)
     {
         sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "JOIN", "<channel>[,<channel>]+ [<key>[,<key>]+]"));
         return ;

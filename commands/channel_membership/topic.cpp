@@ -22,7 +22,7 @@ static void showChannelTopic(std::map<std::string,Channel*> & channel) {
 
 void  Server::topic(std::vector<std::string> cmds, Client &c) {
     if (cmds.size() == 1)
-        sendReply(, error.ERR_NOSUCHCHANNEL());
+        sendReply(c, error.ERR_NOSUCHCHANNEL(c->nickname(), cmds[0], "<channel> [:<topic>]"));
     else
         setChannelTopic(this->channel, cmds);
 }

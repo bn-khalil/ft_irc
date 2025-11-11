@@ -6,7 +6,7 @@ void Server::join(std::vector<std::string> cmds, Client &c)
     // std::cout << cmds[1] << std::endl;
     // exit(1);
     // c.set_nickname("default");
-
+    Channel access("access");
     if(cmds.size() < 2)
     {
         sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "JOIN", "<channel>[,<channel>]+ [<key>[,<key>]+]"));

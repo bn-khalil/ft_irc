@@ -159,9 +159,6 @@ void Server::ParseCmd(Client &client)
 
     cmds = splitCmd(client.getlineCmd());
 
-    std::string empty = "";
-    client.setlineCmd(empty);
-
     if (cmds.size() == 0)
         return;
 
@@ -198,6 +195,9 @@ void Server::ParseCmd(Client &client)
     {
         std::cout << "USER commmand" << std::endl;
     }
+    
+    std::string empty = "";
+    client.setlineCmd(empty);
 }
 
 void Server::GetClientEvents()

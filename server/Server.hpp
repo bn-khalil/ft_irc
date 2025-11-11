@@ -45,6 +45,7 @@ class Server
     public:
     
         void  StartServer();
+        Channel *chan;
         Server(void);
         Server(std::string &port,std::string &password);
         Server(const Server& other);
@@ -55,6 +56,8 @@ class Server
 		std::map<std::string,Channel*> channel;
         void sendReply(Client *c, std::string msg);
         void removeClientFromAllChannels(Client *c);    
+// void sendReply(Client *c, std::string msg);
+void broadcast(const std::string &msg); 
         ~Server();
 };
 

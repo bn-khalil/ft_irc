@@ -22,6 +22,8 @@ class Channel
         unsigned int num_limite;
         
     public :
+        std::map<std::string,Client*> get_operators_(){return operators_;};
+        std::map<std::string,Client*> get_users(){return users;};
          std::string getNamesList();
         unsigned int get_num_limite() {return num_limite;};
         std::string get_channel_name(){return Channel_name;};
@@ -32,7 +34,7 @@ class Channel
         void kick_from_channel(Client *c);
         bool isClientOperator(Client *c) const;
         void join(std::vector<std::string> cmds, Client *c);
-	    void sendReply(Client *c, std::string message);
+	    // void sendReply(Client *c, std::string message);
 	    std::vector<std::string> splite_coma(std::string &strr, char d);
         std::string  Get_key();
         std::string  Set_key();
@@ -42,7 +44,7 @@ class Channel
         bool is_full();
         void rm_user_from_channel(Client *c);
         bool  isEmpty();
-        void broadcast(const std::string &msg);
+        // void broadcast(const std::string &msg);
         bool    isClientUSER(Client *c) const;
 
 
@@ -53,6 +55,6 @@ class Channel
 std::vector<std::string> splite_coma(std::string &strr, char d);
 // void  join(std::vector<std::string> cmds, Client *c);
 
-// void sendReply(Client *c, std::string message);
+
 
 #endif

@@ -20,14 +20,16 @@
 //splite by comma
 //check
 //brodcast
-void Channel::sendReply(Client *c, std::string msg)
-{
-    std::string full_msg = msg + "\r\n";
-    if(send(c->getfd() , full_msg.c_str() , full_msg.length(), 0) <= 0)
-    {
-        std::cerr << "Client Disconnected" << std::endl;
-    }
-}
+// void Channel::sendReply(Client *c, std::string msg)
+// {
+//     std::string full_msg = msg + "aaaa" + "\r\n";
+//     (void)c;
+//     std::cout << send(4 , full_msg.c_str() , full_msg.length(), 0)  << "\n";
+//     // if(send(4 , full_msg.c_str() , full_msg.length(), 0) )
+//     // {
+//     //     std::cerr << "Client Disconnected" << std::endl;
+//     // }
+// }
 Channel::Channel(std::string name) : Channel_name(name)
 {
     this->isKeySet = false;
@@ -52,10 +54,12 @@ std::string Channel::getNamesList()
 }
 
 
-void Channel::broadcast(const std::string &msg)
+void Server::broadcast(const std::string &msg)
 {
-    
-    for(std::map<std::string,Client*>::iterator it = this->users.begin(); it != users.end();  it++)
+
+    std::map<std::string,Client*> op = chan->get_operators_();
+    std::map<std::string,Client*> us = chan->get_users();
+    for(std::map<std::string,Client*>::iterator it = op.begin(); it != us.end();  it++)
     {
         Client *c = it->second;
         sendReply(c, msg);
@@ -164,7 +168,7 @@ void Server::removeClientFromAllChannels(Client *c)
             continue;
         Channel *chan = it1->second;
        // brodcast to other user;
-       chan->broadcast( error.MSG_PART(c->get_Prefix(), chan->get_channel_name(), "Leaving") );
+       broadcast( error.MSG_PART(c->get_Prefix(), chan->get_channel_name(), "Leaving") );
        // rm user from channel;
         chan->rm_user_from_channel(c);
        // rm channel if no one left  
@@ -185,7 +189,8 @@ void Server::sendReply(Client *c, std::string msg)
 {
     
     std::string full_msg = msg + "\r\n";
-    if(send(c->getfd() , full_msg.c_str() , full_msg.length(), 0) <= 0) //lenght and size
+    (void) c;
+    if(send(4 , full_msg.c_str() , full_msg.length(), 0) <= -1) //lenght and size
     {
         std::cerr << "Client Disconnected" << std::endl;
     }
@@ -263,7 +268,7 @@ void Server::join(std::vector<std::string> cmds, Client *c)
         channel[one_channel] = join;
         join->Add_to_admin(c);
         join->Add_to_user(c);
-        join->broadcast( error.MSG_JOIN(c->get_Prefix(), one_channel) );
+        // broadcast( error.MSG_JOIN(c->get_Prefix(), one_channel) );
         sendReply(c, error.RPL_NOTOPIC(c->get_nickname(), one_channel));
         sendReply(c, error.RPL_NAMREPLY(c->get_nickname(), one_channel, join->getNamesList()));
         sendReply(c, error.RPL_ENDOFNAMES(c->get_nickname(), one_channel));
@@ -282,7 +287,7 @@ void Server::join(std::vector<std::string> cmds, Client *c)
             join->Add_to_user(c);
         //send msg to all user we have new user 
         // succsec  one !!
-        join->broadcast( error.MSG_JOIN(c->get_Prefix(), one_channel) );
+        broadcast( error.MSG_JOIN(c->get_Prefix(), one_channel) );
         sendReply(c, error.RPL_NOTOPIC(c->get_nickname(), one_channel));
         sendReply(c, error.RPL_NAMREPLY(c->get_nickname(), one_channel, join->getNamesList()));
         sendReply(c, error.RPL_ENDOFNAMES(c->get_nickname(), one_channel));

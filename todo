@@ -1,2 +1,40 @@
 1 nick 
 topic #sd df   df df	gd
+
+@REM mode #ch
+@REM :*.freenode.net 324 bn #ch :+nt
+@REM :*.freenode.net 329 bn #ch :1762934472
+@REM mode #ch +l
+@REM :*.freenode.net 696 bn #ch l * :You must specify a parameter for the limit mode. Syntax: <limit>.
+@REM mode #ch l
+@REM :*.freenode.net 696 bn #ch l * :You must specify a parameter for the limit mode. Syntax: <limit>.
+@REM mode #ch ++l
+@REM :*.freenode.net 696 bn #ch l * :You must specify a parameter for the limit mode. Syntax: <limit>.
+@REM mode #ch ++l 12
+@REM :bn!~s@freenode-obu.d75.6g0qj4.IP MODE #ch +l :12
+@REM mode #ch l 123
+@REM :bn!~s@freenode-obu.d75.6g0qj4.IP MODE #ch +l :123
+@REM mode #ch ---l
+@REM :bn!~s@freenode-obu.d75.6g0qj4.IP MODE #ch :-l
+@REM mode #ch +++l 12
+@REM :bn!~s@freenode-obu.d75.6g0qj4.IP MODE #ch +l :12
+@REM mode #ch l
+@REM :*.freenode.net 696 bn #ch l * :You must specify a parameter for the limit mode. Syntax: <limit>.
+@REM mode #ch l 123 1        2
+@REM :bn!~s@freenode-obu.d75.6g0qj4.IP MODE #ch +l :123
+@REM mode #ch l	12
+@REM :*.freenode.net 472 bn 	 :is not a recognised channel mode.
+@REM :*.freenode.net 472 bn 1 :is not a recognised channel mode.
+@REM :*.freenode.net 472 bn 2 :is not a recognised channel mode.
+@REM :*.freenode.net 696 bn #ch l * :You must specify a parameter for the limit mode. Syntax: <limit>.
+@REM mode #ch +l     	3
+@REM :*.freenode.net 472 bn 	 :is not a recognised channel mode.
+@REM :*.freenode.net 472 bn 	 :is not a recognised channel mode.
+@REM :*.freenode.net 472 bn 3 :is not a recognised channel mode.
+@REM :*.freenode.net 696 bn #ch l * :You must specify a parameter for the limit mode. Syntax: <limit>.
+@REM mode #ch +l        4
+@REM :bn!~s@freenode-obu.d75.6g0qj4.IP MODE #ch +l :4
+@REM mode #ch l 5
+@REM :bn!~s@freenode-obu.d75.6g0qj4.IP MODE #ch +l :5
+@REM mode #ch o
+@REM :*.freenode.net 696 bn #ch o * :You must specify a parameter for the op mode. Syntax: <nick>.

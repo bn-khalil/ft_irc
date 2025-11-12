@@ -9,6 +9,12 @@
 #include <netinet/in.h> 
 #include "../commands/channel_membership/Reply.hpp"
 
+typedef struct modes_s {
+    std::string param;
+    char mode;
+    bool sing;
+} modes_t;
+
 class Client;
 class Channel;
 class Server
@@ -56,10 +62,13 @@ class Server
         void  topic(Client &c);
 		std::map<std::string,Channel*> channel;
         void sendReply(Client &c, std::string msg);
-        void removeClientFromAllChannels(Client &c);    
+        void removeClientFromAllChannels(Client &c);
         // void sendReply(Client &c, std::string msg);
         void broadcast(const std::string &msg);
         std::string toLower(std::string str);
+        std::vector<std::string> new_splite(std::string &strr, char d);
+        std::vector<modes_t> parseModes(std::vector<std::string> cmds, Client &c, const std::map<std::string,Channel*>::iterator & it_channel);
+        bool isChannelExist(std::map<std::string,Channel*>::iterator & it_channel, std::vector<std::string> cmds, Client &c);
         ~Server();
 };
 

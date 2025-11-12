@@ -45,6 +45,10 @@ class Reply
     	std::string RPL_NOTOPIC(const std::string& nick, const std::string& channel);
 		// std::string RPL_TOPICWHOTIME(const std::string& nick, const std::string& channel, const std::string& set_by, const std::string& timestamp)
 
+		// --- MODE part ---
+		std::string ERR_NEEDMODEPARM(const std::string& nick, const std::string& channelname, const char mode, const std::string& more);
+		std::string ERR_INVALIDMODEPARM(const std::string& nick, const char mode);
+
 		
 };
 

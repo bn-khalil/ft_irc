@@ -11,5 +11,7 @@ void  Server::mode(std::vector<std::string> cmds, Client &c) {
             return ;
         }
     }
-    else if (cmds.size() == 2)
+    else if (cmds.size() == 2) {
+        
+    }
 }

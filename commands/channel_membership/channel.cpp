@@ -139,3 +139,11 @@ std::string Channel::to_lower(std::string str)
     std::transform(lower_str.begin(), lower_str.end(), lower_str.begin(), ::tolower);
     return lower_str;
 }
+
+void Channel::setTopic( std::string topic ) {
+    this->channelTopic = topic;
+}
+
+std::string Channel::getTopic() {
+    return this->channelTopic;
+}

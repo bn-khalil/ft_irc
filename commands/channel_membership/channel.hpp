@@ -15,6 +15,7 @@ class Channel
         std::map<std::string,Client*> users;
         std::map<std::string,Client*> invite;
         std::string key;
+        std::string channelTopic;
         bool isKeySet;
         bool isInviteOnly;
         bool  limit;
@@ -45,6 +46,8 @@ class Channel
         bool  isEmpty();
         bool    isClientUSER(Client &c) const;
         std::string to_lower(std::string str);
+        void setTopic( std::string topic );
+        std::string getTopic();
         void broadcast(const std::string &msg); 
 
 };

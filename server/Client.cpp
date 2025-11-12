@@ -11,6 +11,7 @@ Client::Client(int fd)
     isSetPass=false;
     isSetNick=false;
     isAuthenticated = false;
+    isSetuser = false;
     _nickname= "*" ;
     _username= "" ;
     _hostname= "" ;

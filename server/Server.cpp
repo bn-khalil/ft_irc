@@ -55,11 +55,14 @@ void Server::NickCmd(Client &client, std::string nick_arg)
             }
         }
     }
-    std::cout << "NICK name is seted ✅✅✅✅✅✅✅  -------> nick :: [ " << nick_arg << " ]"<< std::endl;
     client.set_nickname(nick_arg);
+    std::cout << "NICK name is seted ✅✅✅✅✅✅✅  -------> nick :: [ " << client.get_nickname() << " ]"<< std::endl;
     client.SetIsSetNick(true);
     if (client.GetIsSetuser() == true)
+    {
+        std::cout << " authentication dazet nick set\n";
         client.Set_isAuthenticated(true);
+    }
 
 }
 
@@ -211,7 +214,10 @@ void Server::UserCmd(Client &client, std::vector<std::string> &arg)
     client.set_realname(realName);
 	client.set_username(userName);
     if (client.GetIsSetNick() == true)
+    {
+        std::cout << " authentication dazet  \n";
         client.Set_isAuthenticated(true);
+    }
 
     std::cout << "userName -> [" << userName  << "]"<< std::endl;
 	std::cout << "realName -> [" << realName  << "]"<< std::endl;

@@ -2,11 +2,11 @@
 
 void Server::join(std::vector<std::string> cmds, Client &c)
 {
-    // if(c.Get_isAuthenticated() == false)
-    // {
-    //     sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
-    //     return ;
-    // }
+    if(c.Get_isAuthenticated() == false)
+    {
+        sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
+        return ;
+    }
     if(cmds.size() < 2)
     {
         sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "JOIN", "<channel>[,<channel>]+ [<key>[,<key>]+]"));

@@ -79,14 +79,13 @@ bool validateLimitParams(std::string limit) {
 }
 
 void Channel::modeExecuter(modes_t & mode, Client &c) {
-    // std:: cout << " ==== " << this->isClientOperator(c) << std::endl;
+    std:: cout << " ==== " << this->isClientOperator(c) << std::endl;
     if (!this->isClientOperator(c)) {
         std::cout << "client not operator" << std::endl;
         return ;
     }
 
-    if (mode.mode == 'i') {
-        if (mode.sing && !this->isInviteOnly) {
+    if (mode.mode == 'i') {        if (mode.sing && !this->isInviteOnly) {
             this->isInviteOnly = true;
             //send to user;
             // std::cout << this->Channel_name << "  -> +i" << std::endl;

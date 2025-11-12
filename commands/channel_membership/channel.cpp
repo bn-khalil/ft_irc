@@ -8,6 +8,7 @@ Channel::Channel(std::string name) : Channel_name(name)
     this->limit = false;
     this->num_limite = 0;
     this->key = "";
+    this->time_creat_channel = time(0);
 }
 void Channel::broadcast(const std::string &msg)
 {

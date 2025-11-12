@@ -20,7 +20,7 @@ class Channel
         bool isInviteOnly;
         bool  limit;
         unsigned int num_limite;
-
+        time_t time_creat_channel;
         
     public :
         std::map<std::string,Client*> get_operators_(){return operators_;};

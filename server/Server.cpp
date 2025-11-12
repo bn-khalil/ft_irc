@@ -346,7 +346,7 @@ void Server::removeClientFromAllChannels(Client &c)
         if(it1 == channel.end())
             continue;
         Channel *chan = it1->second;
-         chan->broadcast( error.MSG_PART(c.get_Prefix(), chan->get_channel_name(), "Leaving") );
+         chan->broadcast( error.MSG_PART(c.get_Prefix(), chan->get_channel_name(), "Left all channels") );
         chan->rm_user_from_channel(c);
        if(chan->isEmpty() == true)
        {

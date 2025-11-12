@@ -11,9 +11,8 @@ void Server::join(std::vector<std::string> cmds, Client &c)
     }
   if(cmds[1] == "0")
     {
-        std::cout << "testesttesttest" << std::endl;
         removeClientFromAllChannels(c);
-        // return ;
+        return ;
     }
     std::vector<std::string> key_channle;
     std::vector<std::string> multi_channel = access.splite_coma(cmds[1], ',');
@@ -49,10 +48,10 @@ void Server::join(std::vector<std::string> cmds, Client &c)
         channel[one_channel] = join;
         join->Add_to_admin(c);
         join->Add_to_user(c);
-        access.broadcast( error.MSG_JOIN(c.get_Prefix(), one_channel) );
-        sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), one_channel));
-        sendReply(c, error.RPL_NAMREPLY(c.get_nickname(), one_channel, join->getNamesList()));
-        sendReply(c, error.RPL_ENDOFNAMES(c.get_nickname(), one_channel));
+        // access.broadcast( error.MSG_JOIN(c.get_Prefix(), one_channel) );
+        // sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), one_channel));
+        // sendReply(c, error.RPL_NAMREPLY(c.get_nickname(), one_channel, join->getNamesList()));
+        // sendReply(c, error.RPL_ENDOFNAMES(c.get_nickname(), one_channel));
     }
     else
     {

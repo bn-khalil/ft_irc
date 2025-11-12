@@ -6,6 +6,7 @@
 #include "../../server/Server.hpp"
 #include <sys/socket.h>
 #include "../../server/Client.hpp"
+#include <cstdlib>
 
 class Channel 
 {
@@ -18,7 +19,8 @@ class Channel
         std::string channelTopic;
         bool isKeySet;
         bool isInviteOnly;
-        bool  limit;
+        bool limit;
+        bool isLimited;
         unsigned int num_limite;
         time_t time_creat_channel;
         
@@ -49,6 +51,7 @@ class Channel
         void setTopic( std::string topic );
         std::string getTopic();
         void broadcast(const std::string &msg);
+        void modeExecuter(modes_t & mode, Client &c);
 
 };
 

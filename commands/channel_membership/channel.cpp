@@ -10,11 +10,20 @@ Channel::Channel(std::string name) : Channel_name(name)
     this->limit = false;
     this->num_limite = 0;
     this->key = "";
-    this->time_creat_channel = time(0);
+    this->isLimited = false;
+     this->time_creat_channel = time(0);
 }
+void Channel::broadcast(const std::string &msg)
+{
 
-#include <iostream> // <-- تأكد أن هادي الفوق
-
+    Server access;
+    for(std::map<std::string,Client*>::iterator it = users.begin(); it != users.end();  it++)
+    {
+        Client *c = it->second;
+        access.sendReply(*c, msg);
+    }
+    
+}
 std::string Channel::getNamesList()
 {
     std::string  name = "";

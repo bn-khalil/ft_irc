@@ -119,4 +119,18 @@ std::string Reply::RPL_NOTOPIC(const std::string& nick, const std::string& chann
     return ":" + server_name + " 331 " + nick + " " + channel + " :No topic is set";
 }
 
+//------------------------------TOPIC error------------------------------------------------------
+
+// :*.freenode.net 696 bn #ch o * :You must specify a parameter for the op mode. Syntax: <nick>.
+
+std::string Reply::ERR_NEEDMODEPARM(const std::string& nick, const std::string& channelname, const char mode, const std::string& more) 
+{
+    return ":*." + server_name + " 696 " + nick + " " + channelname + " " + mode + " * You must specify a parameter for the key mode. " + more ;
+}
+// :*.freenode.net 472 bn 	 :is not a recognised channel mode.
+std::string Reply::ERR_INVALIDMODEPARM(const std::string& nick, const char mode)
+{
+    return ":*." + server_name + " 472 " + nick + " " + mode + " is not a recognised channel mode." ;
+}
+
 /* ************************************************************************** */

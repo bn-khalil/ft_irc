@@ -185,6 +185,7 @@ void Server::ParseCmd(Client &client)
     else if (cmds[0] == "nick")
     {
         Server::NickCmd(client,cmds[1]);
+        
         std::cout << "NICK commmand" << std::endl;
     }
 
@@ -373,4 +374,17 @@ void Server::sendReply(Client &c, std::string msg)
         std::cerr << "Client Disconnected" << std::endl;
     }
     
+}
+
+std::vector<std::string> Server::new_splite(std::string &strr, char d)
+{
+    std::string save;
+    std::stringstream ss(strr);
+    std::vector<std::string> resulte;
+
+    while(getline(ss,  save , d))
+    {
+            resulte.push_back(save);
+    }
+    return resulte;
 }

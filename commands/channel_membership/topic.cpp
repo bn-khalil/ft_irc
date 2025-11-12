@@ -9,18 +9,6 @@
 
 //     }
 // }
-static std::vector<std::string> new_splite(std::string &strr, char d)
-{
-    std::string save;
-    std::stringstream ss(strr);
-    std::vector<std::string> resulte;
-
-    while(getline(ss,  save , d))
-    {
-            resulte.push_back(save);
-    }
-    return resulte;
-}
 
 void  Server::topic(Client &c) {
     std::string command = c.getlineCmd();

@@ -13,17 +13,7 @@ Channel::Channel(std::string name) : Channel_name(name)
     this->isLimited = false;
      this->time_creat_channel = time(0);
 }
-void Channel::broadcast(const std::string &msg)
-{
 
-    Server access;
-    for(std::map<std::string,Client*>::iterator it = users.begin(); it != users.end();  it++)
-    {
-        Client *c = it->second;
-        access.sendReply(*c, msg);
-    }
-    
-}
 std::string Channel::getNamesList()
 {
     std::string  name = "";

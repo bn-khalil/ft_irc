@@ -12,7 +12,7 @@ Client::Client(int fd)
     isSetNick=false;
     std::cout << fd << " set with clien(fd)" << std::endl;
     isAuthenticated = false;
-    _nickname= "" ;
+    _nickname= "*" ;
     _username= "" ;
     _hostname= "" ;
 }

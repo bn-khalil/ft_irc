@@ -35,7 +35,7 @@ class Channel
         void kick_from_channel(Client &c);
         bool isClientOperator(Client &c) const;
         void join(std::vector<std::string> cmds, Client &c);
-	    std::vector<std::string> splite_coma(std::string &strr, char d);
+	    static std::vector<std::string> splite_coma(std::string &strr, char d);
         std::string  Get_key();
         std::string  Set_key();
         bool Check_mode(char mode);
@@ -45,10 +45,10 @@ class Channel
         void rm_user_from_channel(Client &c);
         bool  isEmpty();
         bool    isClientUSER(Client &c) const;
-        std::string to_lower(std::string str);
+        static std::string to_lower(std::string str);
         void setTopic( std::string topic );
         std::string getTopic();
-        void broadcast(const std::string &msg); 
+        void broadcast(const std::string &msg);
 
 };
 

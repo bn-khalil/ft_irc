@@ -11,9 +11,14 @@ std::string Reply::ERR_NEEDMOREPARAMS(std::string nick, std::string command, std
     
     return msg;
 }
+//:Register first
 std::string Reply::ERR_NOSUCHCHANNEL(const std::string& nick, const std::string& channel_name)
 {
     return ":" + server_name + " 403 " + nick + " " + channel_name + " :No such channel";
+}
+std::string Reply::ERR_NOT_REGESTRED(const std::string& nick)
+{
+    return ":" + server_name + " 451 " + nick  + " :Register first";
 }
 std::string Reply::ERR_LEAVE_ALL_CHANNEL(const std::string& nick, const std::string& channel_name)
 {

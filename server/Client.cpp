@@ -11,8 +11,9 @@ Client::Client(int fd)
     isSetPass=false;
     isSetNick=false;
     isAuthenticated = false;
-    _nickname= "nickname" ;
+    _nickname= "*" ;
     _username= "" ;
+    _hostname= "" ;
 }
 
 Client::Client(const Client &other)
@@ -21,9 +22,9 @@ Client::Client(const Client &other)
 
 }
 
-std::string Client::get_Prefix() const
+std::string Client::    get_Prefix() const
 {
-	return ":" + this->_nickname + "!" + this->_username + "@" + this->_nickname;
+	return ":" + this->_nickname + "!" + this->_username + "@" + this->_hostname;
 }
 
 
@@ -32,3 +33,4 @@ Client::~Client(void)
 {
 }
 
+// :bn!~SD@freenode-obu.d75.6g0qj4.IP TOPIC #b :new

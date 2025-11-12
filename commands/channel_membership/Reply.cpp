@@ -1,15 +1,28 @@
 #include "Reply.hpp"
 
-Reply::Reply() : server_name("ircserver42")
+Reply::Reply() : server_name("ircserver42.com")
 {
 }
-std::string Reply::ERR_NEEDMOREPARAMS(const std::string& nick, const std::string& command)
+std::string Reply::ERR_NEEDMOREPARAMS(std::string nick, std::string command, std::string more)
 {
-    return ":" + server_name + " 461 " + nick + " " + command + " :Not enough parameters";
+
+         std::string msg =  ":"  + server_name   + " 461 " + nick + " " + command + " :Not enough parameters\n" + 
+          ":"  + server_name   + " 650 " + nick + " " + command + ":" + more ;
+    
+    return msg;
 }
+//:Register first
 std::string Reply::ERR_NOSUCHCHANNEL(const std::string& nick, const std::string& channel_name)
 {
     return ":" + server_name + " 403 " + nick + " " + channel_name + " :No such channel";
+}
+std::string Reply::ERR_NOT_REGESTRED(const std::string& nick)
+{
+    return ":" + server_name + " 451 " + nick  + " :Register first";
+}
+std::string Reply::ERR_LEAVE_ALL_CHANNEL(const std::string& nick, const std::string& channel_name)
+{
+    return ":" + server_name + " 403 " + nick + " " + channel_name + " :Left all channels";
 }
 std::string Reply::ERR_CHANOPRIVSNEEDED(const std::string& nick, const std::string& channel)
 {
@@ -19,6 +32,20 @@ std::string Reply::ERR_NOTONCHANNEL(const std::string& nick, const std::string& 
 {
     return ":" + server_name + " 442 " + nick + " " + channel + " :You're not on that channel";
 }
+std::string Reply::ERR_UNKNOWNCOMMAND_N(const std::string &nick, const std::string & command) {
+    std::string UpCommand = command;
+    for (size_t i = 0; i < UpCommand.size(); i++)
+        UpCommand[i] = std::toupper(UpCommand[i]);
+    
+    return ":*." + server_name + " 421 " + nick + " " + UpCommand + " :Unknown command";
+}
+    // :*.freenode.net 421 sd SD :Unknown command
+
+// std::string Reply::RPL_BROADCAST(const std::string& nick, const std::string & command, const std::string & channel, const std::string & message) {
+//     return ":" + nick + "!" + host + " " + command + " " + channel + " " + message;
+// }
+
+// :bn!~SD@freenode-obu.d75.6g0qj4.IP TOPIC #b :new
 
 //------------------------------JOIN error------------------------------------------------------
 std::string Reply::ERR_BADCHANNELKEY(const std::string& nick, const std::string& channel)
@@ -37,21 +64,19 @@ std::string Reply::MSG_JOIN(const std::string& user_prefix, const std::string& c
 {
     return ":" + user_prefix + " JOIN :" + channel_name;
 }
-std::string Reply::RPL_TOPIC(const std::string& nick, const std::string& channel, const std::string& topic)
-{
-    return ":" + server_name + " 332 " + nick + " " + channel + " :" + topic;
-}
-std::string Reply::RPL_NOTOPIC(const std::string& nick, const std::string& channel)
-{
-    return ":" + server_name + " 331 " + nick + " " + channel + " :No topic is set";
-}
+
 std::string Reply::RPL_NAMREPLY(const std::string& nick, const std::string& channel, const std::string& names_list)
 {
     return ":" + server_name + " 353 " + nick + " = " + channel + " :" + names_list;
 }
+
 std::string Reply::RPL_ENDOFNAMES(const std::string& nick, const std::string& channel)
 {
     return ":" + server_name + " 366 " + nick + " " + channel + " :End of /NAMES list";
+}
+std::string Reply::RPL_ENDOFINVIT(const std::string& nick, const std::string& channel)
+{
+    return ":" + server_name + " 337 " + nick + " : " + channel + " :End of /NAMES list";
 }
 //------------------------------KICK error------------------------------------------------------
 
@@ -81,4 +106,17 @@ std::string Reply::MSG_INVITE(const std::string& inviter_prefix, const std::stri
 {
     return ":" + inviter_prefix + " INVITE " + target_nick + " :" + channel;
 }
+
+//------------------------------TOPIC error------------------------------------------------------
+
+
+std::string Reply::RPL_TOPIC(const std::string& nick, const std::string& channel, const std::string& topic)
+{
+    return ":" + server_name + " 332 " + nick + " " + channel + " :" + topic;
+}
+std::string Reply::RPL_NOTOPIC(const std::string& nick, const std::string& channel)
+{
+    return ":" + server_name + " 331 " + nick + " " + channel + " :No topic is set";
+}
+
 /* ************************************************************************** */

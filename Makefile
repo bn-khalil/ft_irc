@@ -1,6 +1,6 @@
 NAME = ircserv
 
-FLAG = -Wall -Werror -Wextra -std=c++98 #-fsanitize=address -g
+FLAG = -Wall -Werror -Wextra -std=c++98 -fsanitize=address -g
 
 HEADER = server/Authentication.hpp server/Client.hpp server/Server.hpp
 EXP_HEADER = exception/FcntlFailedException.hpp exception/SocketBindFailedException.hpp  exception/SocketFailedToCreatException.hpp  exception/SocketListenFailedException.hpp  exception/SocketOptionFailedException.hpp 
@@ -8,7 +8,11 @@ EXP_HEADER = exception/FcntlFailedException.hpp exception/SocketBindFailedExcept
 EXP_SRC = exception/FcntlFailedException.cpp exception/SocketBindFailedException.cpp exception/SocketFailedToCreatException.cpp exception/SocketListenFailedException.cpp exception/SocketOptionFailedException.cpp \
 		commands/channel_membership/channel.cpp \
 		commands/channel_membership/join.cpp  \
+		commands/channel_membership/topic.cpp  \
+		commands/channel_membership/mode.cpp  \
 		commands/channel_membership/Reply.cpp \
+		commands/channel_membership/kick.cpp \
+		commands/channel_membership/invite.cpp \
 
 
 CPP = c++

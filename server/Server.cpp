@@ -17,7 +17,8 @@
 #include <unistd.h>
 #include <vector>
 #include <map>
-
+#include "../commands/channel_membership/channel.hpp"
+#include <arpa/inet.h>
 int Server::ReadClientMessage(std::string &line)
 {
     (void)line;
@@ -57,6 +58,9 @@ void Server::NickCmd(Client &client, std::string nick_arg)
     std::cout << "NICK name is seted ✅✅✅✅✅✅✅  -------> nick :: [ " << nick_arg << " ]"<< std::endl;
     client.set_nickname(nick_arg);
     client.SetIsSetNick(true);
+    if (client.GetIsSetuser() == true)
+        client.Set_isAuthenticated(true);
+
 }
 
 
@@ -96,7 +100,11 @@ Server::Server(const Server &other)
 
 void Server::AddClient()
 {
-    int ClientSocketFd = accept(serverId, NULL, NULL);
+    //------------------fixprefix---------------------
+    sockaddr_in  client_addr;
+    socklen_t    addr_len;
+
+    int ClientSocketFd = accept(serverId,  (struct sockaddr *)&client_addr, &addr_len);
     if (ClientSocketFd < 0)
     {
         std::cerr << "ClientSocketFd \n";
@@ -108,6 +116,7 @@ void Server::AddClient()
         close(ClientSocketFd);
         return;
     }
+    std::string hostname = inet_ntoa(client_addr.sin_addr);
 
     pollfd ClientPollfd;
     ClientPollfd.fd = ClientSocketFd;
@@ -118,7 +127,8 @@ void Server::AddClient()
 
     Client client(ClientSocketFd);
     ClientsInfo[ClientSocketFd] = client;
-
+    client.set_hostname(hostname);
+    //need to add username
     std::cout << "client number " << ClientSocketFd << " connect" << std::endl;
 }
 
@@ -182,7 +192,7 @@ void Server::UserCmd(Client &client, std::vector<std::string> &arg)
     //     std::cout << "USER CMD 3 ❌❌❌❌❌❌❌❌❌❌❌❌ \n";        
     //     return;
     // }
-	userName = arg[0];
+	userName = arg[1];
 	if (two == std::string::npos)
 	{ 
 		size_t i ;
@@ -195,14 +205,24 @@ void Server::UserCmd(Client &client, std::vector<std::string> &arg)
 	}
 	else 
 	{
-		realName = client.getlineCmd().substr(two + 2 );
+		realName = client.getlineCmd().substr(two + 2);
 	}
+	client.SetIsSetPass(true);
+    client.set_realname(realName);
+	client.set_username(userName);
+    if (client.GetIsSetNick() == true)
+        client.Set_isAuthenticated(true);
+
+    std::cout << "userName -> [" << userName  << "]"<< std::endl;
 	std::cout << "realName -> [" << realName  << "]"<< std::endl;
-	// else if () {
-	
-	// }
 
 }			
+std::string Server::toLower(std::string str) {
+    for (size_t i = 0; i < str.size(); i++)
+        str[i] = std::tolower(str[i]);
+    return str;
+}
+
 void Server::ParseCmd(Client &client)
 {
     std::vector<std::string> cmds;
@@ -212,28 +232,40 @@ void Server::ParseCmd(Client &client)
 
     if (cmds.size() == 0)
         return;
-
-    if (cmds[0] == "PASS")
+    cmds[0] = toLower(cmds[0]);
+    if (cmds[0] == "pass")
     {
         if (client.Get_isAuthenticated() == true)
         {
         }
         PassCmd(client, cmds[1]);
     }
-    else if (cmds[0] == "NICK")
+    else if (cmds[0] == "nick")
     {
         Server::NickCmd(client,cmds[1]);
     }
 
-    else if (cmds[0] == "JOIN")
+    else if (cmds[0] == "join")
     {
-        join(cmds, &client);
+        join(cmds, client);
     }
-    else if (cmds[0] == "USER")
+    else if (cmds[0] == "topic")
+        topic(client);
+    else if (cmds[0] == "mode")
+        mode(cmds, client);
+    else if(cmds[0] == "kick")
+        kick(cmds, client);
+    else if(cmds[0] == "invit")
+        invit(cmds, client);
+    else if (cmds[0] == "user")
     {
         UserCmd(client,cmds);
         std::cout << "USER commmand" << std::endl;
     }
+    else
+        sendReply(client, error.ERR_UNKNOWNCOMMAND_N(client.get_nickname(), cmds[0]));
+    // :*.freenode.net 421 sd SD :Unknown command
+    
     std::string empty = "";
     client.setlineCmd(empty);
 }
@@ -353,4 +385,50 @@ Server::Server(std::string &port, std::string &password)
 {
     serverId = -1;
     addr_len = sizeof(sockaddr_in);
+}
+
+
+
+
+
+
+//-------------------------------------------------------------------CHANNEL_PART----------------------------------------------------------------------------------------------
+void Server::removeClientFromAllChannels(Client &c)
+{
+    std::vector<std::string> channel_to_leave;
+    std::map<std::string, Channel *>::iterator it = this->channel.begin();
+    while(it != this->channel.end())
+    {
+        Channel *ch = it->second;
+        if(ch->isUserInChannel(c))
+            channel_to_leave.push_back(ch->get_channel_name());
+        it++;
+    }
+    for(size_t i = 0; i < channel_to_leave.size();i++)
+    {
+        std::map<std::string,Channel*>::iterator it1 = channel.find(channel_to_leave[i]);
+        if(it1 == channel.end())
+            continue;
+        Channel *chan = it1->second;
+         chan->broadcast( error.MSG_PART(c.get_Prefix(), chan->get_channel_name(), "Left all channels") );
+        chan->rm_user_from_channel(c);
+       if(chan->isEmpty() == true)
+       {
+            channel.erase(it1);
+            delete chan;
+       }
+    }
+    
+}
+
+void Server::sendReply(Client &c, std::string msg)
+{
+    
+    std::string full_msg = msg + "\r\n";
+    (void) c;
+    if(send(c.getfd() , full_msg.c_str() , full_msg.length(), 0) <= -1)
+    {
+        std::cerr << "Client Disconnected" << std::endl;
+    }
+    
 }

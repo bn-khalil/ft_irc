@@ -9,6 +9,7 @@
 #include <iostream>
 #include <iterator>
 #include <sstream>
+#include <string>
 #include <strings.h>
 #include <sys/poll.h>
 #include <sys/socket.h>
@@ -26,11 +27,13 @@ void Server::NickCmd(Client &client, std::string nick_arg)
 {
     if (client.GetIsSetPass() == false)
     {
+        std::cout << "NICK COMMAND ❌❌❌❌❌❌❌❌❌❌❌❌ \n";
         // "464 :Password incorrect
         return ;
     }
     else if (nick_arg.empty())
-     {
+     { 
+        std::cout << "NICK COMMAND ❌❌❌❌❌❌❌❌❌❌❌❌ \n";
         //"431 :No nickname given"
         return ;
      }
@@ -38,18 +41,20 @@ void Server::NickCmd(Client &client, std::string nick_arg)
     {
         for (std::map<int, Client>::iterator it = ClientsInfo.begin(); it != ClientsInfo.end(); ++it)
         {
-         if (it->first == client.getfd())
-        {   
-            continue;
-        }
+            if (it->first == client.getfd())
+            {   
+                // std::cout << "is the same \n";    
+                continue;
+            }
             if (it->second.GetIsSetNick() == true &&it->second.get_nickname()==nick_arg)
             {
+                std::cout << "NICK COMMAND ❌❌❌❌❌❌❌❌❌❌❌❌ \n";
                 return ;
                 // "433  Nickname is already in use");
             }
         }
     }
-    std::cout << "NICK name is seted " << nick_arg << std::endl;
+    std::cout << "NICK name is seted ✅✅✅✅✅✅✅  -------> nick :: [ " << nick_arg << " ]"<< std::endl;
     client.set_nickname(nick_arg);
     client.SetIsSetNick(true);
 }
@@ -131,35 +136,79 @@ std::vector<std::string> Server::splitCmd(std::string &str)
 
 void Server::PassCmd(Client &client, std::string password_arg)
 {
-    std::cout << password_arg.empty() << std::endl;
     if (client.Get_isAuthenticated() == true)
     {
         // client.getFd(),
+        std::cout << "PASS CMD ❌❌❌❌❌❌❌❌❌❌❌❌ \n";
         return;
         // "462 :You may not reregister");
     }
     if (password_arg.empty())
     {
         // "461 PASS :Not enough parameters"
+        std::cout << "PASS CMD ❌❌❌❌❌❌❌❌❌❌❌❌ \n";
         return;
     }
     if (password_arg != this->password)
     {
+     std::cout << "PASS CMD ❌❌❌❌❌❌❌❌❌❌❌❌ \n";
         return;
         // "464 :Password incorrect"
     }
-    std::cout << client.getfd() << " " << "daz \n";
+    std::cout << " client number " << client.getfd() << " " << "PASS command ✅✅✅✅✅✅✅ \n";
     client.SetIsSetPass(true);
 }
+void Server::UserCmd(Client &client, std::vector<std::string> &arg)
+{
+    std::string userName;
+    std::string realName;
 
+	size_t size_cmd = arg.size();
+	size_t two =client.getlineCmd().find(" :");
+    if (client.Get_isAuthenticated() == true)
+    {
+        //"462 :You may not reregister"
+        std::cout << "USER CMD 1 ❌❌❌❌❌❌❌❌❌❌❌❌ \n";        
+        return;
+    }
+    else if (size_cmd < 5)
+    {
+        //461 USER :Not enough parameters
+        std::cout << "USER CMD  ❌❌❌❌❌❌❌❌❌❌❌❌     //461 USER :Not enough parameters \n";        
+        return;
+    }
+    // else if (client.GetIsSetPass() == false)
+    // {
+    //     std::cout << "USER CMD 3 ❌❌❌❌❌❌❌❌❌❌❌❌ \n";        
+    //     return;
+    // }
+	userName = arg[0];
+	if (two == std::string::npos)
+	{ 
+		size_t i ;
+		for (i = 4 ; i < size_cmd - 1;i++)
+		{
+			realName += arg[i] + " ";
+			std::cout << "added" << std::endl;
+		}	
+			realName += arg[i];
+	}
+	else 
+	{
+		realName = client.getlineCmd().substr(two + 2 );
+	}
+	std::cout << "realName -> [" << realName  << "]"<< std::endl;
+	// else if () {
+	
+	// }
+
+}			
 void Server::ParseCmd(Client &client)
 {
     std::vector<std::string> cmds;
 
     cmds = splitCmd(client.getlineCmd());
 
-    std::string empty = "";
-    client.setlineCmd(empty);
 
     if (cmds.size() == 0)
         return;
@@ -170,12 +219,10 @@ void Server::ParseCmd(Client &client)
         {
         }
         PassCmd(client, cmds[1]);
-        std::cout << "PASS commmand" << std::endl;
     }
     else if (cmds[0] == "NICK")
     {
         Server::NickCmd(client,cmds[1]);
-        std::cout << "NICK commmand" << std::endl;
     }
 
     else if (cmds[0] == "JOIN")
@@ -184,8 +231,11 @@ void Server::ParseCmd(Client &client)
     }
     else if (cmds[0] == "USER")
     {
+        UserCmd(client,cmds);
         std::cout << "USER commmand" << std::endl;
     }
+    std::string empty = "";
+    client.setlineCmd(empty);
 }
 
 void Server::GetClientEvents()

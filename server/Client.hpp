@@ -24,7 +24,6 @@ class Client
         }
         void setfd( int fd)
         {
-            std::cout << fd << " setfd clien(fd)" << std::endl;
             this->fd = fd;
         }
         int getfd()
@@ -59,7 +58,6 @@ class Client
         {_nickname = nick;}
         Client(void);
         Client(int fd);
-        Client &operator=(const Client &other);
         Client(const Client& other);
         ~Client();
         std::string get_Prefix() const;

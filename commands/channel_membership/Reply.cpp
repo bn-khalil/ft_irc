@@ -15,6 +15,10 @@ std::string Reply::ERR_NOSUCHCHANNEL(const std::string& nick, const std::string&
 {
     return ":" + server_name + " 403 " + nick + " " + channel_name + " :No such channel";
 }
+std::string Reply::ERR_LEAVE_ALL_CHANNEL(const std::string& nick, const std::string& channel_name)
+{
+    return ":" + server_name + " 403 " + nick + " " + channel_name + " :Left all channels";
+}
 std::string Reply::ERR_CHANOPRIVSNEEDED(const std::string& nick, const std::string& channel)
 {
     return ":" + server_name + " 482 " + nick + " " + channel + " :You're not channel operator";

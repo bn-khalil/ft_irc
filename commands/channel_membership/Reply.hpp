@@ -29,6 +29,7 @@ class Reply
     	std::string RPL_NAMREPLY(const std::string& nick, const std::string& channel, const std::string& names_list);
     	std::string RPL_ENDOFNAMES(const std::string& nick, const std::string& channel);
     	std::string RPL_ENDOFINVIT(const std::string& nick ,const std::string& channel);
+    	std::string ERR_LEAVE_ALL_CHANNEL(const std::string& nick ,const std::string& channel);
 
         // --- KICK Part ---
     	std::string ERR_USERNOTINCHANNEL(const std::string& nick, const std::string& target_nick, const std::string& channel);

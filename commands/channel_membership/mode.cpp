@@ -78,7 +78,13 @@ bool validateLimitParams(std::string limit) {
     return true;
 }
 
-void Channel::modeExecuter(modes_t & mode) {
+void Channel::modeExecuter(modes_t & mode, Client &c) {
+    // std:: cout << " ==== " << this->isClientOperator(c) << std::endl;
+    if (!this->isClientOperator(c)) {
+        std::cout << "client not operator" << std::endl;
+        return ;
+    }
+
     if (mode.mode == 'i') {
         if (mode.sing && !this->isInviteOnly) {
             this->isInviteOnly = true;
@@ -122,11 +128,24 @@ void Channel::modeExecuter(modes_t & mode) {
             this->isLimited = true;
             std::cout << "channel limit sat " << this->num_limite << std::endl;
         }
-        // std:: cout << mode.mode << " " << mode.param << std::endl;
-        // long limit = std::atol(mode.param.c_str());
-
-        // for nigative
         //:*.freenode.net 696 bn #bn l -4 :Invalid limit mode parameter. Syntax: <limit>.
+    }
+    else if (mode.mode == 'k') {
+        if (this->isKeySet && mode.sing) {
+            std::cout << "key already set " << std::endl;
+        } else {
+            if (!mode.sing && this->key == mode.param) {
+                this->isKeySet = false;
+                this->key = "";
+            } 
+            else if (mode.sing) {
+                this->isKeySet = true;
+                this->key = mode.param;
+                std::cout << "key added " << std::endl;
+            }
+            else
+                std::cout << "key already set " << std::endl;
+        }
     }
 }
 
@@ -158,7 +177,7 @@ void  Server::mode(std::vector<std::string> cmds, Client &c) {
         modes = parseModes(cmds, c, it_channel);
         for (size_t i = 0; i < modes.size(); i++) {
             std:: cout << modes[i].sing << modes[i].mode << " --> " << modes[i].param << std::endl;
-            it_channel->second->modeExecuter(modes[i]);
+            it_channel->second->modeExecuter(modes[i], c);
         }
     }
     modes.clear();

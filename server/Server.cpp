@@ -185,6 +185,7 @@ void Server::ParseCmd(Client &client)
     else if (cmds[0] == "nick")
     {
         Server::NickCmd(client,cmds[1]);
+        
         std::cout << "NICK commmand" << std::endl;
     }
 

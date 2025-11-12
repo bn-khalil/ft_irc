@@ -51,7 +51,7 @@ class Channel
         void setTopic( std::string topic );
         std::string getTopic();
         void broadcast(const std::string &msg);
-        void modeExecuter(modes_t & mode);
+        void modeExecuter(modes_t & mode, Client &c);
 
 };
 

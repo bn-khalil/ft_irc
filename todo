@@ -38,3 +38,5 @@ topic #sd df   df df	gd
 @REM :bn!~s@freenode-obu.d75.6g0qj4.IP MODE #ch +l :5
 @REM mode #ch o
 @REM :*.freenode.net 696 bn #ch o * :You must specify a parameter for the op mode. Syntax: <nick>.
+
+// each mode changed should broadcast it 

@@ -9,12 +9,30 @@ class Client
         bool isAuthenticated;
         std::string _nickname;
         std::string _username;
+        std::string _realname;
         std::string _hostname;
         std::string lineCmd;
         bool isSetPass;
         bool isSetNick;
+        bool isSetuser;
 
     public:
+        std::string get_username()
+        {
+            return _username;
+        }
+        std::string get_realname()
+        {
+            return _realname;
+        }
+        void set_username(std::string _username)
+        {
+            this->_username = _username;
+        }
+        void set_realname(std::string _realname)
+        {
+            this->_realname = _realname;
+        }
         void setlineCmd( std::string &line)
         {
             lineCmd = line;
@@ -25,7 +43,6 @@ class Client
         }
         void setfd( int fd)
         {
-            std::cout << fd << " setfd clien(fd)" << std::endl;
             this->fd = fd;
         }
         int getfd()
@@ -54,11 +71,23 @@ class Client
         bool GetIsSetNick(){
             return isSetNick;
         }
+        void SetIsSetuser(bool flag)
+        {
+            isSetuser= flag ;
+        }
+        bool GetIsSetuser(){
+            return isSetuser;
+        }
         std::string get_nickname() 
         {
-            return _nickname;}
+            return _nickname;
+        }
+
         void set_nickname(std::string nick) 
-        {_nickname = nick;}
+        {
+            _nickname = nick;
+        }
+
         Client(void);
         Client(int fd);
         Client(const Client& other);

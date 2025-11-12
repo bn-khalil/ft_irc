@@ -2,8 +2,11 @@
 
 void Server::join(std::vector<std::string> cmds, Client &c)
 {
-
-    Channel access("access");
+    if(c.Get_isAuthenticated() == false)
+    {
+        sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
+        return ;
+    }
     if(cmds.size() < 2)
     {
         sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "JOIN", "<channel>[,<channel>]+ [<key>[,<key>]+]"));
@@ -15,10 +18,10 @@ void Server::join(std::vector<std::string> cmds, Client &c)
         return ;
     }
     std::vector<std::string> key_channle;
-    std::vector<std::string> multi_channel = access.splite_coma(cmds[1], ',');
+    std::vector<std::string> multi_channel = Channel::splite_coma(cmds[1], ',');
 
     if(cmds.size() > 2)
-        key_channle = access.splite_coma(cmds[2], ',');
+        key_channle = Channel::splite_coma(cmds[2], ',');
 
 
   
@@ -28,7 +31,7 @@ void Server::join(std::vector<std::string> cmds, Client &c)
     {
             std::string one_channel = multi_channel[i];
             std::string key = "";
-            one_channel = access.to_lower(one_channel);
+            one_channel = Channel::to_lower(one_channel);
             if(i < key_channle.size())
                 key  = key_channle[i];
 
@@ -40,7 +43,7 @@ void Server::join(std::vector<std::string> cmds, Client &c)
     }
 
     Channel *join;
-
+    
     std::map<std::string, Channel *>::iterator it = channel.find(one_channel);
     if(it == channel.end())
     {
@@ -48,10 +51,10 @@ void Server::join(std::vector<std::string> cmds, Client &c)
         channel[one_channel] = join;
         join->Add_to_admin(c);
         join->Add_to_user(c);
-        // access.broadcast( error.MSG_JOIN(c.get_Prefix(), one_channel) );
-        // sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), one_channel));
-        // sendReply(c, error.RPL_NAMREPLY(c.get_nickname(), one_channel, join->getNamesList()));
-        // sendReply(c, error.RPL_ENDOFNAMES(c.get_nickname(), one_channel));
+        join->broadcast( error.MSG_JOIN(c.get_Prefix(), one_channel) );
+        sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), one_channel));
+        sendReply(c, error.RPL_NAMREPLY(c.get_nickname(), one_channel, join->getNamesList()));
+        sendReply(c, error.RPL_ENDOFNAMES(c.get_nickname(), one_channel));
     }
     else
     {
@@ -65,7 +68,7 @@ void Server::join(std::vector<std::string> cmds, Client &c)
         else
         {
             join->Add_to_user(c);
-        access.broadcast( error.MSG_JOIN(c.get_Prefix(), one_channel) );
+        join->broadcast( error.MSG_JOIN(c.get_Prefix(), one_channel) );
         sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), one_channel));
         sendReply(c, error.RPL_NAMREPLY(c.get_nickname(), one_channel, join->getNamesList()));
         sendReply(c, error.RPL_ENDOFNAMES(c.get_nickname(), one_channel));

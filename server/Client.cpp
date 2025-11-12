@@ -12,7 +12,7 @@ Client::Client(int fd)
     isSetNick=false;
     std::cout << fd << " set with clien(fd)" << std::endl;
     isAuthenticated = false;
-    _nickname= "" ;
+    _nickname= "*" ;
     _username= "" ;
     _hostname= "" ;
 }
@@ -36,3 +36,4 @@ Client::~Client(void)
 {
 }
 
+// :bn!~SD@freenode-obu.d75.6g0qj4.IP TOPIC #b :new

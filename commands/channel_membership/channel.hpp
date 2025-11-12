@@ -15,11 +15,12 @@ class Channel
         std::map<std::string,Client*> users;
         std::map<std::string,Client*> invite;
         std::string key;
+        std::string channelTopic;
         bool isKeySet;
         bool isInviteOnly;
         bool  limit;
         unsigned int num_limite;
-
+        time_t time_creat_channel;
         
     public :
         std::map<std::string,Client*> get_operators_(){return operators_;};
@@ -34,7 +35,7 @@ class Channel
         void kick_from_channel(Client &c);
         bool isClientOperator(Client &c) const;
         void join(std::vector<std::string> cmds, Client &c);
-	    std::vector<std::string> splite_coma(std::string &strr, char d);
+	    static std::vector<std::string> splite_coma(std::string &strr, char d);
         std::string  Get_key();
         std::string  Set_key();
         bool Check_mode(char mode);
@@ -44,8 +45,10 @@ class Channel
         void rm_user_from_channel(Client &c);
         bool  isEmpty();
         bool    isClientUSER(Client &c) const;
-        std::string to_lower(std::string str);
-        void broadcast(const std::string &msg); 
+        static std::string to_lower(std::string str);
+        void setTopic( std::string topic );
+        std::string getTopic();
+        void broadcast(const std::string &msg);
 
 };
 

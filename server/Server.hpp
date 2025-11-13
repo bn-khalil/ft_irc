@@ -70,8 +70,8 @@ class Server
        bool isChannelExist(std::map<std::string,Channel*>::iterator & it_channel, 
         std::vector<std::string> cmds, Client &c);
         std::vector<modes_t> parseModes(std::vector<std::string> cmds, 
-Client &c, 
-const std::map<std::string,Channel*>::iterator & it_channel) ;
+        Client &c, 
+        const std::map<std::string,Channel*>::iterator & it_channel) ;
 
         ~Server();
 };

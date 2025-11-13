@@ -129,8 +129,9 @@ void Server::AddClient()
     poll_fds.push_back(ClientPollfd);
 
     Client client(ClientSocketFd);
-    ClientsInfo[ClientSocketFd] = client;
     client.set_hostname(hostname);
+    ClientsInfo[ClientSocketFd] = client;
+    std::cout << client.get_hostname() << std::endl;
     //need to add username
     std::cout << "client number " << ClientSocketFd << " connect" << std::endl;
 }

@@ -44,7 +44,6 @@ const std::map<std::string,Channel*>::iterator & it_channel) {
                 currentMode.sing = sing;
                 currentMode.mode = modes[i];
                 if (modes[i] == 'k' || (modes[i] == 'l' && sing == true) || modes[i] == 'o') {
-                    std::cout << modes[i] << std::endl;
                     indexParam++;
                     if (indexParam < cmds.size()) {
                         currentMode.param = cmds[indexParam];
@@ -83,35 +82,23 @@ std::map<std::string,Client*>::iterator Channel::findClientByNickName( const std
 }
 
 
-void Channel::modeExecuter(modes_t & mode, Client &c) {
-    std:: cout << " ==== " << this->isClientOperator(c) << std::endl;
+bool Channel::modeExecuter(modes_t & mode, Client &c, Server & server) {
     if (!this->isClientOperator(c)) {
-        std::cout << "client not operator" << std::endl;
-        return ;
+        server.sendReply(c, server.error.ERR_NOTCHANNELOPERATO(c.get_nickname(), this->Channel_name));
+        return false;
     }
 
     if (mode.mode == 'i') {        
-        if (mode.sing && !this->isInviteOnly) {
+        if (mode.sing && !this->isInviteOnly)
             this->isInviteOnly = true;
-            //send to user;
-            // std::cout << this->Channel_name << "  -> +i" << std::endl;
-        }
-        else if (!mode.sing && this->isInviteOnly){
+        else if (!mode.sing && this->isInviteOnly)
             this->isInviteOnly = false;
-            //send to user;
-            // std::cout << this->Channel_name << "  -> -i" << std::endl;
-        }
     }
     else if (mode.mode == 't') {
-        if (mode.sing && !this->topicRestriction) {
+        if (mode.sing && !this->topicRestriction)
             this->topicRestriction = true;
-            //send
-            std::cout << "only Operators can change topic" << std::endl;
-        } else if (!mode.sing && this->topicRestriction) {
+        else if (!mode.sing && this->topicRestriction)
             this->topicRestriction = false;
-            //send
-            std::cout << "every one can change topic" << std::endl;
-        }
     }
     else if (mode.mode == 'l') {
         if (!mode.sing) {
@@ -119,11 +106,8 @@ void Channel::modeExecuter(modes_t & mode, Client &c) {
             this->isLimited = false;
         }
         else {
-            if (!validateLimitParams(mode.param)) {
-                // send message to client;
-                std::cout << "param invalid" << std::endl;
-                return;
-            }
+            if (!validateLimitParams(mode.param))
+                return false;
 
             size_t count = 0;
             for (size_t i = 0; i < mode.param.size(); i++) {
@@ -133,23 +117,23 @@ void Channel::modeExecuter(modes_t & mode, Client &c) {
                     break ;
             }
             if (count > 1 || count == mode.param.size())
-                return ;
+                return false;
 
             unsigned int limit = static_cast<unsigned int>(std::atol(mode.param.c_str()));
 
             if (limit < 0 || limit == this->num_limite)
-                return ;
+                return false;
 
             this->num_limite = (limit);
             this->isLimited = true;
-            std::cout << "channel limit sat " << this->num_limite << std::endl;
         }
-        //:*.freenode.net 696 bn #bn l -4 :Invalid limit mode parameter. Syntax: <limit>.
     }
     else if (mode.mode == 'k') {
         if (this->isKeySet && mode.sing) {
-            std::cout << "key already set " << std::endl;
-        } else {
+            server.sendReply(c, server.error.ERR_KEYALREADYSET(c.get_nickname(), this->Channel_name));
+            return false;
+        }
+        else {
             if (!mode.sing && this->key == mode.param) {
                 this->isKeySet = false;
                 this->key = "";
@@ -157,33 +141,26 @@ void Channel::modeExecuter(modes_t & mode, Client &c) {
             else if (mode.sing) {
                 this->isKeySet = true;
                 this->key = mode.param;
-                std::cout << "key added " << std::endl;
             }
-            else
-                std::cout << "key already set " << std::endl;
+            else {
+                server.sendReply(c, server.error.ERR_KEYALREADYSET(c.get_nickname(), this->Channel_name));
+                return false;
+            }
         }
     }
     else if (mode.mode == 'o') {
         std::string nickName = mode.param;
         std::map<std::string,Client*>::iterator client = this->findClientByNickName(nickName);
         if (client == this->users.end()) {
-            // send
-            //:atw.hu.quakenet.org 401 bn sd :No such nick
-            std::cout << "NO suck nick" << std::endl;
-            return ;
+            server.sendReply(c, server.error.ERR_NICKNOTFOUND(c.get_nickname(), nickName));
+            return false;
         }
-        if (!mode.sing && isClientOperator( *client->second )) {
+        if (!mode.sing && isClientOperator( *client->second ))
             this->popClientFromOperatorList( nickName );
-            // send 
-            std::cout << nickName << " not an operator in " << this->Channel_name << std::endl;
-        }
-        else if (mode.sing && !isClientOperator( *client->second )) {
-
+        else if (mode.sing && !isClientOperator( *client->second ))
             this->Add_to_admin( *client->second );
-            // send 
-            std::cout << nickName << " become an operator in " << this->Channel_name << std::endl;
-        }
     }
+    return true;
 }
 
 void Channel::popClientFromOperatorList( const std::string & nickname ) {
@@ -194,6 +171,10 @@ void  Server::mode(std::vector<std::string> cmds, Client &c) {
 
     std::vector<modes_t> modes;
     std::map<std::string,Channel*>::iterator it_channel = this->channel.end();
+    std::vector<std::string> seccessModes;
+    std::string sortModes;
+    std::string sortModesPlus;
+    std::string sortModesMinus;
 
     if (cmds.size() == 1) 
         sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "MODE", "<target> [[(+|-)]<modes> [<mode-parameters>]]"));
@@ -205,11 +186,36 @@ void  Server::mode(std::vector<std::string> cmds, Client &c) {
         if (!isChannelExist(it_channel, cmds, c))
             return ;
 
+        seccessModes.push_back("");
         modes = parseModes(cmds, c, it_channel);
         for (size_t i = 0; i < modes.size(); i++) {
-            std:: cout << modes[i].sing << modes[i].mode << " --> " << modes[i].param << std::endl;
-            it_channel->second->modeExecuter(modes[i], c);
+            if (it_channel->second->modeExecuter(modes[i], c, *this)) {
+                if (modes[i].param.empty()) {
+                    if (modes[i].sing)
+                        sortModesPlus = modes[i].mode + sortModesPlus;
+                    else
+                        sortModesMinus = modes[i].mode + sortModesMinus;
+                }
+                else {
+                    if (modes[i].sing)
+                        sortModesPlus += modes[i].mode;
+                    else
+                        sortModesMinus += modes[i].mode;
+                    seccessModes.push_back(modes[i].param);
+                }
+            }
         }
+        if (!sortModesPlus.empty())
+            sortModesPlus = "+" + sortModesPlus;
+        if (!sortModesMinus.empty())
+            sortModesMinus = "-" + sortModesMinus;
+        seccessModes[0] = sortModesMinus + sortModesPlus;
+        for (size_t i = 0; i < seccessModes.size(); i++) {
+            sortModes = sortModes + seccessModes[i];
+            if (i < seccessModes.size() - 1)
+                sortModes += " ";
+        }
+        sendReply(c, error.RPL_MODEOPTIONS(it_channel->second->get_channel_name(), sortModes));
     }
     modes.clear();
 }

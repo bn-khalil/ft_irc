@@ -39,6 +39,17 @@ std::string Reply::ERR_UNKNOWNCOMMAND_N(const std::string &nick, const std::stri
     
     return ":*." + server_name + " 421 " + nick + " " + UpCommand + " :Unknown command";
 }
+
+std::string Reply::ERR_NOTCHANNELOPERATO(const std::string &nick, const std::string & channel) {
+    return ":*." + server_name + " 482 " + nick + " " + channel + " : You're not channel operator";
+}
+
+std::string Reply::RPL_MODEOPTIONS(const std::string& channel, const std::string& modes) {
+    return ":prefix MODE " + channel + " " + modes;
+}
+
+
+        //:tngnet.nl.quakenet.org 482 sf #bn :You're not channel operator
     // :*.freenode.net 421 sd SD :Unknown command
 
 // std::string Reply::RPL_BROADCAST(const std::string& nick, const std::string & command, const std::string & channel, const std::string & message) {
@@ -131,6 +142,20 @@ std::string Reply::ERR_NEEDMODEPARM(const std::string& nick, const std::string& 
 std::string Reply::ERR_INVALIDMODEPARM(const std::string& nick, const char mode)
 {
     return ":*." + server_name + " 472 " + nick + " " + mode + " is not a recognised channel mode." ;
+}
+
+//------------------------------MODE error------------------------------------------------------
+            // :euroserv.fr.quakenet.org 467 sd #bn :Channel key already set
+ 
+std::string Reply::ERR_KEYALREADYSET(const std::string& nick, const std::string& channelname)
+{
+    return ":*." + server_name + " 467 " + nick + " " + channelname + " : Channel key already set";
+
+}
+
+std::string Reply::ERR_NICKNOTFOUND(const std::string& nick, const std::string& otherNick)
+{
+    return ":*." + server_name + " 401 " + nick + " " + otherNick + " : No such nick";
 }
 
 /* ************************************************************************** */

@@ -1,15 +1,6 @@
 #include "channel.hpp"
 #include <sstream>
 
-
-// static void showChannelTopic(std::map<std::string,Channel*> & channel) {
-//     std::map<std::string,Channel*>::iterator it = channel.begin();
-//     while (it != channel.end())
-//     {
-
-//     }
-// }
-
 void  Server::topic(Client &c) {
     std::string command = c.getlineCmd();
     if (!command.empty() && command.back() == '\n') {
@@ -49,14 +40,14 @@ void  Server::topic(Client &c) {
         }
 
         if (!it->second->isClientOperator(c) && it->second->getTopicRestriction()) {
-            // send
-            std::cout << "you are not an operator" << std::endl;
+            sendReply(c, this->error.ERR_NOTCHANNELOPERATO(c.get_nickname(), it->second->get_channel_name()));
             return ;
         }
     
         it->second->setTopic(topic);
         std::cout << it->second->getTopic() << std::endl;
         sendReply(c, error.RPL_TOPIC(c.get_nickname(), args[1], topic));
+        // broadcast shoul
     }
 }
 

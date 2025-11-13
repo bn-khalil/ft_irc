@@ -45,10 +45,10 @@ class Server
 	void NickCmd(Client &client, std::string password_ar);
 	void UserCmd(Client &client, std::vector<std::string> &arg);
     std::vector<std::string> splitCmd(std::string &str);
-    Reply   error;
 
     public:
     
+        Reply   error;
         void  StartServer();
         Channel *chan;
         Server(void);

@@ -40,3 +40,5 @@ topic #sd df   df df	gd
 @REM :*.freenode.net 696 bn #ch o * :You must specify a parameter for the op mode. Syntax: <nick>.
 
 // each mode changed should broadcast it 
+
+// nick shoul set after user 

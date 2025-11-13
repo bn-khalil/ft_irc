@@ -78,6 +78,11 @@ bool validateLimitParams(std::string limit) {
     return true;
 }
 
+std::map<std::string,Client*>::iterator Channel::findClientByNickName( const std::string & nickname ) {
+    return this->users.find(nickname);
+}
+
+
 void Channel::modeExecuter(modes_t & mode, Client &c) {
     std:: cout << " ==== " << this->isClientOperator(c) << std::endl;
     if (!this->isClientOperator(c)) {
@@ -146,11 +151,32 @@ void Channel::modeExecuter(modes_t & mode, Client &c) {
                 std::cout << "key already set " << std::endl;
         }
     }
+    else if (mode.mode == 'o') {
+        std::string nickName = mode.param;
+        std::map<std::string,Client*>::iterator client = this->findClientByNickName(nickName);
+        if (client == this->users.end()) {
+            // send
+            //:atw.hu.quakenet.org 401 bn sd :No such nick
+            std::cout << "NO suck nick" << std::endl;
+            return ;
+        }
+        if (!mode.sing && isClientOperator( *client->second )) {
+            this->popClientFromOperatorList( nickName );
+            // send 
+            std::cout << nickName << " not an operator in " << this->Channel_name << std::endl;
+        }
+        else if (mode.sing && !isClientOperator( *client->second )) {
+
+            this->Add_to_admin( *client->second );
+            // send 
+            std::cout << nickName << " become an operator in " << this->Channel_name << std::endl;
+        }
+    }
 }
 
-// void modeRemoveExecuter(modes_t & mode) {
-
-// }
+void Channel::popClientFromOperatorList( const std::string & nickname ) {
+    this->operators_.erase( nickname );
+}
 
 void  Server::mode(std::vector<std::string> cmds, Client &c) {
 

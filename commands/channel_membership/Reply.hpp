@@ -57,7 +57,7 @@ class Reply
 		std::string ERR_KEYALREADYSET(const std::string& nick, const std::string& channelname);
 		std::string ERR_NICKNOTFOUND(const std::string& nick, const std::string& otherNick);
 
-		std::string RPL_MODEOPTIONS(const std::string& channel, const std::string& modes);
+		std::string RPL_MODEOPTIONS(const std::string & prefix, const std::string& channel, const std::string& modes);
 };
 
 

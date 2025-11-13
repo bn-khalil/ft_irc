@@ -44,8 +44,8 @@ std::string Reply::ERR_NOTCHANNELOPERATO(const std::string &nick, const std::str
     return ":*." + server_name + " 482 " + nick + " " + channel + " : You're not channel operator";
 }
 
-std::string Reply::RPL_MODEOPTIONS(const std::string& channel, const std::string& modes) {
-    return ":prefix MODE " + channel + " " + modes;
+std::string Reply::RPL_MODEOPTIONS(const std::string & prefix, const std::string& channel, const std::string& modes) {
+    return prefix + " " + channel + " " + modes;
 }
 
 

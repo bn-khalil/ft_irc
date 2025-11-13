@@ -47,6 +47,7 @@ void  Server::topic(Client &c) {
         it->second->setTopic(topic);
         std::cout << it->second->getTopic() << std::endl;
         sendReply(c, error.RPL_TOPIC(c.get_nickname(), args[1], topic));
+        it->second->broadcast(error.RPL_TOPIC(c.get_nickname(), args[1], topic));
         // broadcast shoul
     }
 }

@@ -204,6 +204,8 @@ void  Server::mode(std::vector<std::string> cmds, Client &c) {
                     seccessModes.push_back(modes[i].param);
                 }
             }
+                else
+                    return ;
         }
         if (!sortModesPlus.empty())
             sortModesPlus = "+" + sortModesPlus;
@@ -215,7 +217,8 @@ void  Server::mode(std::vector<std::string> cmds, Client &c) {
             if (i < seccessModes.size() - 1)
                 sortModes += " ";
         }
-        sendReply(c, error.RPL_MODEOPTIONS(it_channel->second->get_channel_name(), sortModes));
+        // sendReply(c, error.RPL_MODEOPTIONS(c.get_Prefix(), it_channel->second->get_channel_name(), sortModes));
+        it_channel->second->broadcast(error.RPL_MODEOPTIONS(c.get_Prefix(), it_channel->second->get_channel_name(), sortModes));
     }
     modes.clear();
 }

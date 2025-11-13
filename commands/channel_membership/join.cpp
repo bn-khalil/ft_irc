@@ -67,7 +67,7 @@ void Server::join(std::vector<std::string> cmds, Client &c)
             sendReply(c, error.ERR_BADCHANNELKEY(c.get_nickname(), one_channel));
         else
         {
-            join->Add_to_user(c);
+        join->Add_to_user(c);
         join->broadcast( error.MSG_JOIN(c.get_Prefix(), one_channel) );
         sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), one_channel));
         sendReply(c, error.RPL_NAMREPLY(c.get_nickname(), one_channel, join->getNamesList()));

@@ -12,6 +12,7 @@ Channel::Channel(std::string name) : Channel_name(name)
     this->key = "";
     this->isLimited = false;
     this->topicRestriction = true;
+    this->channelTopic = "";
     this->time_creat_channel = time(0);
 }
 

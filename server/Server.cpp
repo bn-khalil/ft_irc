@@ -435,7 +435,6 @@ void Server::sendReply(Client &c, std::string msg)
     }
     
 }
-<<<<<<< HEAD
 Client * Server::find_client_by_nickname(std::string nick)
 {
     for(std::map<int, Client>::iterator it = ClientsInfo.begin(); it != ClientsInfo.end(); it++)
@@ -445,7 +444,6 @@ Client * Server::find_client_by_nickname(std::string nick)
     }
     return NULL;
 }
-=======
 
 std::vector<std::string> Server::new_splite(std::string &strr, char d)
 {
@@ -459,4 +457,3 @@ std::vector<std::string> Server::new_splite(std::string &strr, char d)
     }
     return resulte;
 }
->>>>>>> test

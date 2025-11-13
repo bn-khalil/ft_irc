@@ -49,11 +49,9 @@ class Reply
     	std::string RPL_TOPIC(const std::string& nick, const std::string& channel, const std::string& topic);
     	std::string RPL_NOTOPIC(const std::string& nick, const std::string& channel);
 		// std::string RPL_TOPICWHOTIME(const std::string& nick, const std::string& channel, const std::string& set_by, const std::string& timestamp)
-<<<<<<< HEAD
 		std::string ERR_NOSUCHNICK(const std::string& nick, const std::string& target_nick);
 		std::string RPL_INVITELIST(const std::string& nick, const std::string& channel);
 		std::string RPL_ENDOFINVITELIST(const std::string& nick);
-=======
 
 		// --- MODE part ---
 		std::string ERR_NEEDMODEPARM(const std::string& nick, const std::string& channelname, const char mode, const std::string& more);
@@ -63,7 +61,6 @@ class Reply
 		std::string ERR_NICKNOTFOUND(const std::string& nick, const std::string& otherNick);
 
 		std::string RPL_MODEOPTIONS(const std::string & prefix, const std::string& channel, const std::string& modes);
->>>>>>> test
 };
 
 

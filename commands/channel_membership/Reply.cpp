@@ -129,3 +129,40 @@ std::string Reply::RPL_NOTOPIC(const std::string& nick, const std::string& chann
 }
 
 /* ************************************************************************** */
+///just to compile 
+std::string Reply::ERR_NOSUCHNICK(const std::string& nick, const std::string& target)
+{
+    return ":" + server_name + " 401 " + nick + " " + target + " :No such nick/channel";
+}
+
+std::string Reply::RPL_INVITELIST(const std::string& nick, const std::string& channel)
+{
+    return ":" + server_name + " 346 " + nick + " :" + channel;
+}
+
+std::string Reply::RPL_ENDOFINVITELIST(const std::string& nick)
+{
+    return ":" + server_name + " 347 " + nick + " :End of Invite List";
+}
+
+std::string Reply::ERR_NEEDMODEPARM(const std::string& nick, const std::string& channel, char mode, const std::string& description)
+{
+    std::string m(1, mode);
+    return ":" + server_name + " 696 " + nick + " " + channel + " " + m + " :" + description;
+}
+
+std::string Reply::ERR_NICKNOTFOUND(const std::string& nick, const std::string& target)
+{
+    return ":" + server_name + " 401 " + nick + " " + target + " :No such nick/channel";
+}
+
+std::string Reply::ERR_KEYALREADYSET(const std::string& nick, const std::string& channel)
+{
+    return ":" + server_name + " 467 " + nick + " " + channel + " :Channel key already set";
+}
+
+std::string Reply::ERR_INVALIDMODEPARM(const std::string& nick, char mode)
+{
+    std::string m(1, mode);
+    return ":" + server_name + " 472 " + nick + " " + m + " :is unknown mode char to me";
+}

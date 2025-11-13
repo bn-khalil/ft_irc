@@ -42,3 +42,8 @@ topic #sd df   df df	gd
 // each mode changed should broadcast it 
 
 // nick shoul set after user 
+
+should show new topic to joined users
+@REM //:ircserver42.com 331 s #bn :No topic is set
+@REM :ircserver42.com 353 s = #bn :@a s
+@REM :ircserver42.com 366 s #bn :End of /NAMES list

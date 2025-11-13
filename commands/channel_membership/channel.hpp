@@ -21,6 +21,7 @@ class Channel
         bool isInviteOnly;
         bool limit;
         bool isLimited;
+        bool topicRestriction;
         unsigned int num_limite;
         time_t time_creat_channel;
         
@@ -54,7 +55,7 @@ class Channel
         void modeExecuter(modes_t & mode, Client &c);
         std::map<std::string,Client*>::iterator findClientByNickName( const std::string & nickname );
         void popClientFromOperatorList( const std::string & nickname );
-
+        bool getTopicRestriction();
 };
 
 

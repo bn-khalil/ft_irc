@@ -11,7 +11,8 @@ Channel::Channel(std::string name) : Channel_name(name)
     this->num_limite = 0;
     this->key = "";
     this->isLimited = false;
-     this->time_creat_channel = time(0);
+    this->topicRestriction = true;
+    this->time_creat_channel = time(0);
 }
 
 std::string Channel::getNamesList()
@@ -27,6 +28,10 @@ std::string Channel::getNamesList()
     if(!name.empty())
         name.erase(name.length() - 1, 1);
     return name;
+}
+
+bool Channel::getTopicRestriction() {
+    return this->topicRestriction;
 }
 
 void Channel::Add_to_admin(Client &c)

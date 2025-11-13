@@ -43,12 +43,20 @@ void  Server::topic(Client &c) {
 
         std::map<std::string,Channel*>::iterator it = this->channel.find(args[1]);
 
-        if (it != channel.end()) {
-            it->second->setTopic(topic);
-            std::cout << it->second->getTopic() << std::endl;
-            sendReply(c, error.RPL_TOPIC(c.get_nickname(), args[1], topic));
-        } else
+        if (it == channel.end()) {
             sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), args[0]));
+            return ;
+        }
+
+        if (!it->second->isClientOperator(c) && it->second->getTopicRestriction()) {
+            // send
+            std::cout << "you are not an operator" << std::endl;
+            return ;
+        }
+    
+        it->second->setTopic(topic);
+        std::cout << it->second->getTopic() << std::endl;
+        sendReply(c, error.RPL_TOPIC(c.get_nickname(), args[1], topic));
     }
 }
 

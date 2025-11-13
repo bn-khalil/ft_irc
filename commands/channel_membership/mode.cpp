@@ -90,7 +90,8 @@ void Channel::modeExecuter(modes_t & mode, Client &c) {
         return ;
     }
 
-    if (mode.mode == 'i') {        if (mode.sing && !this->isInviteOnly) {
+    if (mode.mode == 'i') {        
+        if (mode.sing && !this->isInviteOnly) {
             this->isInviteOnly = true;
             //send to user;
             // std::cout << this->Channel_name << "  -> +i" << std::endl;
@@ -99,6 +100,17 @@ void Channel::modeExecuter(modes_t & mode, Client &c) {
             this->isInviteOnly = false;
             //send to user;
             // std::cout << this->Channel_name << "  -> -i" << std::endl;
+        }
+    }
+    else if (mode.mode == 't') {
+        if (mode.sing && !this->topicRestriction) {
+            this->topicRestriction = true;
+            //send
+            std::cout << "only Operators can change topic" << std::endl;
+        } else if (!mode.sing && this->topicRestriction) {
+            this->topicRestriction = false;
+            //send
+            std::cout << "every one can change topic" << std::endl;
         }
     }
     else if (mode.mode == 'l') {
@@ -180,14 +192,8 @@ void Channel::popClientFromOperatorList( const std::string & nickname ) {
 
 void  Server::mode(std::vector<std::string> cmds, Client &c) {
 
-    // std::string command = c.getlineCmd();
     std::vector<modes_t> modes;
     std::map<std::string,Channel*>::iterator it_channel = this->channel.end();
-
-    // if (!command.empty() && command.back() == '\n') {
-    //     command.pop_back();
-    // }
-    // std::vector<std::string> cmds = new_splite(command, ' ');
 
     if (cmds.size() == 1) 
         sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "MODE", "<target> [[(+|-)]<modes> [<mode-parameters>]]"));

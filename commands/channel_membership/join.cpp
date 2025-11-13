@@ -9,7 +9,7 @@ void Server::join(std::vector<std::string> cmds, Client &c)
     // }
     if(cmds.size() < 2)
     {
-        sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "JOIN", "<channel>[,<channel>]+ [<key>[,<key>]+]"));
+        sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "JOIN"));
         return ;
     }
   if(cmds[1] == "0")

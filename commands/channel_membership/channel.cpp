@@ -69,15 +69,15 @@ bool Channel::isInvited(Client &c)
 {
     return (invite.find(c.get_nickname()) != invite.end());
 }
-Client * Server::search_nick_of_inveted(std::string nick)
-{
-    std::map<std::string ,Client *>::iterator it = users.find(nick);
-    if(it != users.end()) 
-    {
-        return it->second;
-    }
-    return (NULL);
-}
+// Client * Server::search_nick_of_inveted(std::string nick)
+// {
+//     std::map<std::string ,Client *>::iterator it = users.find(nick);
+//     if(it != users.end()) 
+//     {
+//         return it->second;
+//     }
+//     return (NULL);
+// }
 bool Channel::is_full()
 {
     return(users.size() >=  get_num_limite());
@@ -146,7 +146,15 @@ void Channel::setTopic( std::string topic ) {
 std::string Channel::getTopic() {
     return this->channelTopic;
 }
-
+bool Channel::isUserInChannel(Client &c)
+{
+    std::map<std::string , Client*>::iterator it = users.find(c.get_nickname());
+    if(it != users.end())
+    {
+        return true;
+    }
+    return false;
+}
 void Channel::broadcast(const std::string &msg)
 {
     std::string full_msg = msg + "\r\n";

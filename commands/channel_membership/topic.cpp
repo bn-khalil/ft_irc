@@ -30,7 +30,7 @@ void  Server::topic(Client &c) {
     std::vector<std::string> args = new_splite(command, ' ');
 
     if (args.size() == 1)
-        sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "TOPIC", "<channel> [:<topic>]"));
+        sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "TOPIC"));
     else if (args.size() == 2) {
         std::map<std::string,Channel*>::iterator it = this->channel.find(args[1]);
         if (it == channel.end()) {

@@ -3,7 +3,7 @@
 void  Server::mode(std::vector<std::string> cmds, Client &c) {
     // <target> [[(+|-)]<modes> [<mode-parameters>]]
     if (cmds.size() == 1) 
-        sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "MODE", "<target> [[(+|-)]<modes> [<mode-parameters>]]"));
+        sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "MODE"));
     else if (cmds.size() == 2) {
         std::map<std::string,Channel*>::iterator it = this->channel.find(cmds[1]);
         if (it == channel.end()) {

@@ -187,11 +187,8 @@ void Server::ParseCmd(Client &client)
         Server::NickCmd(client,cmds[1]);
         std::cout << "NICK commmand" << std::endl;
     }
-
     else if (cmds[0] == "join")
-    {
         join(cmds, client);
-    }
     else if (cmds[0] == "topic")
         topic(client);
     else if (cmds[0] == "mode")
@@ -374,12 +371,12 @@ void Server::sendReply(Client &c, std::string msg)
     }
     
 }
-Client * Server::search_nick_of_inveted(std::string nick)
+Client * Server::find_client_by_nickname(std::string nick)
 {
-    std::map<std::string ,Client *>::iterator it = users.find(nick);
-    if(it != users.end()) 
+    for(std::map<int, Client>::iterator it = ClientsInfo.begin(); it != ClientsInfo.end(); it++)
     {
-        return it->second;
+        if(it->second.get_nickname() == nick)
+            return &it->second;
     }
-    return (NULL);
+    return NULL;
 }

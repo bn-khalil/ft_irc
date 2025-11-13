@@ -12,7 +12,7 @@ class Reply
 
 		Reply();
 		// --- General Errors ---
-    	std::string ERR_NEEDMOREPARAMS(std::string nick, std::string command, std::string more);
+    	std::string ERR_NEEDMOREPARAMS(std::string nick, std::string command);
     	std::string ERR_NOSUCHCHANNEL(const std::string& nick, const std::string& channel_name);
     	std::string ERR_CHANOPRIVSNEEDED(const std::string& nick, const std::string& channel);
     	std::string ERR_NOTONCHANNEL(const std::string& nick, const std::string& channel);
@@ -46,8 +46,9 @@ class Reply
     	std::string RPL_TOPIC(const std::string& nick, const std::string& channel, const std::string& topic);
     	std::string RPL_NOTOPIC(const std::string& nick, const std::string& channel);
 		// std::string RPL_TOPICWHOTIME(const std::string& nick, const std::string& channel, const std::string& set_by, const std::string& timestamp)
-
-		
+		std::string ERR_NOSUCHNICK(const std::string& nick, const std::string& target_nick);
+		std::string RPL_INVITELIST(const std::string& nick, const std::string& channel);
+		std::string RPL_ENDOFINVITELIST(const std::string& nick);
 };
 
 

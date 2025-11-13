@@ -3,12 +3,10 @@
 Reply::Reply() : server_name("ircserver42.com")
 {
 }
-std::string Reply::ERR_NEEDMOREPARAMS(std::string nick, std::string command, std::string more)
+std::string Reply::ERR_NEEDMOREPARAMS(std::string nick, std::string command)
 {
 
-         std::string msg =  ":"  + server_name   + " 461 " + nick + " " + command + " :Not enough parameters\n" + 
-          ":"  + server_name   + " 650 " + nick + " " + command + ":" + more ;
-    
+    std::string msg =  ":"  + server_name   + " 461 " + nick + " " + command + " :Not enough parameters\n"; 
     return msg;
 }
 //:Register first
@@ -118,5 +116,20 @@ std::string Reply::RPL_NOTOPIC(const std::string& nick, const std::string& chann
 {
     return ":" + server_name + " 331 " + nick + " " + channel + " :No topic is set";
 }
+std::string Reply::ERR_NOSUCHNICK(const std::string& nick, const std::string& target_nick)
+{
+    return ":" + server_name + " 401 " + nick + " " + target_nick + " :No such nick/channel";
+}
 
+std::string Reply::RPL_INVITELIST(const std::string& nick, const std::string& channel)
+{
+    // 346: <nick> :<channel>
+    return ":" + server_name + " 346 " + nick + " :" + channel;
+}
+
+std::string Reply::RPL_ENDOFINVITELIST(const std::string& nick)
+{
+    // 347: <nick> :End of Invite List
+    return ":" + server_name + " 347 " + nick + " :End of Invite List";
+}
 /* ************************************************************************** */

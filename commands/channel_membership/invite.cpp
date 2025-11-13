@@ -4,14 +4,19 @@
 
 void  Server::invit(std::vector<std::string> cmds, Client &c)
 {  
+    // if(c.Get_isAuthenticated() == false)
+    // {
+    //     sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
+    //     return ;
+    // }
     if(cmds.size() >= 3)
     {
         std::string one_channel = cmds[2];
         std::string name_c_invited = cmds[1];
-        Client *client_invited = chan->search_nick_of_inveted(name_c_invited);
+        Client *client_invited = find_client_by_nickname(name_c_invited);
         if(!client_invited)
         {
-            std::cout << "401 nicknick user :No such nick" << std::endl;
+            std::cout << error.ERR_NOSUCHNICK(c.get_nickname(), name_c_invited);
             return ;
         }
     
@@ -25,21 +30,33 @@ void  Server::invit(std::vector<std::string> cmds, Client &c)
         
         if(real_one->isUserInChannel(*client_invited))
         {
-            error.ERR_NOTONCHANNEL(c.get_nickname(), one_channel);
+            sendReply(c, error.ERR_USERONCHANNEL(c.get_nickname() ,name_c_invited, one_channel));
             return ;
-
         }
 
-        if(chan->isClientOperator(c) == true)
+        if(real_one->isClientOperator(c) == false)
         {
-            error.ERR_CHANOPRIVSNEEDED(c.get_nickname(), one_channel);
+            sendReply(c, error.ERR_CHANOPRIVSNEEDED(c.get_nickname(), one_channel));
             return ;
         }
-        chan->Add_to_invite(*client_invited);
-        chan->broadcast("CHECK_REFERANCE_MSG");
+        real_one->Add_to_invite(*client_invited);
+        real_one->broadcast(error.RPL_INVITING(c.get_nickname(), name_c_invited, one_channel));
+    }
+    else if(cmds.size() == 1)
+    {
+        for(std::map<std::string,Channel*>::iterator it = channel.begin();  it != channel.end() ; it++)
+        {
+            Channel *ch = it->second;
+            if(ch->isUserInChannel(c))
+            {
+                sendReply(c, error.RPL_INVITELIST(c.get_nickname(), ch->get_channel_name()));
+            }
+        }
+        sendReply(c, error.RPL_ENDOFINVITELIST(c.get_nickname()));
+        
     }
     else 
     {
-        std::cout << "print channel list " << std::endl;
+        sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "INVITE"));
     }
 }

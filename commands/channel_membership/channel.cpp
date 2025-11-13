@@ -28,7 +28,7 @@ std::string Channel::getNamesList()
     if(!name.empty())
         name.erase(name.length() - 1, 1);
     return name;
-}
+} 
 
 bool Channel::getTopicRestriction() {
     return this->topicRestriction;
@@ -75,6 +75,15 @@ bool Channel::isInvited(Client &c)
 {
     return (invite.find(c.get_nickname()) != invite.end());
 }
+Client * Server::search_nick_of_inveted(std::string nick)
+{
+    std::map<std::string ,Client *>::iterator it = users.find(nick);
+    if(it != users.end()) 
+    {
+        return it->second;
+    }
+    return (NULL);
+}
 bool Channel::is_full()
 {
     return(users.size() >=  get_num_limite());
@@ -114,10 +123,7 @@ bool  Channel::isEmpty()
 }
 
 
-bool Channel::isUserInChannel(Client &c)
-{
-    return(users.find(c.get_nickname()) != users.end());
-}
+
 
 std::vector<std::string> Channel::splite_coma(std::string &strr, char d)
 {

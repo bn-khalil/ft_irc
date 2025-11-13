@@ -65,9 +65,7 @@ class Server
         void removeClientFromAllChannels(Client &c);
         // void sendReply(Client &c, std::string msg);
         std::string toLower(std::string str);
-        std::vector<std::string> new_splite(std::string &strr, char d);
-        std::vector<modes_t> parseModes(std::vector<std::string> cmds, Client &c, const std::map<std::string,Channel*>::iterator & it_channel);
-        bool isChannelExist(std::map<std::string,Channel*>::iterator & it_channel, std::vector<std::string> cmds, Client &c);
+        Client *search_nick_of_inveted(std::string nick);
         ~Server();
 };
 

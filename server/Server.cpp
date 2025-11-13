@@ -374,3 +374,12 @@ void Server::sendReply(Client &c, std::string msg)
     }
     
 }
+Client * Server::search_nick_of_inveted(std::string nick)
+{
+    std::map<std::string ,Client *>::iterator it = users.find(nick);
+    if(it != users.end()) 
+    {
+        return it->second;
+    }
+    return (NULL);
+}

@@ -59,6 +59,7 @@ class Server
         void removeClientFromAllChannels(Client &c);    
         // void sendReply(Client &c, std::string msg);
         std::string toLower(std::string str);
+        Client *search_nick_of_inveted(std::string nick);
         ~Server();
 };
 

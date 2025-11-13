@@ -49,7 +49,6 @@ class Channel
         void setTopic( std::string topic );
         std::string getTopic();
         void broadcast(const std::string &msg);
-        Client *search_nick_of_inveted(std::string nick)
 
 };
 

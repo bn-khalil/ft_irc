@@ -13,18 +13,57 @@ Channel::Channel(std::string name) : Channel_name(name)
     this->time_creat_channel = time(0);
 }
 
+#include <iostream> // <-- تأكد أن هادي الفوق
+
 std::string Channel::getNamesList()
 {
     std::string  name = "";
+
+    // --- DEBUG: شوف شحال من واحد كاين ---
+    std::cout << "========== DEBUG: getNamesList() ==========" << std::endl;
+    std::cout << "DEBUG: Total users in map: " << users.size() << std::endl;
+    std::cout << "DEBUG: Total operators in map: " << operators_.size() << std::endl;
+    std::cout << "-------------------------------------------" << std::endl;
+
+
     for(std::map<std::string, Client *>::iterator it = users.begin(); it != users.end(); it++)
     {
+        std::cout << "DEBUG: Processing user:" << std::endl;
+        
+        // --- DEBUG: شوف المفتاح (Key) لي هو النيكنايم ---
+        std::cout << "  -> Map Key (it->first): [" << it->first << "]" << std::endl;
+        
+        // --- DEBUG: شوف النيكنايم لي مسجل فـ Client* ---
+        std::cout << "  -> Client* Nick (it->second->get_nickname()): [" << it->second->get_nickname() << "]" << std::endl;
+
+        // --- DEBUG: شوف واش هو أوبيراتور ---
         if(operators_.find(it->first) != operators_.end())
+        {
+            std::cout << "  -> Status: Is operator." << std::endl;
             name  = name  + '@';
-        name += it->first;
+        }
+        else
+        {
+            std::cout << "  -> Status: Is normal user." << std::endl;
+        }
+
+        // --- هنا فين كتزيد النيكنايم ---
+        name += it->first; // (هادي كتستعمل المفتاح ديال الماب)
+        
+        std::cout << "  -> Current name string: [" << name << "]" << std::endl; // هادي هي لي درتي نتا
+        
         name  += " ";
     }
+
+    std::cout << "-------------------------------------------" << std::endl;
+    std::cout << "DEBUG: Final string before erase: [" << name << "]" << std::endl;
+
     if(!name.empty())
         name.erase(name.length() - 1, 1);
+    
+    std::cout << "DEBUG: Final string returned: [" << name << "]" << std::endl;
+    std::cout << "===========================================" << std::endl;
+    
     return name;
 }
 
@@ -69,6 +108,15 @@ bool Channel::isInvited(Client &c)
 {
     return (invite.find(c.get_nickname()) != invite.end());
 }
+Client * Channel::search_nick_of_inveted(std::string nick)
+{
+    std::map<std::string ,Client *>::iterator it = users.find(nick);
+    if(it != users.end()) 
+    {
+        return it->second;
+    }
+    return (NULL);
+}
 bool Channel::is_full()
 {
     return(users.size() >=  get_num_limite());
@@ -108,10 +156,7 @@ bool  Channel::isEmpty()
 }
 
 
-bool Channel::isUserInChannel(Client &c)
-{
-    return(users.find(c.get_nickname()) != users.end());
-}
+
 
 std::vector<std::string> Channel::splite_coma(std::string &strr, char d)
 {

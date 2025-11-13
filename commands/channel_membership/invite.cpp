@@ -3,18 +3,15 @@
 
 
 void  Server::invit(std::vector<std::string> cmds, Client &c)
-{
-    // (void)cmds;
-    // (void)c;
-//  Channel access("accsess");
-    
-    if(cmds.size() < 2)
+{  
+    if(cmds.size() > 3)
     {
-        sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "INVITE", "<channel>[,<channel>]+ [<key>[,<key>]+]"));
-        return ;
-    }
-
-    std::string one_channel = cmds[1];
+    std::string one_channel = cmds[2];
+    std::string name_c_invited = cmds[1];   
+    Client *client_invited = chan->search_nick_of_inveted(name_c_invited);
+    if(!client_invited)
+        std::cout << "need to print the nickname not found" << std::endl;
+    
     if(one_channel.length() < 2 || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200)
     {
         sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), one_channel));
@@ -27,24 +24,19 @@ void  Server::invit(std::vector<std::string> cmds, Client &c)
         return ;
 
     }
-    std::map<std::string, Client*> op = access.get_operators_();
 
-    std::map<std::string , Client*>::iterator it1 = op.find(c.get_nickname());
-    if(it1 == op.end())
+    if(chan->isClientOperator(c) == true)
     {
         error.ERR_CHANOPRIVSNEEDED(c.get_nickname(), one_channel);
         return ;
     }
-    std::map<std::string, Client*>  us = access.get_users();
 
-    std::map<std::string , Client*>::iterator it2 = us.find(c.get_nickname());
-    if(it2 == us.end())
+    if(chan->isUserInChannel(c) == false)
     {
         error.ERR_USERNOTINCHANNEL(c.get_nickname(), cmds[1] ,one_channel);
         return ;
     }
-    access.Add_to_invite(c);
-    access.broadcast("CHECK_REFERANCE_MSG");
-return ;
-
+    chan->Add_to_invite(*client_invited);
+    chan->broadcast("CHECK_REFERANCE_MSG");
+}
 }

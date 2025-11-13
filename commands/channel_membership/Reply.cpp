@@ -37,6 +37,17 @@ std::string Reply::ERR_UNKNOWNCOMMAND_N(const std::string &nick, const std::stri
     
     return ":*." + server_name + " 421 " + nick + " " + UpCommand + " :Unknown command";
 }
+
+std::string Reply::ERR_NOTCHANNELOPERATO(const std::string &nick, const std::string & channel) {
+    return ":*." + server_name + " 482 " + nick + " " + channel + " : You're not channel operator";
+}
+
+std::string Reply::RPL_MODEOPTIONS(const std::string & prefix, const std::string& channel, const std::string& modes) {
+    return prefix + " " + channel + " " + modes;
+}
+
+
+        //:tngnet.nl.quakenet.org 482 sf #bn :You're not channel operator
     // :*.freenode.net 421 sd SD :Unknown command
 
 // std::string Reply::RPL_BROADCAST(const std::string& nick, const std::string & command, const std::string & channel, const std::string & message) {
@@ -116,20 +127,5 @@ std::string Reply::RPL_NOTOPIC(const std::string& nick, const std::string& chann
 {
     return ":" + server_name + " 331 " + nick + " " + channel + " :No topic is set";
 }
-std::string Reply::ERR_NOSUCHNICK(const std::string& nick, const std::string& target_nick)
-{
-    return ":" + server_name + " 401 " + nick + " " + target_nick + " :No such nick/channel";
-}
 
-std::string Reply::RPL_INVITELIST(const std::string& nick, const std::string& channel)
-{
-    // 346: <nick> :<channel>
-    return ":" + server_name + " 346 " + nick + " :" + channel;
-}
-
-std::string Reply::RPL_ENDOFINVITELIST(const std::string& nick)
-{
-    // 347: <nick> :End of Invite List
-    return ":" + server_name + " 347 " + nick + " :End of Invite List";
-}
 /* ************************************************************************** */

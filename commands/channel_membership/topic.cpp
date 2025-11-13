@@ -1,27 +1,6 @@
 #include "channel.hpp"
 #include <sstream>
 
-
-// static void showChannelTopic(std::map<std::string,Channel*> & channel) {
-//     std::map<std::string,Channel*>::iterator it = channel.begin();
-//     while (it != channel.end())
-//     {
-
-//     }
-// }
-static std::vector<std::string> new_splite(std::string &strr, char d)
-{
-    std::string save;
-    std::stringstream ss(strr);
-    std::vector<std::string> resulte;
-
-    while(getline(ss,  save , d))
-    {
-            resulte.push_back(save);
-    }
-    return resulte;
-}
-
 void  Server::topic(Client &c) {
     std::string command = c.getlineCmd();
     if (!command.empty() && command.back() == '\n') {
@@ -55,12 +34,21 @@ void  Server::topic(Client &c) {
 
         std::map<std::string,Channel*>::iterator it = this->channel.find(args[1]);
 
-        if (it != channel.end()) {
-            it->second->setTopic(topic);
-            std::cout << it->second->getTopic() << std::endl;
-            sendReply(c, error.RPL_TOPIC(c.get_nickname(), args[1], topic));
-        } else
+        if (it == channel.end()) {
             sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), args[0]));
+            return ;
+        }
+
+        if (!it->second->isClientOperator(c) && it->second->getTopicRestriction()) {
+            sendReply(c, this->error.ERR_NOTCHANNELOPERATO(c.get_nickname(), it->second->get_channel_name()));
+            return ;
+        }
+    
+        it->second->setTopic(topic);
+        std::cout << it->second->getTopic() << std::endl;
+        sendReply(c, error.RPL_TOPIC(c.get_nickname(), args[1], topic));
+        it->second->broadcast(error.RPL_TOPIC(c.get_nickname(), args[1], topic));
+        // broadcast shoul
     }
 }
 

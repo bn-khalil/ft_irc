@@ -12,4 +12,3 @@ class Authentication
 };
 
 #endif
-

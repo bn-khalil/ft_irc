@@ -18,6 +18,9 @@ class Reply
     	std::string ERR_NOTONCHANNEL(const std::string& nick, const std::string& channel);
     	std::string ERR_NOT_REGESTRED(const std::string& nick);
 		std::string ERR_UNKNOWNCOMMAND_N(const std::string &nick, const std::string & command);
+		std::string ERR_NOTCHANNELOPERATO(const std::string &nick, const std::string & channel);
+
+        //:tngnet.nl.quakenet.org 482 sf #bn :You're not channel operator
 
 		// --- General msgs ---
     	std::string RPL_BROADCAST(const std::string& nick, const std::string & command, const std::string & channel, const std::string & message);
@@ -46,9 +49,21 @@ class Reply
     	std::string RPL_TOPIC(const std::string& nick, const std::string& channel, const std::string& topic);
     	std::string RPL_NOTOPIC(const std::string& nick, const std::string& channel);
 		// std::string RPL_TOPICWHOTIME(const std::string& nick, const std::string& channel, const std::string& set_by, const std::string& timestamp)
+<<<<<<< HEAD
 		std::string ERR_NOSUCHNICK(const std::string& nick, const std::string& target_nick);
 		std::string RPL_INVITELIST(const std::string& nick, const std::string& channel);
 		std::string RPL_ENDOFINVITELIST(const std::string& nick);
+=======
+
+		// --- MODE part ---
+		std::string ERR_NEEDMODEPARM(const std::string& nick, const std::string& channelname, const char mode, const std::string& more);
+		std::string ERR_INVALIDMODEPARM(const std::string& nick, const char mode);
+
+		std::string ERR_KEYALREADYSET(const std::string& nick, const std::string& channelname);
+		std::string ERR_NICKNOTFOUND(const std::string& nick, const std::string& otherNick);
+
+		std::string RPL_MODEOPTIONS(const std::string & prefix, const std::string& channel, const std::string& modes);
+>>>>>>> test
 };
 
 

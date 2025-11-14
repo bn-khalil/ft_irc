@@ -399,9 +399,14 @@ Server::Server(std::string &port, std::string &password)
 
 
 //-------------------------------------------------------------------CHANNEL_PART----------------------------------------------------------------------------------------------
-bool the_boot_alone_in_channel(Client &Client)
+bool Server::the_boot_alone_in_channel(Client &Client)
 {
     //if the user kick itself rm habo lboot
+    std::map<std::string, Channel*>::iterator it = channel.begin();
+    Channel *ch  = it->second;
+    if(ch->get_number_of_users(ch) == 1 && Client.get_nickname() == "SKHAYTI!")
+        return true;
+    return false;
     
 
 };
@@ -429,6 +434,13 @@ void Server::removeClientFromAllChannels(Client &c)
             channel.erase(it1);
             delete chan;
        }
+        if(the_boot_alone_in_channel(c))
+        {
+            chan->rm_user_from_channel(c);
+            channel.erase(it1);
+            delete chan;
+        }
+
     }
     
 }

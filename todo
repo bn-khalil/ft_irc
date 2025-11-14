@@ -52,3 +52,17 @@ should show new topic to joined users
 @REM :ircserver42.com 366 s #bn :End of /NAMES list
 >>>>>>> test
 //nick with only alpha
+
+
+
+
+:ircserver42.com 366 akella #1 :End of /NAMES list
+topic
+:ircserver42.com 461 akella TOPIC :Not enough parameters
+topic #1
+:ircserver42.com 331 akella #1 :No topic is set
+topic #1 : hello
+:ircserver42.com 332 akella #1 :: hello
+:ircserver42.com 332 akella #1 :: hello
+
+

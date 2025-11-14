@@ -259,7 +259,7 @@ void Server::ParseCmd(Client &client)
         mode(cmds, client);
     else if(cmds[0] == "kick")
         kick(cmds, client);
-    else if(cmds[0] == "invit")
+    else if(cmds[0] == "invite")
         invit(cmds, client);
     else if (cmds[0] == "user")
     {

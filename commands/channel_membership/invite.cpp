@@ -27,8 +27,12 @@ void  Server::invit(std::vector<std::string> cmds, Client &c)
          return ;
         }
         Channel *real_one = it->second;
-        
-        if(real_one->isUserInChannel(*client_invited))
+        // if(real_one->isUserInChannel(c) == true) 
+        // {
+        //     sendReply(c, error.ERR_USERONCHANNEL(c.get_nickname() ,name_c_invited, one_channel));
+        //     return ;
+        // }
+        if(real_one->isUserInChannel(*client_invited) == true)
         {
             sendReply(c, error.ERR_USERONCHANNEL(c.get_nickname() ,name_c_invited, one_channel));
             return ;

@@ -1,4 +1,5 @@
 #include "Reply.hpp"
+#include <type_traits>
 
 Reply::Reply() : server_name("ircserver42.com")
 {
@@ -93,9 +94,9 @@ std::string Reply::ERR_USERNOTINCHANNEL(const std::string& nick, const std::stri
 {
     return ":" + server_name + " 441 " + nick + " " + target_nick + " " + channel + " :They aren't on that channel";
 }
-std::string Reply::MSG_KICK(const std::string& kicker_prefix, const std::string& channel, const std::string& target_nick)
+std::string Reply::MSG_KICK(const std::string& kicker_prefix, const std::string& channel, const std::string& target_nick, const std::string &reason)
 {
-    return ":" + kicker_prefix + " KICK " + channel + " " + target_nick ;
+    return ":" + kicker_prefix + " KICK " + channel + " " + target_nick + " "  + reason ;
 }
 
 std::string Reply::MSG_PART(const std::string& user_prefix, const std::string& channel, const std::string& reason)

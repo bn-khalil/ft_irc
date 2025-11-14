@@ -71,7 +71,18 @@ void Server::kick(std::vector<std::string> cmds, Client &c)
         return;
     }
 
-    // real_one->broadcast(error.RPL_BROADCAST(c.get_nickname(), "KICK", real_one->get_channel_name(), cmds[3]));
+    real_one->broadcast(error.MSG_KICK(c.get_Prefix(), real_one->get_channel_name(), name_c_to_kick, reason));
     real_one->removeClientFromOneChannels(*client_to_kick);
-    sendReply(c, error.MSG_KICK(c.get_Prefix(), real_one->get_channel_name(), name_c_to_kick));
+    sendReply(c, error.MSG_KICK(c.get_Prefix(), real_one->get_channel_name(), name_c_to_kick, reason));
 }
+//nick amine
+// user a a a 
+// user a a a a
+// join ##A
+// :amine!~a@0.0.0.0 JOIN :##a
+// :ircserver42.com 331 amine ##a :No topic is set
+// :ircserver42.com 353 amine = ##a :@amine
+// :ircserver42.com 366 amine ##a :End of /NAMES list
+
+
+

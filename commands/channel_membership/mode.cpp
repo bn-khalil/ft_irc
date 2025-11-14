@@ -172,6 +172,12 @@ void  Server::mode(Client &c) {
     std::string sortModesPlus;
     std::string sortModesMinus;
 
+    if(c.Get_isAuthenticated() == false)
+    {
+        sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
+        return ;
+    }
+
     std::string command = c.getlineCmd();
     if (!command.empty() && command.back() == '\n') {
         command.pop_back();

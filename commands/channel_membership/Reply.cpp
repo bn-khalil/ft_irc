@@ -6,11 +6,10 @@ Reply::Reply() : server_name("ircserver42.com")
 }
 std::string Reply::ERR_NEEDMOREPARAMS(std::string nick, std::string command)
 {
-
     std::string msg =  ":"  + server_name   + " 461 " + nick + " " + command + " :Not enough parameters"; 
     return msg;
 }
-//:Register first
+
 std::string Reply::ERR_NOSUCHCHANNEL(const std::string& nick, const std::string& channel_name)
 {
     return ":" + server_name + " 403 " + nick + " " + channel_name + " :No such channel";
@@ -31,12 +30,9 @@ std::string Reply::ERR_NOTONCHANNEL(const std::string& nick, const std::string& 
 {
     return ":" + server_name + " 442 " + nick + " " + channel + " :You're not on that channel";
 }
-std::string Reply::ERR_UNKNOWNCOMMAND_N(const std::string &nick, const std::string & command) {
-    std::string UpCommand = command;
-    for (size_t i = 0; i < UpCommand.size(); i++)
-        UpCommand[i] = std::toupper(UpCommand[i]);
-    
-    return ":*." + server_name + " 421 " + nick + " " + UpCommand + " :Unknown command";
+std::string Reply::ERR_UNKNOWNCOMMAND_N(const std::string &nick, const std::string & command)
+{
+    return ":*." + server_name + " 421 " + nick + " " + command + " :Unknown command";
 }
 
 std::string Reply::ERR_NOTCHANNELOPERATO(const std::string &nick, const std::string & channel) {

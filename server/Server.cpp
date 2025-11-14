@@ -255,6 +255,8 @@ void Server::ParseCmd(Client &client)
         join(cmds, client);
     else if (cmds[0] == "topic")
         topic(client);
+    else if (cmds[0] == "privmsg")
+        privmsg(client);
     else if (cmds[0] == "mode")
         mode(cmds, client);
     else if(cmds[0] == "kick")

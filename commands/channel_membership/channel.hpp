@@ -51,6 +51,7 @@ class Channel
         void setTopic( std::string topic );
         std::string getTopic();
         void broadcast(const std::string &msg);
+        void broadcastExpectSender(const std::string &msg, Client & sender);
         bool modeExecuter(modes_t & mode, Client &c, Server & server);
         std::map<std::string,Client*>::iterator findClientByNickName( const std::string & nickname );
         void popClientFromOperatorList( const std::string & nickname );

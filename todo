@@ -1,7 +1,7 @@
 1 nick 
 topic #sd df   df df	gd
 
-<<<<<<< HEAD
+
 //topic after set
 =======
 @REM mode #ch
@@ -66,3 +66,28 @@ topic #1 : hello
 :ircserver42.com 332 akella #1 :: hello
 
 
+// privmsg
+privmsg
+:cymru.us.quakenet.org 411 bn :No recipient given (PRIVMSG)
+PRIVMSG
+:cymru.us.quakenet.org 411 bn :No recipient given (PRIVMSG)
+
+privmsg dg
+:cymru.us.quakenet.org 412 bn :No text to send
+
+privmsg sdf sdf
+:cymru.us.quakenet.org 401 bn sdf :No such nick
+
+:cymru.us.quakenet.org 412 bn :No text to send
+privmsg nm hello // correct
+
+
+privmsg nm      hello sd
+:cymru.us.quakenet.org 401 bn nm	hello :No such nick
+
+// broadcast expected sender
+
+// operator can't kicked from a channel
+
+//kick #bn	as // with tab bet channel and nick
+:hostsailor.ro.quakenet.org 461 as KICK :Not enough parameters 

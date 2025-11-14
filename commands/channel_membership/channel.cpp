@@ -177,3 +177,15 @@ void Channel::broadcast(const std::string &msg)
     }
     
 }
+void Channel::broadcastExpectSender(const std::string &msg, Client & sender)
+{
+    std::string full_msg = msg + "\r\n";
+    for(std::map<std::string,Client*>::iterator it = users.begin(); it != users.end();  it++)
+    {
+        Client *c = it->second;
+        if (c->get_nickname() == sender.get_nickname())
+            continue ;
+        send(c->getfd(), full_msg.c_str(), full_msg.length(), 0);
+    }
+    
+}

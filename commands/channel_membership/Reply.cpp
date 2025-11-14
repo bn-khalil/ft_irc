@@ -149,10 +149,9 @@ std::string Reply::RPL_ENDOFINVITELIST(const std::string& nick)
     return ":" + server_name + " 347 " + nick + " :End of Invite List";
 }
 
-std::string Reply::ERR_NEEDMODEPARM(const std::string& nick, const std::string& channel, char mode, const std::string& description)
+std::string Reply::ERR_NEEDMODEPARM(const std::string& nick, const std::string& channel, const std::string & mode, const std::string& description)
 {
-    std::string m(1, mode);
-    return ":" + server_name + " 696 " + nick + " " + channel + " " + m + " :" + description;
+    return ":" + server_name + " 461 " + nick + " " + channel + " " + mode + " :" + description;
 }
 
 std::string Reply::ERR_NICKNOTFOUND(const std::string& nick, const std::string& target)
@@ -169,4 +168,21 @@ std::string Reply::ERR_INVALIDMODEPARM(const std::string& nick, char mode)
 {
     std::string m(1, mode);
     return ":" + server_name + " 472 " + nick + " " + m + " :is unknown mode char to me";
+}
+
+//------------------------------PRIVMSG error------------------------------------------------------
+
+std::string Reply::ERR_NORECIPIENT(const std::string & nick) 
+{
+    return ":" + server_name + " 411 " + nick + " :No recipient given (PRIVMSG)";
+}
+
+std::string Reply::ERR_NOTEXTSEND(const std::string & nick) 
+{
+    return ":" + server_name + " 412 " + nick + " :No text to send";
+}
+
+std::string Reply::RPL_PRIVMSG(const std::string & prefix, const std::string & nick , const std::string & message) 
+{
+    return prefix + " PRIVMSG " + nick + " :" + message;
 }

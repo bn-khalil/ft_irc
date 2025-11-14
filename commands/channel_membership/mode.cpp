@@ -48,20 +48,20 @@ const std::map<std::string,Channel*>::iterator & it_channel) {
                     if (indexParam < cmds.size()) {
                         currentMode.param = cmds[indexParam];
                     } else {
+                        std::string modeWithFlag(1, modes[i]);
                         if (modes[i] == 'k')
                             sendReply(c, error.ERR_NEEDMODEPARM(c.get_nickname(), 
-                            it_channel->second->get_channel_name(),modes[i], " Syntax : <key>."));
+                            it_channel->second->get_channel_name(), modeWithFlag, "Not enough parameters"));
                         else if (modes[i] == 'l')
                             sendReply(c, error.ERR_NEEDMODEPARM(c.get_nickname(), 
-                            it_channel->second->get_channel_name(),modes[i], " Syntax : <limit>."));
+                            it_channel->second->get_channel_name(),modeWithFlag, "Not enough parameters"));
                         else if (modes[i] == 'o')
-                            sendReply(c, error.ERR_NEEDMODEPARM(c.get_nickname(), 
-                            it_channel->second->get_channel_name(),modes[i], " Syntax : <nick>."));
+                                ;
                         continue ;
                     }
                 }
                 modesWithInfo.push_back(currentMode);
-            } else 
+            } else
                 sendReply(c, error.ERR_INVALIDMODEPARM(c.get_nickname(), modes[i]));
         }
         indexParam++;
@@ -83,10 +83,6 @@ std::map<std::string,Client*>::iterator Channel::findClientByNickName( const std
 
 
 bool Channel::modeExecuter(modes_t & mode, Client &c, Server & server) {
-    if (!this->isClientOperator(c)) {
-        server.sendReply(c, server.error.ERR_NOTCHANNELOPERATO(c.get_nickname(), this->Channel_name));
-        return false;
-    }
 
     if (mode.mode == 'i') {        
         if (mode.sing && !this->isInviteOnly)
@@ -176,18 +172,33 @@ void  Server::mode(std::vector<std::string> cmds, Client &c) {
     std::string sortModesPlus;
     std::string sortModesMinus;
 
+    std::string command = c.getlineCmd();
+    if (!command.empty() && command.back() == '\n') {
+        command.pop_back();
+    }
+    cmds = new_splite(command, ' ');
+
     if (cmds.size() == 1) 
         sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "MODE"));
     else if (cmds.size() == 2) {
         if (!isChannelExist(it_channel, cmds, c))
             return ;
+        else{
+            // print channel info
+        }
     }
     else {
         if (!isChannelExist(it_channel, cmds, c))
             return ;
-
+        if (!it_channel->second->isClientOperator(c)) {
+            sendReply(c, error.ERR_NOTCHANNELOPERATO(c.get_nickname(),
+            it_channel->second->get_channel_name()));
+            return ;
+        }
         seccessModes.push_back("");
         modes = parseModes(cmds, c, it_channel);
+        if (modes.empty())
+            return ;
         for (size_t i = 0; i < modes.size(); i++) {
             if (it_channel->second->modeExecuter(modes[i], c, *this)) {
                 if (modes[i].param.empty()) {
@@ -204,8 +215,6 @@ void  Server::mode(std::vector<std::string> cmds, Client &c) {
                     seccessModes.push_back(modes[i].param);
                 }
             }
-                else
-                    return ;
         }
         if (!sortModesPlus.empty())
             sortModesPlus = "+" + sortModesPlus;
@@ -217,8 +226,10 @@ void  Server::mode(std::vector<std::string> cmds, Client &c) {
             if (i < seccessModes.size() - 1)
                 sortModes += " ";
         }
-        // sendReply(c, error.RPL_MODEOPTIONS(c.get_Prefix(), it_channel->second->get_channel_name(), sortModes));
-        it_channel->second->broadcast(error.RPL_MODEOPTIONS(c.get_Prefix(), it_channel->second->get_channel_name(), sortModes));
+
+        if (!sortModes.empty())
+            it_channel->second->broadcast(error.RPL_MODEOPTIONS(c.get_Prefix(), 
+            it_channel->second->get_channel_name(), sortModes));
     }
     modes.clear();
 }

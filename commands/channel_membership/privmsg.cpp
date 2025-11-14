@@ -5,6 +5,13 @@ void  Server::privmsg(Client &c) {
     if (!command.empty() && command.back() == '\n') {
         command.pop_back();
     }
+
+    if(c.Get_isAuthenticated() == false)
+    {
+        sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
+        return ;
+    }
+    
     std::vector<std::string> args = new_splite(command, ' ');
 
     if (args.size() <= 1)
@@ -22,18 +29,20 @@ void  Server::privmsg(Client &c) {
                 sendReply(c, error.ERR_NOSUCHNICK(c.get_nickname(), rcvNick));
                 return ;
             }
-            sendReply(*rcvClient, error.RPL_PRIVMSG(c.get_Prefix(), rcvClient->get_nickname(), args[args.size() - 1 ]));
+            sendReply(*rcvClient, error.RPL_PRIVMSG(c.get_Prefix(),
+             rcvClient->get_nickname(), args[args.size() - 1 ]));
 
         } else {
-            if (rcvNick[0] == '&')
-                return ;
             std::map<std::string, Channel *>::iterator it = this->channel.find(rcvNick);
             
             if (it == this->channel.end()) {
                 sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), rcvNick));
                 return ;
             }
-            it->second->broadcastExpectSender(error.RPL_PRIVMSG(c.get_Prefix(), it->second->get_channel_name(), args[args.size() - 1 ]), c);
+            if (rcvNick[0] == '&')
+                return ;
+            it->second->broadcastExpectSender(error.RPL_PRIVMSG(c.get_Prefix(), 
+            it->second->get_channel_name(), args[args.size() - 1 ]), c);
         }
     }
 }

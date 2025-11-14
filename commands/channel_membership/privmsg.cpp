@@ -14,7 +14,7 @@ void  Server::privmsg(Client &c) {
     else {
         std::string rcvNick = args[1];
         bool isChannel = false;
-        if (!rcvNick.empty() && rcvNick[0] == '#')
+        if (!rcvNick.empty() && (rcvNick[0] == '#' || rcvNick[0] == '&') )
             isChannel = true;
         if ( !isChannel ) {
             Client * rcvClient = find_client_by_nickname( rcvNick );
@@ -25,6 +25,8 @@ void  Server::privmsg(Client &c) {
             sendReply(*rcvClient, error.RPL_PRIVMSG(c.get_Prefix(), rcvClient->get_nickname(), args[args.size() - 1 ]));
 
         } else {
+            if (rcvNick[0] == '&')
+                return ;
             std::map<std::string, Channel *>::iterator it = this->channel.find(rcvNick);
             
             if (it == this->channel.end()) {

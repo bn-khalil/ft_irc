@@ -43,16 +43,6 @@ std::string Reply::RPL_MODEOPTIONS(const std::string & prefix, const std::string
     return prefix + " " + channel + " " + modes;
 }
 
-
-        //:tngnet.nl.quakenet.org 482 sf #bn :You're not channel operator
-    // :*.freenode.net 421 sd SD :Unknown command
-
-// std::string Reply::RPL_BROADCAST(const std::string& nick, const std::string & command, const std::string & channel, const std::string & message) {
-//     return ":" + nick + "!" + host + " " + command + " " + channel + " " + message;
-// }
-
-// :bn!~SD@freenode-obu.d75.6g0qj4.IP TOPIC #b :new
-
 //------------------------------JOIN error------------------------------------------------------
 std::string Reply::ERR_BADCHANNELKEY(const std::string& nick, const std::string& channel)
 {

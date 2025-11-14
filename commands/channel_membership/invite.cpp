@@ -2,8 +2,14 @@
 #include "channel.hpp"
 #include <cstddef>
 
-void  Server::invit(std::vector<std::string> cmds, Client &c)
-{  
+void  Server::invit(Client &c)
+{ 
+    std::string command = c.getlineCmd();
+    if (!command.empty() && command.back() == '\n') {
+        command.pop_back();
+    }
+    std::vector<std::string> cmds = new_splite(command, ' ');
+
     if(c.Get_isAuthenticated() == false)
     {
         sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));

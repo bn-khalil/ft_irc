@@ -1,7 +1,13 @@
 #include "channel.hpp"
 
-void Server::join(std::vector<std::string> cmds, Client &c)
+void Server::join(Client &c)
 {
+    std::string command = c.getlineCmd();
+    if (!command.empty() && command.back() == '\n') {
+        command.pop_back();
+    }
+    std::vector<std::string> cmds = new_splite(command, ' ');
+
     if(c.Get_isAuthenticated() == false)
     {
         sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));

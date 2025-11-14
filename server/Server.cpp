@@ -252,17 +252,17 @@ void Server::ParseCmd(Client &client)
         Server::NickCmd(client,cmds[1]);
     }
     else if (cmds[0] == "join")
-        join(cmds, client);
+        join(client);
     else if (cmds[0] == "topic")
         topic(client);
     else if (cmds[0] == "privmsg")
         privmsg(client);
     else if (cmds[0] == "mode")
-        mode(cmds, client);
+        mode(client);
     else if(cmds[0] == "kick")
-        kick(cmds, client);
+        kick(client);
     else if(cmds[0] == "invite")
-        invit(cmds, client);
+        invit(client);
     else if (cmds[0] == "user")
     {
         UserCmd(client,cmds);

@@ -58,10 +58,10 @@ class Server
         Server &operator=(const Server &other);
         
         void  StartServer();
-        void  join(std::vector<std::string> cmds, Client &c);
-        void  kick(std::vector<std::string> cmds, Client &c);
-        void  invit(std::vector<std::string> cmds, Client &c);
-        void  mode(std::vector<std::string> cmds, Client &c);
+        void  join(Client &c);
+        void  kick(Client &c);
+        void  invit(Client &c);
+        void  mode(Client &c);
         void  topic(Client &c);
         void  privmsg(Client &c);
         void sendReply(Client &c, std::string msg);

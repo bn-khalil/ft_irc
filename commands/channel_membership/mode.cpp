@@ -163,7 +163,7 @@ void Channel::popClientFromOperatorList( const std::string & nickname ) {
     this->operators_.erase( nickname );
 }
 
-void  Server::mode(std::vector<std::string> cmds, Client &c) {
+void  Server::mode(Client &c) {
 
     std::vector<modes_t> modes;
     std::map<std::string,Channel*>::iterator it_channel = this->channel.end();
@@ -176,7 +176,7 @@ void  Server::mode(std::vector<std::string> cmds, Client &c) {
     if (!command.empty() && command.back() == '\n') {
         command.pop_back();
     }
-    cmds = new_splite(command, ' ');
+    std::vector<std::string> cmds = new_splite(command, ' ');
 
     if (cmds.size() == 1) 
         sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "MODE"));

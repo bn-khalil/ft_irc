@@ -2,8 +2,14 @@
 #include "channel.hpp"
 
 
-void Server::kick(std::vector<std::string> cmds, Client &c)
+void Server::kick(Client &c)
 {
+    std::string command = c.getlineCmd();
+    if (!command.empty() && command.back() == '\n') {
+        command.pop_back();
+    }
+    std::vector<std::string> cmds = new_splite(command, ' ');
+
     if (c.Get_isAuthenticated() == false)
     {
         sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
@@ -73,7 +79,6 @@ void Server::kick(std::vector<std::string> cmds, Client &c)
 
     real_one->broadcast(error.MSG_KICK(c.get_Prefix(), real_one->get_channel_name(), name_c_to_kick, reason));
     real_one->removeClientFromOneChannels(*client_to_kick);
-    sendReply(c, error.MSG_KICK(c.get_Prefix(), real_one->get_channel_name(), name_c_to_kick, reason));
 }
 //nick amine
 // user a a a 

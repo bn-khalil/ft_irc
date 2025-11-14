@@ -91,3 +91,10 @@ privmsg nm      hello sd
 
 //kick #bn	as // with tab bet channel and nick
 :hostsailor.ro.quakenet.org 461 as KICK :Not enough parameters 
+
+
+
+@REM akella@e3r4p3 MY_IRC % nc localhost 6677 12
+@REM pass 12
+@REM user a a a a
+@REM nick bn

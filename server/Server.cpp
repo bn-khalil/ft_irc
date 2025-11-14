@@ -399,6 +399,12 @@ Server::Server(std::string &port, std::string &password)
 
 
 //-------------------------------------------------------------------CHANNEL_PART----------------------------------------------------------------------------------------------
+bool the_boot_alone_in_channel(Client &Client)
+{
+    //if the user kick itself rm habo lboot
+    
+
+};
 void Server::removeClientFromAllChannels(Client &c)
 {
     std::vector<std::string> channel_to_leave;
@@ -473,4 +479,14 @@ std::vector<std::string> Server::isUserInvited_to_channel(Client &c)
         it++;
     }
     return all_channel;
+}
+//remove pointer add referance and check how you can rmove the new
+void Server::join_all_channel(Client &c)
+{
+    for(std::map<std::string, Channel*>::iterator it = channel.begin(); it != channel.end(); it++)
+    {
+        Channel *ch = it->second;
+        ch->Add_to_user(c);
+    }
+    
 }

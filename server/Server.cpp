@@ -404,7 +404,7 @@ bool Server::the_boot_alone_in_channel(Client &Client)
     //if the user kick itself rm habo lboot
     std::map<std::string, Channel*>::iterator it = channel.begin();
     Channel *ch  = it->second;
-    if(ch->get_number_of_users(ch) == 1 && Client.get_nickname() == "SKHAYTI!")
+    if(ch->get_number_of_users() == 1 && Client.get_nickname() == "SKHAYTI!")
         return true;
     return false;
     

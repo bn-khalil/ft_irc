@@ -59,7 +59,7 @@ class Channel
         bool getTopicRestriction();
         bool isUserInChannel(Client &c);
         void removeClientFromOneChannels(Client &c);
-        size_t get_number_of_users(Channel *c)
+        size_t get_number_of_users()
         {
             return(users.size());
         }

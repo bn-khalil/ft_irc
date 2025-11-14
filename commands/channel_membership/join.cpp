@@ -2,11 +2,12 @@
 
 bool  tab_found(std::string str)
 {
-    int  i = 0;
+    size_t  i = 0;
     while(i < str.size())
     {
         if(str[i] == 9)
             return true;
+        i++;
     }
     return false;
 }
@@ -83,14 +84,14 @@ void Server::join(Client &c)
             sendReply(c, error.ERR_BADCHANNELKEY(c.get_nickname(), one_channel));
         else
         {
-        join->Add_to_user(c);
-        join->broadcast( error.MSG_JOIN(c.get_Prefix(), one_channel) );
-        if(join->getTopic() == "")
-            sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), one_channel));
-        if(join->getTopic() != "")
-            sendReply(c, error.WITHTOPIC(c.get_nickname(), one_channel, join->getTopic()));
-        sendReply(c, error.RPL_NAMREPLY(c.get_nickname(), one_channel, join->getNamesList()));
-        sendReply(c, error.RPL_ENDOFNAMES(c.get_nickname(), one_channel));
+            join->Add_to_user(c);
+            join->broadcast( error.MSG_JOIN(c.get_Prefix(), one_channel) );
+            if(join->getTopic() == "")
+                sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), one_channel));
+            if(join->getTopic() != "")
+                sendReply(c, error.WITHTOPIC(c.get_nickname(), one_channel, join->getTopic()));
+            sendReply(c, error.RPL_NAMREPLY(c.get_nickname(), one_channel, join->getNamesList()));
+            sendReply(c, error.RPL_ENDOFNAMES(c.get_nickname(), one_channel));
         }
     }
         i++;

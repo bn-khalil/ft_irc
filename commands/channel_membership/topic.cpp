@@ -39,6 +39,12 @@ void  Server::topic(Client &c) {
             sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), args[0]));
             return ;
         }
+        
+        if (!it->second->isUserInChannel(c))
+        {
+            sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(), it->first));
+            return;
+        }
 
         if (!it->second->isClientOperator(c) && it->second->getTopicRestriction()) {
             sendReply(c, this->error.ERR_NOTCHANNELOPERATO(c.get_nickname(), it->second->get_channel_name()));

@@ -65,7 +65,7 @@ void Server::kick(Client &c)
         return;
     }
 
-    if (!real_one->isUserInChannel(*client_to_kick) || client_to_kick->get_nickname() == "SKHAYTI!")
+    if (!real_one->isUserInChannel(*client_to_kick))
     {
         sendReply(c, error.ERR_USERNOTINCHANNEL(c.get_nickname(), name_c_to_kick, one_channel));
         return;

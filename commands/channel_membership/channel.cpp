@@ -1,6 +1,6 @@
 #include "channel.hpp"
 #include <sstream>
-#include  <sys/socket.h>
+#include <sys/socket.h>
 #include <sys/poll.h>
 
 Channel::Channel(std::string name) : Channel_name(name)
@@ -15,6 +15,7 @@ Channel::Channel(std::string name) : Channel_name(name)
     this->channelTopic = "";
     this->time_creat_channel = time(0);
 }
+
 void Channel::removeClientFromOneChannels(Client &c)
 {
     users.erase(c.get_nickname());
@@ -23,15 +24,15 @@ void Channel::removeClientFromOneChannels(Client &c)
     
 std::string Channel::getNamesList()
 {
-    std::string  name = "";
-    for(std::map<std::string, Client *>::iterator it = users.begin(); it != users.end(); it++)
+    std::string name = "";
+    for (std::map<std::string, Client *>::iterator it = users.begin(); it != users.end(); it++)
     {
-        if(operators_.find(it->first) != operators_.end())
-            name  = name  + '@';
+        if (operators_.find(it->first) != operators_.end())
+            name = name + '@';
         name += it->first;
-        name  += " ";
+        name += " ";
     }
-    if(!name.empty())
+    if (!name.empty())
         name.erase(name.length() - 1, 1);
     return name;
 } 
@@ -42,19 +43,17 @@ bool Channel::getTopicRestriction() {
 
 void Channel::Add_to_admin(Client &c)
 {
-   operators_.insert(std::make_pair(c.get_nickname(),&c));
+    operators_.insert(std::make_pair(c.get_nickname(), &c));
 }
-
 
 void Channel::Add_to_user(Client &c)
 {
-   users.insert(std::make_pair(c.get_nickname(),&c));
+    users.insert(std::make_pair(c.get_nickname(), &c));
 }
-
 
 void Channel::Add_to_invite(Client &c)
 {
-   invite.insert(std::make_pair(c.get_nickname(),&c));
+    invite.insert(std::make_pair(c.get_nickname(), &c));
 }
 
 std::string Channel::Get_key()
@@ -67,7 +66,6 @@ bool Channel::isClientOperator(Client &c) const
     return (operators_.find(c.get_nickname()) != operators_.end()); 
 }
 
-
 bool Channel::isClientUSER(Client &c) const
 {
     return (operators_.find(c.get_nickname()) != operators_.end()); 
@@ -77,33 +75,26 @@ std::string Channel::Set_key()
 {
     return this->key;
 }
+
 bool Channel::isInvited(Client &c)
 {
     return (invite.find(c.get_nickname()) != invite.end());
 }
-// Client * Server::search_nick_of_inveted(std::string nick)
-// {
-//     std::map<std::string ,Client *>::iterator it = users.find(nick);
-//     if(it != users.end()) 
-//     {
-//         return it->second;
-//     }
-//     return (NULL);
-// }
+
 bool Channel::is_full()
 {
-    return(users.size() >=  get_num_limite());
+    return (users.size() >= get_num_limite());
 }
 
 void Channel::rm_user_from_channel(Client &c)
 {
     std::map<std::string, Client*>::iterator it_user = users.find(c.get_nickname());
-    if(it_user != users.end())
+    if (it_user != users.end())
     {
         users.erase(c.get_nickname());
     }
     std::map<std::string, Client*>::iterator it_operator = operators_.find(c.get_nickname());
-    if(it_operator != operators_.end())
+    if (it_operator != operators_.end())
     {
         operators_.erase(c.get_nickname());
     }
@@ -111,25 +102,21 @@ void Channel::rm_user_from_channel(Client &c)
 
 bool Channel::Check_mode(char mode)
 {
-    if(mode == 'k')
+    if (mode == 'k')
         return this->isKeySet;
-    else if(mode == 'i')
+    else if (mode == 'i')
         return this->isInviteOnly;
-    else if(mode == 'l')
+    else if (mode == 'l')
         return this->limit;
     return false;
 }
 
-
-bool  Channel::isEmpty()
+bool Channel::isEmpty()
 {
-    if(users.size() == 0)
+    if (users.size() == 0)
         return true;
     return false;
 }
-
-
-
 
 std::vector<std::string> Channel::splite_coma(std::string &strr, char d)
 {
@@ -137,9 +124,9 @@ std::vector<std::string> Channel::splite_coma(std::string &strr, char d)
     std::stringstream ss(strr);
     std::vector<std::string> resulte;
 
-    while(getline(ss,  save , d))
+    while (getline(ss, save, d))
     {
-            resulte.push_back(save);
+        resulte.push_back(save);
     }
     return resulte;
 }
@@ -151,41 +138,47 @@ std::string Channel::to_lower(std::string str)
     return lower_str;
 }
 
-void Channel::setTopic( std::string topic ) {
+void Channel::setTopic(std::string topic) {
     this->channelTopic = topic;
 }
 
 std::string Channel::getTopic() {
     return this->channelTopic;
 }
+
 bool Channel::isUserInChannel(Client &c)
 {
-    std::map<std::string , Client*>::iterator it = users.find(c.get_nickname());
-    if(it != users.end())
+    std::map<std::string, Client*>::iterator it = users.find(c.get_nickname());
+    if (it != users.end())
     {
         return true;
     }
     return false;
 }
+
 void Channel::broadcast(const std::string &msg)
 {
     std::string full_msg = msg + "\r\n";
-    for(std::map<std::string,Client*>::iterator it = users.begin(); it != users.end();  it++)
+    for (std::map<std::string, Client*>::iterator it = users.begin(); it != users.end(); it++)
     {
         Client *c = it->second;
         send(c->getfd(), full_msg.c_str(), full_msg.length(), 0);
     }
-    
 }
-void Channel::broadcastExpectSender(const std::string &msg, Client & sender)
+
+void Channel::broadcastExpectSender(const std::string &msg, Client &sender)
 {
     std::string full_msg = msg + "\r\n";
-    for(std::map<std::string,Client*>::iterator it = users.begin(); it != users.end();  it++)
+    for (std::map<std::string, Client*>::iterator it = users.begin(); it != users.end(); it++)
     {
         Client *c = it->second;
         if (c->get_nickname() == sender.get_nickname())
-            continue ;
+            continue;
         send(c->getfd(), full_msg.c_str(), full_msg.length(), 0);
     }
-    
+}
+
+size_t Channel::get_number_of_users()
+{
+    return (users.size());
 }

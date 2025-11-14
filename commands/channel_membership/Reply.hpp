@@ -1,7 +1,6 @@
 #ifndef REPLY_HPP
 # define REPLY_HPP
 
-// # include <iostream>
 # include <string>
 
 class Reply
@@ -20,7 +19,6 @@ class Reply
 		std::string ERR_UNKNOWNCOMMAND_N(const std::string &nick, const std::string & command);
 		std::string ERR_NOTCHANNELOPERATO(const std::string &nick, const std::string & channel);
 
-        //:tngnet.nl.quakenet.org 482 sf #bn :You're not channel operator
 
 		// --- General msgs ---
     	std::string RPL_BROADCAST(const std::string& nick, const std::string & command, const std::string & channel, const std::string & message);
@@ -48,7 +46,6 @@ class Reply
 		// --- TOPIC part ---
     	std::string RPL_TOPIC(const std::string& nick, const std::string& channel, const std::string& topic);
     	std::string RPL_NOTOPIC(const std::string& nick, const std::string& channel);
-		// std::string RPL_TOPICWHOTIME(const std::string& nick, const std::string& channel, const std::string& set_by, const std::string& timestamp)
 		std::string ERR_NOSUCHNICK(const std::string& nick, const std::string& target_nick);
 		std::string RPL_INVITELIST(const std::string& nick, const std::string& channel);
 		std::string RPL_ENDOFINVITELIST(const std::string& nick);
@@ -66,7 +63,6 @@ class Reply
 		std::string ERR_NORECIPIENT(const std::string & nick);
 		std::string ERR_NOTEXTSEND(const std::string & nick);
 		std::string RPL_PRIVMSG(const std::string & prefix, const std::string & nick , const std::string & message);
-		// :bn!~a@197.230.30.146 PRIVMSG lk :hello
 
 };
 

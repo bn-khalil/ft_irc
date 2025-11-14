@@ -1,7 +1,6 @@
 #include "../../server/Server.hpp"
 #include "channel.hpp"
 
-
 void Server::kick(Client &c)
 {
     std::string command = c.getlineCmd();
@@ -27,16 +26,15 @@ void Server::kick(Client &c)
     std::string name_c_to_kick = cmds[2];
     std::string reason = "";
 
-//take the full reason
     if (cmds.size() > 3)
     {
         std::vector<std::string>::iterator it = cmds.begin() + 3;
-        if(it->size() > 0 && (*it)[0] == ':')
+        if (it->size() > 0 && (*it)[0] == ':')
             reason += it->substr(1);
         else
             reason += *it;
         it++;
-        for(;it != cmds.end(); it++)
+        for (; it != cmds.end(); it++)
         {
             reason += " "; 
             reason += *it;
@@ -80,14 +78,3 @@ void Server::kick(Client &c)
     real_one->broadcast(error.MSG_KICK(c.get_Prefix(), real_one->get_channel_name(), name_c_to_kick, reason));
     real_one->removeClientFromOneChannels(*client_to_kick);
 }
-//nick amine
-// user a a a 
-// user a a a a
-// join ##A
-// :amine!~a@0.0.0.0 JOIN :##a
-// :ircserver42.com 331 amine ##a :No topic is set
-// :ircserver42.com 353 amine = ##a :@amine
-// :ircserver42.com 366 amine ##a :End of /NAMES list
-
-
-

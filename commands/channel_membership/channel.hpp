@@ -43,7 +43,6 @@ class Channel
         std::string  Set_key();
         bool Check_mode(char mode);
         bool isInvited(Client &c);
-        bool isUserInChannel(Client &c);
         bool is_full();
         void rm_user_from_channel(Client &c);
         bool  isEmpty();
@@ -56,6 +55,9 @@ class Channel
         std::map<std::string,Client*>::iterator findClientByNickName( const std::string & nickname );
         void popClientFromOperatorList( const std::string & nickname );
         bool getTopicRestriction();
+        bool isUserInChannel(Client &c);
+        void removeClientFromOneChannels(Client &c);
+
 };
 
 

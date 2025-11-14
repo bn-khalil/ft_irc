@@ -458,3 +458,17 @@ std::vector<std::string> Server::new_splite(std::string &strr, char d)
     }
     return resulte;
 }
+  
+std::vector<std::string> Server::isUserInvited_to_channel(Client &c)
+{
+    std::map<std::string , Channel*>::iterator it = channel.begin();
+    std::vector<std::string> all_channel;
+    while(it != channel.end())
+    {
+        Channel *ch = it->second;
+        if(ch->isInvited(c))
+            all_channel.push_back(it->first);
+        it++;
+    }
+    return all_channel;
+}

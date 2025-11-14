@@ -15,7 +15,12 @@ Channel::Channel(std::string name) : Channel_name(name)
     this->channelTopic = "";
     this->time_creat_channel = time(0);
 }
-
+void Channel::removeClientFromOneChannels(Client &c)
+{
+    users.erase(c.get_nickname());
+    operators_.erase(c.get_nickname());
+}
+    
 std::string Channel::getNamesList()
 {
     std::string  name = "";

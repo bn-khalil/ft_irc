@@ -6,7 +6,7 @@ Reply::Reply() : server_name("ircserver42.com")
 std::string Reply::ERR_NEEDMOREPARAMS(std::string nick, std::string command)
 {
 
-    std::string msg =  ":"  + server_name   + " 461 " + nick + " " + command + " :Not enough parameters\n"; 
+    std::string msg =  ":"  + server_name   + " 461 " + nick + " " + command + " :Not enough parameters"; 
     return msg;
 }
 //:Register first
@@ -93,9 +93,9 @@ std::string Reply::ERR_USERNOTINCHANNEL(const std::string& nick, const std::stri
 {
     return ":" + server_name + " 441 " + nick + " " + target_nick + " " + channel + " :They aren't on that channel";
 }
-std::string Reply::MSG_KICK(const std::string& kicker_prefix, const std::string& channel, const std::string& target_nick, const std::string& reason)
+std::string Reply::MSG_KICK(const std::string& kicker_prefix, const std::string& channel, const std::string& target_nick)
 {
-    return ":" + kicker_prefix + " KICK " + channel + " " + target_nick + " :" + reason;
+    return ":" + kicker_prefix + " KICK " + channel + " " + target_nick ;
 }
 
 std::string Reply::MSG_PART(const std::string& user_prefix, const std::string& channel, const std::string& reason)
@@ -135,7 +135,7 @@ std::string Reply::WITHTOPIC(const std::string& nick, const std::string& channel
 ///just to compile 
 std::string Reply::ERR_NOSUCHNICK(const std::string& nick, const std::string& target)
 {
-    return ":" + server_name + " 401 " + nick + " " + target + " :No such nick/channel";
+    return ":" + server_name + " 401 " + nick + " " + target + " :No such nick";
 }
 
 std::string Reply::RPL_INVITELIST(const std::string& nick, const std::string& channel)

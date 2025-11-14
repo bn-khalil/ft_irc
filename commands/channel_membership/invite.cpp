@@ -1,22 +1,22 @@
 #include "../../server/Server.hpp"
 #include "channel.hpp"
-
+#include <cstddef>
 
 void  Server::invit(std::vector<std::string> cmds, Client &c)
 {  
-    // if(c.Get_isAuthenticated() == false)
-    // {
-    //     sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
-    //     return ;
-    // }
-    if(cmds.size() >= 3)
+    if(c.Get_isAuthenticated() == false)
+    {
+        sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
+        return ;
+    }
+    if(cmds.size() > 2)
     {
         std::string one_channel = cmds[2];
         std::string name_c_invited = cmds[1];
         Client *client_invited = find_client_by_nickname(name_c_invited);
         if(!client_invited)
         {
-            std::cout << error.ERR_NOSUCHNICK(c.get_nickname(), name_c_invited);
+            sendReply(c,error.ERR_NOSUCHNICK(c.get_nickname(), name_c_invited));
             return ;
         }
     
@@ -40,17 +40,17 @@ void  Server::invit(std::vector<std::string> cmds, Client &c)
             return ;
         }
         real_one->Add_to_invite(*client_invited);
-        real_one->broadcast(error.RPL_INVITING(c.get_nickname(), name_c_invited, one_channel));
+        sendReply(c, error.RPL_INVITING(c.get_nickname(), name_c_invited, one_channel));
+        sendReply(*client_invited, error.MSG_INVITE(c.get_Prefix(), name_c_invited, one_channel));
     }
     else if(cmds.size() == 1)
     {
-        for(std::map<std::string,Channel*>::iterator it = channel.begin();  it != channel.end() ; it++)
+        std::vector<std::string> all_invited_channel = isUserInvited_to_channel(c);
+        size_t i = 0;
+        while(i < all_invited_channel.size())
         {
-            Channel *ch = it->second;
-            if(ch->isUserInChannel(c))
-            {
-                sendReply(c, error.RPL_INVITELIST(c.get_nickname(), ch->get_channel_name()));
-            }
+            sendReply(c, error.RPL_INVITELIST(c.get_nickname(), all_invited_channel[i]));
+            i++;
         }
         sendReply(c, error.RPL_ENDOFINVITELIST(c.get_nickname()));
         

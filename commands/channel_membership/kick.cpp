@@ -2,48 +2,76 @@
 #include "channel.hpp"
 
 
-void  Server::kick(std::vector<std::string> cmds, Client &c)
+void Server::kick(std::vector<std::string> cmds, Client &c)
 {
-    (void)cmds;
-    (void)c;
-    // Channel access("accses");
-    
-    // if(cmds.size() < 2)
-    // {
-    //     sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "JOIN", "<channel>[,<channel>]+ [<key>[,<key>]+]"));
-    //     return ;
-    // }
+    if (c.Get_isAuthenticated() == false)
+    {
+        sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
+        return;
+    }
 
-    // std::string one_channel = cmds[1];
-    // if(one_channel.length() < 2 || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200)
-    // {
-    //     sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), one_channel));
-    //     return ;
-    // }
-    // std::map<std::string , Channel*>::iterator it = channel.find(one_channel);
-    // if(it == channel.end())
-    // {
-    //     error.ERR_NOTONCHANNEL(c.get_nickname(), one_channel);
-    //     return ;
+    // splite with tab or space
+    if (cmds.size() < 3)
+    {
+        sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "KICK"));
+        return;
+    }
 
-    // }
-    // std::map<std::string, Client*> op = access.get_operators_();
+    std::string one_channel = cmds[1];
+    std::string name_c_to_kick = cmds[2];
+    std::string reason = "";
 
-    // std::map<std::string , Client*>::iterator it1 = op.find(c.get_nickname());
-    // if(it1 == op.end())
-    // {
-    //     error.ERR_CHANOPRIVSNEEDED(c.get_nickname(), one_channel);
-    //     return ;
-    // }
-    // std::map<std::string, Client*>  us = access.get_users();
+//take the full reason
+    if (cmds.size() > 3)
+    {
+        std::vector<std::string>::iterator it = cmds.begin() + 3;
+        if(it->size() > 0 && (*it)[0] == ':')
+            reason += it->substr(1);
+        else
+            reason += *it;
+        it++;
+        for(;it != cmds.end(); it++)
+        {
+            reason += " "; 
+            reason += *it;
+        }
+    }
 
-    // std::map<std::string , Client*>::iterator it2 = us.find(c.get_nickname());
-    // if(it2 == us.end())
-    // {
-    //     error.ERR_USERNOTINCHANNEL(c.get_nickname(), cmds[1] ,one_channel);
-    //     return ;
-    // }
-    // removeClientFromAllChannels(c);
-    // access.broadcast("CHECK_REFERANCE_MSG");
-    return ;
+    Client *client_to_kick = find_client_by_nickname(name_c_to_kick);
+    if (!client_to_kick)
+    {
+        sendReply(c, error.ERR_NOSUCHNICK(c.get_nickname(), name_c_to_kick));
+        return;
+    }
+
+    std::map<std::string, Channel *>::iterator it = channel.find(one_channel);
+    if (one_channel.length() < 2 || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || it == channel.end())
+    {
+        sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), one_channel));
+        return;
+    }
+
+    Channel *real_one = it->second;
+
+    if (!real_one->isUserInChannel(c))
+    {
+        sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(), one_channel));
+        return;
+    }
+
+    if (!real_one->isUserInChannel(*client_to_kick))
+    {
+        sendReply(c, error.ERR_USERNOTINCHANNEL(c.get_nickname(), name_c_to_kick, one_channel));
+        return;
+    }
+
+    if (real_one->isClientOperator(c) == false)
+    {
+        sendReply(c, error.ERR_CHANOPRIVSNEEDED(c.get_nickname(), one_channel));
+        return;
+    }
+
+    // real_one->broadcast(error.RPL_BROADCAST(c.get_nickname(), "KICK", real_one->get_channel_name(), cmds[3]));
+    real_one->removeClientFromOneChannels(*client_to_kick);
+    sendReply(c, error.MSG_KICK(c.get_Prefix(), real_one->get_channel_name(), name_c_to_kick));
 }

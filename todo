@@ -51,3 +51,4 @@ should show new topic to joined users
 @REM :ircserver42.com 353 s = #bn :@a s
 @REM :ircserver42.com 366 s #bn :End of /NAMES list
 >>>>>>> test
+//nick with only alpha

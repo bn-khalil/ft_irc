@@ -23,7 +23,7 @@ class Reply
         //:tngnet.nl.quakenet.org 482 sf #bn :You're not channel operator
 
 		// --- General msgs ---
-    	std::string RPL_BROADCAST(const std::string& nick, const std::string & command, const std::string & channel, const std::string & message);
+    	// std::string RPL_BROADCAST(const std::string& nick, const std::string & command, const std::string & channel, const std::string & message);
 		
     	// --- JOIN Part ---
     	std::string ERR_BADCHANNELKEY(const std::string& nick, const std::string& channel);
@@ -37,7 +37,7 @@ class Reply
 
         // --- KICK Part ---
     	std::string ERR_USERNOTINCHANNEL(const std::string& nick, const std::string& target_nick, const std::string& channel);
-    	std::string MSG_KICK(const std::string& kicker_prefix, const std::string& channel, const std::string& target_nick, const std::string& reason);
+    	std::string MSG_KICK(const std::string& kicker_prefix, const std::string& channel, const std::string& target_nick);
 		std::string	MSG_PART(const std::string& user_prefix, const std::string& channel, const std::string& reason);
         // --- INVITE Part ---
     	std::string ERR_USERONCHANNEL(const std::string& nick, const std::string& target_nick, const std::string& channel);

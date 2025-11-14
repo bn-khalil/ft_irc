@@ -1,5 +1,15 @@
 #include "channel.hpp"
 
+bool  tab_found(std::string str)
+{
+    int  i = 0;
+    while(i < str.size())
+    {
+        if(str[i] == 9)
+            return true;
+    }
+    return false;
+}
 void Server::join(Client &c)
 {
     std::string command = c.getlineCmd();
@@ -33,15 +43,15 @@ void Server::join(Client &c)
   
     size_t i = 0;
 
-    while(i < multi_channel.size())
+    while(i < multi_channel.size()  )
     {
             std::string one_channel = multi_channel[i];
             std::string key = "";
             one_channel = Channel::to_lower(one_channel);
             if(i < key_channle.size())
                 key  = key_channle[i];
-
-    if(one_channel.length() < 2 || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200)
+//handl to many channel
+    if(one_channel.length() < 2 || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || tab_found(one_channel) == true)
     {
         sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), one_channel));
         i++;

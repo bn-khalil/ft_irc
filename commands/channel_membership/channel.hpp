@@ -1,6 +1,7 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
+#include <cstddef>
 #include <map>
 #include <vector>
 #include "../../server/Server.hpp"
@@ -58,7 +59,10 @@ class Channel
         bool getTopicRestriction();
         bool isUserInChannel(Client &c);
         void removeClientFromOneChannels(Client &c);
-
+        size_t get_number_of_users(Channel *c)
+        {
+            return(users.size());
+        }
 };
 
 

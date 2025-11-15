@@ -72,37 +72,44 @@ int main(int ac,char **av)
     std::string user_msg = "USER Bot 0 * :Bot\r\n";
     send(boot_fd, user_msg.c_str(), user_msg.length(), 0);
 
+    char buffer[1024];
+
+    bzero(buffer, 1024);
+    int byte_recv = recv(boot_fd, buffer, 1000, 0);
+    if (byte_recv >  0)
+    {
+        std::string recv_msg =  buffer;
+        std::string sender;        
+        //pass 462  461 464 // 431 433
+        if (recv_msg.find(" 462") != std::string::npos || recv_msg.find(" 461") != std::string::npos || recv_msg.find(" 464 ") != std::string::npos|| recv_msg.find(" 431") != std::string::npos|| recv_msg.find(" 431") != std::string::npos|| recv_msg.find(" 433") != std::string::npos) 
+        {
+            
+            std::cerr << "error failed connection"  << "recv_msg " << recv_msg <<std::endl;
+            return 1;
+        }
+    }
     while (true) 
     {
         char buffer[1024];
 
         bzero(buffer, 1024);
         int byte_recv = recv(boot_fd, buffer, 1000, 0);
-        std::string recv_msg =  buffer;
-        std::string sender;
     if (byte_recv >  0)
     {
-        if (recv_msg.find("aut failed") != std::string::npos)
-        {
-            std::cerr << "error failed connection" <<std::endl;
-            return 1;
-        }
-        else {
+        std::string recv_msg =  buffer;
+        std::string sender;
             sender = get_sender_name(recv_msg);
-            // std::cout << "recv_msg is [" << recv_msg  << "]" <<std::endl;  
-            // std::cout << "sender name id " << sender <<std::endl;  
-            // std::cout << "cmd he want is  [" << get_message(recv_msg)<< "]" <<std::endl;  
-            std::string to_send  = "privmsg " + sender + " :" + get_message(recv_msg) + "\r\n";
-            // to_send = to_send.substr(0,to_send.length() );
-            // to_send = "privmsg amine hhhh\r\n";
 
+            std::string to_send  = "privmsg " + sender + " :" + get_message(recv_msg) + "\r\n";
+            
             std::cout << "to_send -> [" << to_send << "]"<<std::endl;
+            
             send(boot_fd, to_send.c_str(), to_send.length(), 0);
             // get_message(recv_msg);
 
-        }
     }
-    else {
+    else if(1) 
+    {
     
     }
     }

@@ -15,7 +15,6 @@ void Server::kick(Client &c)
         return;
     }
 
-    // splite with tab or space
     if (cmds.size() < 3)
     {
         sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "KICK"));

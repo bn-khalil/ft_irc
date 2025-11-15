@@ -1,5 +1,4 @@
 #include "Reply.hpp"
-#include <type_traits>
 
 Reply::Reply() : server_name("ircserver42.com")
 {
@@ -130,11 +129,6 @@ std::string Reply::RPL_TOPIC(const std::string& nick, const std::string& channel
 std::string Reply::RPL_NOTOPIC(const std::string& nick, const std::string& channel)
 {
     return ":" + server_name + " 331 " + nick + " " + channel + " :No topic is set";
-}
-
-std::string Reply::WITHTOPIC(const std::string& nick, const std::string& channel, std::string more)
-{
-    return ":" + server_name + " 331 " + nick + " " + channel + " :" + more;
 }
 
 /* ************************************************************************** */

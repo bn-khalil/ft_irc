@@ -52,7 +52,7 @@ void Server::join(Client &c)
         
         if (i < key_channle.size())
             key = key_channle[i];
-        
+        //CHECK IF ALWAYS THE NAME LOWER OR OPERCASE
         // handl to many channel
         if (one_channel.length() < 2 || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || tab_found(one_channel) == true)
         {
@@ -71,7 +71,10 @@ void Server::join(Client &c)
             join->Add_to_admin(c);
             join->Add_to_user(c);
             join->broadcast(error.MSG_JOIN(c.get_Prefix(), one_channel));
-            sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), one_channel));
+            if (join->getTopic() == "")
+                    sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), one_channel));
+            if (join->getTopic() != "")
+                    sendReply(c, error.RPL_TOPIC(c.get_nickname(), one_channel, join->getTopic()));
             sendReply(c, error.RPL_NAMREPLY(c.get_nickname(), one_channel, join->getNamesList()));
             sendReply(c, error.RPL_ENDOFNAMES(c.get_nickname(), one_channel));
         }
@@ -91,11 +94,11 @@ void Server::join(Client &c)
                 if (join->getTopic() == "")
                     sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), one_channel));
                 if (join->getTopic() != "")
-                    sendReply(c, error.WITHTOPIC(c.get_nickname(), one_channel, join->getTopic()));
+                    sendReply(c, error.RPL_TOPIC(c.get_nickname(), one_channel, join->getTopic()));
                 sendReply(c, error.RPL_NAMREPLY(c.get_nickname(), one_channel, join->getNamesList()));
                 sendReply(c, error.RPL_ENDOFNAMES(c.get_nickname(), one_channel));
             }
         }
         i++;
     }
-}
+}d

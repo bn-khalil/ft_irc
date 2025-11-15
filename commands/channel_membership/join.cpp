@@ -86,7 +86,8 @@ void Server::join(Client &c)
                 sendReply(c, error.ERR_BADCHANNELKEY(c.get_nickname(), one_channel));
             else
             {
-                if(Isin)
+                if(!join->isUserInChannel(c))
+                {
                 join->Add_to_user(c);
                 join->broadcast(error.MSG_JOIN(c.get_Prefix(), one_channel));
                 if (join->getTopic() == "")
@@ -95,6 +96,7 @@ void Server::join(Client &c)
                     sendReply(c, error.WITHTOPIC(c.get_nickname(), one_channel, join->getTopic()));
                 sendReply(c, error.RPL_NAMREPLY(c.get_nickname(), one_channel, join->getNamesList()));
                 sendReply(c, error.RPL_ENDOFNAMES(c.get_nickname(), one_channel));
+                }
             }
         }
         i++;

@@ -132,11 +132,6 @@ std::string Reply::RPL_NOTOPIC(const std::string& nick, const std::string& chann
     return ":" + server_name + " 331 " + nick + " " + channel + " :No topic is set";
 }
 
-std::string Reply::WITHTOPIC(const std::string& nick, const std::string& channel, std::string more)
-{
-    return ":" + server_name + " 331 " + nick + " " + channel + " :" + more;
-}
-
 /* ************************************************************************** */
 ///just to compile 
 std::string Reply::ERR_NOSUCHNICK(const std::string& nick, const std::string& target)

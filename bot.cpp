@@ -23,7 +23,33 @@ std::string get_sender_name(std::string &prfx)
     // std::string sender_name = prfx.substr(ddot_posi+1,mark_posi);
     return (prfx.substr(0,mark_posi));
 }
-
+std::string get_message(std::string &prfx)
+{
+    size_t ddot_posi = prfx.find(':');
+    if (ddot_posi == std::string::npos)
+    {
+        return "";
+    }
+    std::string arg = prfx.substr(ddot_posi+1);
+    std::string cmd[5] = {"amine", "amine\n", "amine\r\n","amine\0","!help"};
+    int i;
+    for ( i = 0;cmd[i] != arg && i < 5;)
+        i++;
+    switch (i) {
+        case 0:
+         return "1";
+        case 1:
+         return "2";
+        case 2:
+         return "3";
+        case 3:
+         return "4";
+        case 4:
+         return "5";
+        default:
+         return "help message\n";
+    }
+}
 int main(int ac,char **av)
 {
     int boot_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -44,7 +70,6 @@ int main(int ac,char **av)
     send(boot_fd, nick_msg.c_str(), nick_msg.length(), 0);
 
     std::string user_msg = "USER Bot 0 * :Bot\r\n";
-
     send(boot_fd, user_msg.c_str(), user_msg.length(), 0);
 
     while (true) 
@@ -64,6 +89,16 @@ int main(int ac,char **av)
         }
         else {
             sender = get_sender_name(recv_msg);
+            // std::cout << "recv_msg is [" << recv_msg  << "]" <<std::endl;  
+            // std::cout << "sender name id " << sender <<std::endl;  
+            // std::cout << "cmd he want is  [" << get_message(recv_msg)<< "]" <<std::endl;  
+            std::string to_send  = "privmsg " + sender + " :" + get_message(recv_msg) + "\r\n";
+            // to_send = to_send.substr(0,to_send.length() );
+            // to_send = "privmsg amine hhhh\r\n";
+
+            std::cout << "to_send -> [" << to_send << "]"<<std::endl;
+            send(boot_fd, to_send.c_str(), to_send.length(), 0);
+            // get_message(recv_msg);
 
         }
     }

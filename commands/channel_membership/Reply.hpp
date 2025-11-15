@@ -10,6 +10,14 @@ class Reply
 	public:
 
 		Reply();
+		
+
+	std::string ERR_PASSWDMISMATCH(std::string nick, std::string command);
+	std::string ERR_ALREADYREGISTERED(std::string nick, std::string command);
+	std::string ERR_NONICKNAMEGIVEN(std::string nick, std::string command);
+	std::string ERR_ERRONEUSNICKNAME(std::string nick, std::string command);
+	std::string ERR_NICKNAMEINUSE(std::string nick, std::string used_nick, std::string command);
+		
 		// --- General Errors ---
     	std::string ERR_NEEDMOREPARAMS(std::string nick, std::string command);
     	std::string ERR_NOSUCHCHANNEL(const std::string& nick, const std::string& channel_name);
@@ -18,7 +26,7 @@ class Reply
     	std::string ERR_NOT_REGESTRED(const std::string& nick);
 		std::string ERR_UNKNOWNCOMMAND_N(const std::string &nick, const std::string & command);
 		std::string ERR_NOTCHANNELOPERATO(const std::string &nick, const std::string & channel);
-
+		std::string ERR_NOT_REGESTRED(const std::string &nick, const std::string & channel);
 
 		// --- General msgs ---
     	std::string RPL_BROADCAST(const std::string& nick, const std::string & command, const std::string & channel, const std::string & message);

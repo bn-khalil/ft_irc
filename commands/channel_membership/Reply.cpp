@@ -185,3 +185,24 @@ std::string Reply::RPL_PRIVMSG(const std::string & prefix, const std::string & n
 {
     return prefix + " PRIVMSG " + nick + " :" + message;
 }
+
+std::string Reply::ERR_PASSWDMISMATCH(std::string nick, std::string command)
+{
+    return ":" + server_name + " 464 " + nick + " " + command;
+}
+std::string Reply::ERR_ALREADYREGISTERED(std::string nick, std::string command)
+{
+    return ":" + server_name + " 462 " + nick + " " + command;
+}
+std::string Reply::ERR_NONICKNAMEGIVEN(std::string nick, std::string command)
+{
+    return ":" + server_name + " 431 " + nick + " " + command;
+}
+std::string Reply::ERR_ERRONEUSNICKNAME(std::string nick, std::string command)
+{
+    return ":" + server_name + " 432 " + nick + " " + command;
+}
+std::string Reply::ERR_NICKNAMEINUSE(std::string nick, std::string used_nick, std::string command)
+{
+    return ":" + server_name + " 433 " + nick + " " + used_nick + " " + command;
+}

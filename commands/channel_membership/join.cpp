@@ -86,7 +86,7 @@ void Server::join(Client &c)
                 sendReply(c, error.ERR_BADCHANNELKEY(c.get_nickname(), one_channel));
             else
             {
-                if(!join->isUserInChannel(c))
+                if(!join->isUserInChannel(c))  
                 {
                 join->Add_to_user(c);
                 join->broadcast(error.MSG_JOIN(c.get_Prefix(), one_channel));

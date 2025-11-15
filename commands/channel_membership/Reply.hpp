@@ -61,7 +61,6 @@ class Reply
 		// --- MODE part ---
 		std::string ERR_NEEDMODEPARM(const std::string& nick, const std::string& channelname, const std::string & mode, const std::string& more);
 		std::string ERR_INVALIDMODEPARM(const std::string& nick, const char mode);
-		// std::string RPL_TOPIC(const std::string& nick, const std::string& channel, std::string more);
 		std::string ERR_KEYALREADYSET(const std::string& nick, const std::string& channelname);
 		std::string ERR_NICKNOTFOUND(const std::string& nick, const std::string& otherNick);
 

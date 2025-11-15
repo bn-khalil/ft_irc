@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "../commands/channel_membership/Reply.hpp"
 #include "../exception/SocketFailedToCreatException.hpp"
 #include "../exception/FcntlFailedException.hpp"
 #include "../exception/SocketBindFailedException.hpp"
@@ -19,53 +20,47 @@
 #include <map>
 #include "../commands/channel_membership/channel.hpp"
 #include <arpa/inet.h>
+
 int Server::ReadClientMessage(std::string &line)
 {
     (void)line;
     return 0;
 }
+
 void Server::NickCmd(Client &client, std::string nick_arg)
 {
+    // parse the nick name  --> ERR_ERRONEUSNICKNAME 432   "<client> <nick> :Erroneus nickname"
     if (client.GetIsSetPass() == false)
     {
-        std::cout << "NICK COMMAND ❌❌❌❌❌❌❌❌❌❌❌❌ \n";
-        // "464 :Password incorrect
-        return ;
+        sendReply(client, error.ERR_PASSWDMISMATCH(client.get_nickname(),":Password not set"));
+        return;
     }
     else if (nick_arg.empty())
-     { 
-        std::cout << "NICK COMMAND ❌❌❌❌❌❌❌❌❌❌❌❌ \n";
-        //"431 :No nickname given"
-        return ;
-     }
-    else 
+    {
+        sendReply(client, error.ERR_NONICKNAMEGIVEN(client.get_nickname(),":No nickname given"));
+        return;
+    }
+    else
     {
         for (std::map<int, Client>::iterator it = ClientsInfo.begin(); it != ClientsInfo.end(); ++it)
         {
             if (it->first == client.getfd())
-            {   
-                // std::cout << "is the same \n";    
                 continue;
-            }
-            if (it->second.GetIsSetNick() == true &&it->second.get_nickname()==nick_arg)
+            if (it->second.GetIsSetNick() == true && it->second.get_nickname() == nick_arg)
             {
-                std::cout << "NICK COMMAND ❌❌❌❌❌❌❌❌❌❌❌❌ \n";
-                return ;
-                // "433  Nickname is already in use");
+                sendReply(client, error.ERR_NICKNAMEINUSE(client.get_nickname(), nick_arg,":Nickname is already in use"));
+                return;
             }
         }
     }
     client.set_nickname(nick_arg);
-    std::cout << "NICK name is seted ✅✅✅✅✅✅✅  -------> nick :: [ " << client.get_nickname() << " ]"<< std::endl;
     client.SetIsSetNick(true);
     if (client.GetIsSetuser() == true)
     {
         std::cout << " authentication dazet nick set\n";
         client.Set_isAuthenticated(true);
     }
-
 }
-
 
 int Server::stringToPort(std::string &string)
 {
@@ -103,11 +98,11 @@ Server::Server(const Server &other)
 
 void Server::AddClient()
 {
-    //------------------fixprefix---------------------
-    sockaddr_in  client_addr;
-    socklen_t    addr_len;
+    // ------------------fixprefix---------------------
+    sockaddr_in client_addr;
+    socklen_t addr_len;
 
-    int ClientSocketFd = accept(serverId,  (struct sockaddr *)&client_addr, &addr_len);
+    int ClientSocketFd = accept(serverId, (struct sockaddr *)&client_addr, &addr_len);
     if (ClientSocketFd < 0)
     {
         std::cerr << "ClientSocketFd \n";
@@ -132,7 +127,7 @@ void Server::AddClient()
     client.set_hostname(hostname);
     ClientsInfo[ClientSocketFd] = client;
     std::cout << client.get_hostname() << std::endl;
-    //need to add username
+
     std::cout << "client number " << ClientSocketFd << " connect" << std::endl;
 }
 
@@ -150,81 +145,68 @@ std::vector<std::string> Server::splitCmd(std::string &str)
 
 void Server::PassCmd(Client &client, std::string password_arg)
 {
+    std::cout << "password_arg " << password_arg << std::endl;
     if (client.Get_isAuthenticated() == true)
     {
-        // client.getFd(),
-        std::cout << "PASS CMD ❌❌❌❌❌❌❌❌❌❌❌❌ \n";
+        sendReply(client, error.ERR_ALREADYREGISTERED(client.get_nickname(),":You may not reregister"));
+        client.SetIsSetPass(false);
         return;
-        // "462 :You may not reregister");
     }
     if (password_arg.empty())
     {
-        // "461 PASS :Not enough parameters"
-        std::cout << "PASS CMD ❌❌❌❌❌❌❌❌❌❌❌❌ \n";
+        sendReply(client, error.ERR_NEEDMOREPARAMS(client.get_nickname(),"PASS"));
+        client.SetIsSetPass(false);
         return;
     }
     if (password_arg != this->password)
     {
-     std::cout << "PASS CMD ❌❌❌❌❌❌❌❌❌❌❌❌ \n";
+        sendReply(client, error.ERR_PASSWDMISMATCH(client.get_nickname(),":Password incorrect"));
+        client.SetIsSetPass(false);
         return;
-        // "464 :Password incorrect"
     }
-    std::cout << " client number " << client.getfd() << " " << "PASS command ✅✅✅✅✅✅✅ \n";
     client.SetIsSetPass(true);
 }
+
 void Server::UserCmd(Client &client, std::vector<std::string> &arg)
 {
     std::string userName;
     std::string realName;
 
-	size_t size_cmd = arg.size();
-	size_t two =client.getlineCmd().find(" :");
+    size_t size_cmd = arg.size();
+    size_t two = client.getlineCmd().find(" :");
     if (client.Get_isAuthenticated() == true)
     {
-        //"462 :You may not reregister"
-        std::cout << "USER CMD 1 ❌❌❌❌❌❌❌❌❌❌❌❌ \n";        
+        sendReply(client, error.ERR_ALREADYREGISTERED(client.get_nickname(),":You may not reregister"));
         return;
     }
     else if (size_cmd < 5)
     {
-        //461 USER :Not enough parameters
-        std::cout << "USER CMD  ❌❌❌❌❌❌❌❌❌❌❌❌     //461 USER :Not enough parameters \n";        
+        sendReply(client, error.ERR_NEEDMOREPARAMS(client.get_nickname(),"USER"));
         return;
     }
-    // else if (client.GetIsSetPass() == false)
-    // {
-    //     std::cout << "USER CMD 3 ❌❌❌❌❌❌❌❌❌❌❌❌ \n";        
-    //     return;
-    // }
-	userName = arg[1];
-	if (two == std::string::npos)
-	{ 
-		size_t i ;
-		for (i = 4 ; i < size_cmd - 1;i++)
-		{
-			realName += arg[i] + " ";
-			std::cout << "added" << std::endl;
-		}	
-			realName += arg[i];
-	}
-	else 
-	{
-		realName = client.getlineCmd().substr(two + 2);
-	}
-	client.SetIsSetPass(true);
+    else if (client.GetIsSetPass() == false)
+    {
+        sendReply(client, error.ERR_PASSWDMISMATCH(client.get_nickname(),":Password not set"));
+        return;
+    }
+    userName = arg[1];
+    if (two == std::string::npos)
+        realName = arg[4];
+    else
+        realName = client.getlineCmd().substr(two + 2);
+
+    client.SetIsSetuser(true);
     client.set_realname(realName);
-	client.set_username(userName);
+    client.set_username(userName);
     if (client.GetIsSetNick() == true)
     {
         std::cout << " authentication dazet  \n";
         client.Set_isAuthenticated(true);
     }
+}
 
-    std::cout << "userName -> [" << userName  << "]"<< std::endl;
-	std::cout << "realName -> [" << realName  << "]"<< std::endl;
-
-}			
-std::string Server::toLower(std::string str) {
+std::string Server::toLower(std::string str)
+{
     for (size_t i = 0; i < str.size(); i++)
         str[i] = std::tolower(str[i]);
     return str;
@@ -233,24 +215,16 @@ std::string Server::toLower(std::string str) {
 void Server::ParseCmd(Client &client)
 {
     std::vector<std::string> cmds;
-
-    cmds = splitCmd(client.getlineCmd());
-
+    cmds = new_splite(client.getlineCmd(), ' ');
 
     if (cmds.size() == 0)
         return;
     cmds[0] = toLower(cmds[0]);
+
     if (cmds[0] == "pass")
-    {
-        if (client.Get_isAuthenticated() == true)
-        {
-        }
         PassCmd(client, cmds[1]);
-    }
     else if (cmds[0] == "nick")
-    {
-        Server::NickCmd(client,cmds[1]);
-    }
+        Server::NickCmd(client, cmds[1]);
     else if (cmds[0] == "join")
         join(client);
     else if (cmds[0] == "topic")
@@ -259,19 +233,18 @@ void Server::ParseCmd(Client &client)
         privmsg(client);
     else if (cmds[0] == "mode")
         mode(client);
-    else if(cmds[0] == "kick")
+    else if (cmds[0] == "kick")
         kick(client);
-    else if(cmds[0] == "invite")
+    else if (cmds[0] == "invite")
         invit(client);
     else if (cmds[0] == "user")
     {
-        UserCmd(client,cmds);
+        UserCmd(client, cmds);
         std::cout << "USER commmand" << std::endl;
     }
     else
         sendReply(client, error.ERR_UNKNOWNCOMMAND_N(client.get_nickname(), cmds[0]));
-    // :*.freenode.net 421 sd SD :Unknown command
-    
+
     std::string empty = "";
     client.setlineCmd(empty);
 }
@@ -305,7 +278,18 @@ void Server::GetClientEvents()
                     else
                     {
                         client.setlineCmd(client.getlineCmd().append(str_buffer));
-                        ParseCmd(client);
+                        std::string s = client.getlineCmd();
+
+                        for (std::string::size_type pos = 0; (pos = s.find("\r\n", pos)) != std::string::npos;)
+                            s.replace(pos, 2, "\n");
+
+                        client.setlineCmd(s);
+                        std::vector<std::string> cmds = new_splite(client.getlineCmd(), '\n');
+                        for (size_t i = 0; i < cmds.size(); i++)
+                        {
+                            client.setlineCmd(cmds[i]);
+                            ParseCmd(client);
+                        }
                     }
                 }
                 else if (bytes_read == 0)
@@ -337,7 +321,6 @@ void Server::waitConnection()
         }
         else if (num_event == 0)
         {
-            // perror("timeout");
             continue;
         }
         else if (num_event > 0)
@@ -393,74 +376,65 @@ Server::Server(std::string &port, std::string &password)
     addr_len = sizeof(sockaddr_in);
 }
 
+// -------------------------------------------------------------------CHANNEL_PART----------------------------------------------------------------------------------------------
 
-
-
-
-
-//-------------------------------------------------------------------CHANNEL_PART----------------------------------------------------------------------------------------------
 bool Server::the_boot_alone_in_channel(Client &Client)
 {
-    //if the user kick itself rm habo lboot
+    // if the user kick itself rm habo lboot
     std::map<std::string, Channel*>::iterator it = channel.begin();
-    Channel *ch  = it->second;
-    if(ch->get_number_of_users() == 1 && Client.get_nickname() == "SKHAYTI!")
+    Channel *ch = it->second;
+    if (ch->get_number_of_users() == 1 && Client.get_nickname() == "SKHAYTI!")
         return true;
     return false;
-    
+}
 
-};
 void Server::removeClientFromAllChannels(Client &c)
 {
     std::vector<std::string> channel_to_leave;
     std::map<std::string, Channel *>::iterator it = this->channel.begin();
-    while(it != this->channel.end())
+    while (it != this->channel.end())
     {
         Channel *ch = it->second;
-        if(ch->isUserInChannel(c))
+        if (ch->isUserInChannel(c))
             channel_to_leave.push_back(ch->get_channel_name());
         it++;
     }
-    for(size_t i = 0; i < channel_to_leave.size();i++)
+    for (size_t i = 0; i < channel_to_leave.size(); i++)
     {
-        std::map<std::string,Channel*>::iterator it1 = channel.find(channel_to_leave[i]);
-        if(it1 == channel.end())
+        std::map<std::string, Channel*>::iterator it1 = channel.find(channel_to_leave[i]);
+        if (it1 == channel.end())
             continue;
         Channel *chan = it1->second;
-         chan->broadcast( error.MSG_PART(c.get_Prefix(), chan->get_channel_name(), "Left all channels") );
+        chan->broadcast(error.MSG_PART(c.get_Prefix(), chan->get_channel_name(), "Left all channels"));
         chan->rm_user_from_channel(c);
-       if(chan->isEmpty() == true)
-       {
+        if (chan->isEmpty() == true)
+        {
             channel.erase(it1);
             delete chan;
-       }
-        if(the_boot_alone_in_channel(c))
+        }
+        if (the_boot_alone_in_channel(c))
         {
             chan->rm_user_from_channel(c);
             channel.erase(it1);
             delete chan;
         }
-
     }
-    
 }
 
 void Server::sendReply(Client &c, std::string msg)
 {
-    
     std::string full_msg = msg + "\r\n";
-    (void) c;
-    if(send(c.getfd() , full_msg.c_str() , full_msg.length(), 0) <= -1)
+    if (send(c.getfd(), full_msg.c_str(), full_msg.length(), 0) <= -1)
     {
         std::cerr << "Client Disconnected" << std::endl;
     }
-    
 }
-Client * Server::find_client_by_nickname(std::string nick)
+
+Client *Server::find_client_by_nickname(std::string nick)
 {
-    for(std::map<int, Client>::iterator it = ClientsInfo.begin(); it != ClientsInfo.end(); it++)
+    for (std::map<int, Client>::iterator it = ClientsInfo.begin(); it != ClientsInfo.end(); it++)
     {
-        if(it->second.get_nickname() == nick)
+        if (it->second.get_nickname() == nick)
             return &it->second;
     }
     return NULL;
@@ -472,33 +446,33 @@ std::vector<std::string> Server::new_splite(std::string &strr, char d)
     std::stringstream ss(strr);
     std::vector<std::string> resulte;
 
-    while(getline(ss,  save , d))
+    while (getline(ss, save, d))
     {
+        if (!save.empty())
             resulte.push_back(save);
     }
     return resulte;
 }
-  
+
 std::vector<std::string> Server::isUserInvited_to_channel(Client &c)
 {
-    std::map<std::string , Channel*>::iterator it = channel.begin();
+    std::map<std::string, Channel*>::iterator it = channel.begin();
     std::vector<std::string> all_channel;
-    while(it != channel.end())
+    while (it != channel.end())
     {
         Channel *ch = it->second;
-        if(ch->isInvited(c))
+        if (ch->isInvited(c))
             all_channel.push_back(it->first);
         it++;
     }
     return all_channel;
 }
-//remove pointer add referance and check how you can rmove the new
+
 void Server::join_all_channel(Client &c)
 {
-    for(std::map<std::string, Channel*>::iterator it = channel.begin(); it != channel.end(); it++)
+    for (std::map<std::string, Channel*>::iterator it = channel.begin(); it != channel.end(); it++)
     {
         Channel *ch = it->second;
         ch->Add_to_user(c);
     }
-    
 }

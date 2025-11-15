@@ -145,7 +145,6 @@ std::vector<std::string> Server::splitCmd(std::string &str)
 
 void Server::PassCmd(Client &client, std::string password_arg)
 {
-    std::cout << "password_arg " << password_arg << std::endl;
     if (client.Get_isAuthenticated() == true)
     {
         sendReply(client, error.ERR_ALREADYREGISTERED(client.get_nickname(),":You may not reregister"));

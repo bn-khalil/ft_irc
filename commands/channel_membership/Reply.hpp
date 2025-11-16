@@ -15,8 +15,10 @@ class Reply
 	std::string ERR_PASSWDMISMATCH(std::string nick, std::string command);
 	std::string ERR_ALREADYREGISTERED(std::string nick, std::string command);
 	std::string ERR_NONICKNAMEGIVEN(std::string nick, std::string command);
-	std::string ERR_ERRONEUSNICKNAME(std::string nick, std::string command);
+	
 	std::string ERR_NICKNAMEINUSE(std::string nick, std::string used_nick, std::string command);
+	std::string ERR_ERRONEUSNICKNAME(std::string nick, std::string used_nick, std::string command);
+
 		
 		// --- General Errors ---
     	std::string ERR_NEEDMOREPARAMS(std::string nick, std::string command);

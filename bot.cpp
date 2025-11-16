@@ -1,6 +1,5 @@
-#include "server/Client.hpp"
-#include <algorithm>
 #include <netinet/in.h>
+#include <ostream>
 #include <string>
 #include <strings.h>
 #include <sys/_endian.h>
@@ -20,7 +19,6 @@ std::string get_sender_name(std::string &prfx)
     {
         return "";
     }
-    // std::string sender_name = prfx.substr(ddot_posi+1,mark_posi);
     return (prfx.substr(0,mark_posi));
 }
 std::string get_message(std::string &prfx)
@@ -31,9 +29,9 @@ std::string get_message(std::string &prfx)
         return "";
     }
     std::string arg = prfx.substr(ddot_posi+1);
-    std::string cmd[5] = {"amine", "amine\n", "amine\r\n","amine\0","!help"};
+    std::string cmd[6] = {"!1", "!2", "!3","!4","!5","!6"};
     int i;
-    for ( i = 0;cmd[i] != arg && i < 5;)
+    for ( i = 0;cmd[i] != arg && i < 6;)
         i++;
     switch (i) {
         case 0:
@@ -52,12 +50,17 @@ std::string get_message(std::string &prfx)
 }
 int main(int ac,char **av)
 {
+    if (ac != 3)
+    {
+        std::cerr << "./bot <password of server> <Port> <IP of server>" << std::endl;
+        return 1;
+    }
     int boot_fd = socket(AF_INET, SOCK_STREAM, 0);
-    
     sockaddr_in server_data;
     server_data.sin_family = AF_INET;
     server_data.sin_port = htons(port);
     server_data.sin_addr.s_addr = inet_addr(ip);
+    
     if (connect(boot_fd, (const struct sockaddr *)&server_data, sizeof(sockaddr_in)) < 0)
     {
         std::cerr << "Connection failed" << std::endl;
@@ -80,10 +83,10 @@ int main(int ac,char **av)
     {
         std::string recv_msg =  buffer;
         std::string sender;        
-        //pass 462  461 464 // 431 433
-        if (recv_msg.find(" 462") != std::string::npos || recv_msg.find(" 461") != std::string::npos || recv_msg.find(" 464 ") != std::string::npos|| recv_msg.find(" 431") != std::string::npos|| recv_msg.find(" 431") != std::string::npos|| recv_msg.find(" 433") != std::string::npos) 
+        if (recv_msg.find(" 462 ") != std::string::npos || recv_msg.find(" 461 ") != std::string::npos 
+        || recv_msg.find(" 464 ") != std::string::npos || recv_msg.find(" 431 ") != std::string::npos 
+        || recv_msg.find(" 431 ") != std::string::npos|| recv_msg.find(" 433 ") != std::string::npos)
         {
-            
             std::cerr << "error failed connection"  << "recv_msg " << recv_msg <<std::endl;
             return 1;
         }
@@ -105,8 +108,6 @@ int main(int ac,char **av)
             std::cout << "to_send -> [" << to_send << "]"<<std::endl;
             
             send(boot_fd, to_send.c_str(), to_send.length(), 0);
-            // get_message(recv_msg);
-
     }
     else if(1) 
     {

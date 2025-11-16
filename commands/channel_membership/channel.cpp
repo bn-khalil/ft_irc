@@ -14,6 +14,7 @@ Channel::Channel(std::string name) : Channel_name(name)
     this->topicRestriction = true;
     this->channelTopic = "";
     this->time_creat_channel = time(0);
+    this->channelActiveModes = "+t";
 }
 Channel::Channel() : Channel_name("Default_Channel_name")
 {
@@ -50,6 +51,18 @@ std::string Channel::getNamesList()
 
 bool Channel::getTopicRestriction() {
     return this->topicRestriction;
+}
+
+bool Channel::getisLimited() {
+    return this->isLimited;
+}
+
+bool Channel::getIsKeySet() {
+    return this->isKeySet;
+}
+
+bool Channel::getIsInviteOnly() {
+    return this->isInviteOnly;
 }
 
 void Channel::Add_to_admin(Client &c)
@@ -188,4 +201,15 @@ void Channel::broadcastExpectSender(const std::string &msg, Client &sender)
 size_t Channel::get_number_of_users()
 {
     return (users.size());
+}
+
+void Channel::setChannelActiveModes(std::string modes) {
+    this->channelActiveModes = modes;
+}
+std::string  Channel::getChannelActiveModes() {
+    return this->channelActiveModes;
+}
+
+time_t Channel::getCreationTime() {
+    return this->time_creat_channel;
 }

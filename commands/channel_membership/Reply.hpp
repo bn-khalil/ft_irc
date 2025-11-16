@@ -65,11 +65,14 @@ class Reply
 		std::string ERR_NICKNOTFOUND(const std::string& nick, const std::string& otherNick);
 
 		std::string RPL_MODEOPTIONS(const std::string & prefix, const std::string& channel, const std::string& modes);
+    	std::string RPL_CHANNELCREATIONTIME(const std::string& nick, const std::string& time, const std::string & channel);
+    	std::string RPL_CHANNELACTIVEMODES(const std::string& nick, const std::string& modes, const std::string & channel);
 
 		// --- PRIVMSG ----
 		std::string ERR_NORECIPIENT(const std::string & nick);
 		std::string ERR_NOTEXTSEND(const std::string & nick);
 		std::string RPL_PRIVMSG(const std::string & prefix, const std::string & nick , const std::string & message);
+
 
 };
 

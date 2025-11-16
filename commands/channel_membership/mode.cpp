@@ -158,6 +158,19 @@ void Channel::popClientFromOperatorList(const std::string &nickname) {
     this->operators_.erase(nickname);
 }
 
+std::string Channel::removeDuplicate(const std::string &s) {
+    std::set<char> eles;
+    std::string result;
+
+    for (size_t i = 0; i < s.size(); ++i) {
+        if (eles.find(s[i]) == eles.end()) {
+            eles.insert(s[i]);
+            result += s[i];
+        }
+    }
+    return result;
+}
+
 void Server::mode(Client &c) {
     std::vector<modes_t> modes;
     std::map<std::string, Channel>::iterator it_channel = this->channel.end();
@@ -184,7 +197,28 @@ void Server::mode(Client &c) {
         if (!isChannelExist(it_channel, cmds, c))
             return;
         else {
-            // print channel info
+            std::string modes = "+";
+            if (it_channel->second.getIsInviteOnly())
+                modes += "i";
+            if (it_channel->second.getTopicRestriction())
+                modes += "t";
+            if (it_channel->second.getisLimited())
+                modes += "l";
+            if (it_channel->second.getIsKeySet())
+                modes += "k";
+
+            if (it_channel->second.getisLimited()) {
+                std::stringstream n_obj;
+                n_obj << it_channel->second.get_num_limite();
+                modes += " " + n_obj.str();
+            }
+            if (it_channel->second.getIsKeySet())
+                modes += " " + it_channel->second.Get_key();
+
+            std::stringstream s_object;
+            s_object <<  it_channel->second.getCreationTime();
+            sendReply(c, error.RPL_CHANNELACTIVEMODES(c.get_nickname(), modes, it_channel->second.get_channel_name()));
+            sendReply(c, error.RPL_CHANNELCREATIONTIME(c.get_nickname(), s_object.str(), it_channel->second.get_channel_name()));
         }
     }
     else {
@@ -219,21 +253,21 @@ void Server::mode(Client &c) {
         }
         
         if (!sortModesPlus.empty())
-            sortModesPlus = "+" + sortModesPlus;
+            sortModesPlus = it_channel->second.removeDuplicate("+" + sortModesPlus);
         if (!sortModesMinus.empty())
-            sortModesMinus = "-" + sortModesMinus;
+            sortModesMinus = it_channel->second.removeDuplicate("-" + sortModesMinus);
             
         seccessModes[0] = sortModesMinus + sortModesPlus;
-        
+
         for (size_t i = 0; i < seccessModes.size(); i++) {
             sortModes = sortModes + seccessModes[i];
             if (i < seccessModes.size() - 1)
                 sortModes += " ";
         }
-
-        if (!sortModes.empty())
+        if (!sortModes.empty()) {
             it_channel->second.broadcast(error.RPL_MODEOPTIONS(c.get_Prefix(), 
                                           it_channel->second.get_channel_name(), sortModes));
+        }
     }
     modes.clear();
 }

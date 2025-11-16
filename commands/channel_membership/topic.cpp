@@ -31,8 +31,14 @@ void  Server::topic(Client &c) {
     } 
     else {
 
-        std::string topic = args[args.size() - 1];
-
+        int dotsIndex = command.find(":");
+        std::string topic;
+        std::cout << dotsIndex << std::endl;
+        if (dotsIndex < 0)
+            topic = args[args.size() - 1];
+        else
+            topic = command.substr(dotsIndex + 1);
+        
         std::map<std::string,Channel>::iterator it = this->channel.find(args[1]);
 
         if (it == channel.end()) {

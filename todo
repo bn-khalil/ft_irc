@@ -98,3 +98,22 @@ privmsg nm      hello sd
 @REM pass 12
 @REM user a a a a
 @REM nick bn
+
+
+@REM topic #bn :this is nsf           
+@REM :bn!~a@197.230.30.146 TOPIC #bn :this is nsf
+@REM  :this is nsf           
+@REM :stockholm.se.quakenet.org 421 bn is :Unknown command
+@REM topic #bn this sd : hello agailn
+@REM :bn!~a@197.230.30.146 TOPIC #bn : hello agailn
+
+@REM mode #bn
+@REM :stockholm.se.quakenet.org 324 bn #bn +tnCN 
+@REM :stockholm.se.quakenet.org 329 bn #bn 1763280840
+
+@REM duplication of modes printed
+
+@REM mode #bn -ti+t-i
+@REM sd!~a@0.0.0.0 #bn -iit+t
+
+@REM sd!~a@0.0.0.0 #sd +i

@@ -2,13 +2,15 @@
 #define CHANNEL_HPP
 
 #include <cstddef>
+#include <ctime>
 #include <map>
+#include <set>
 #include <vector>
 #include <cstdlib>
 #include <sys/socket.h>
 #include "../../server/Server.hpp"
 #include "../../server/Client.hpp"
-
+#include <sstream>
 
 class Channel 
 {
@@ -19,6 +21,7 @@ class Channel
         std::map<std::string, Client*> invite;
         std::string key;
         std::string channelTopic;
+        std::string channelActiveModes;
         bool isKeySet;
         bool isInviteOnly;
         bool limit;
@@ -63,6 +66,14 @@ class Channel
         bool isUserInChannel(Client &c);
         void removeClientFromOneChannels(Client &c);
         size_t get_number_of_users();
+        std::string removeDuplicate(const std::string &s);
+        void setChannelActiveModes(std::string modes);
+        std::string getChannelActiveModes();
+        time_t getCreationTime();
+        bool getisLimited();
+        bool getIsKeySet();
+        bool getIsInviteOnly();
+
 };
 
 #endif

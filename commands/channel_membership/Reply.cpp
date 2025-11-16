@@ -206,3 +206,11 @@ std::string Reply::ERR_NICKNAMEINUSE(std::string nick, std::string used_nick, st
 {
     return ":" + server_name + " 433 " + nick + " " + used_nick + " " + command;
 }
+std::string Reply::RPL_CHANNELCREATIONTIME(const std::string& nick, const std::string& time, const std::string & channel)
+{
+    return ":" + server_name + " 333 " + nick + " " + channel + " " + time;
+}
+std::string Reply::RPL_CHANNELACTIVEMODES(const std::string& nick, const std::string& modes, const std::string & channel)
+{
+    return ":" + server_name + " 324 " + nick + " " + channel + " " + modes;
+}

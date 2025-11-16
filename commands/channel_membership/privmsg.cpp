@@ -14,6 +14,13 @@ void Server::privmsg(Client &c) {
     
     std::vector<std::string> args = new_splite(command, ' ');
 
+    int dotsIndex = command.find(":");
+    std::string message;
+    if (dotsIndex < 0)
+        message = args[args.size() - 1];
+    else
+        message = command.substr(dotsIndex + 1);
+
     if (args.size() <= 1)
         sendReply(c, error.ERR_NORECIPIENT(c.get_nickname()));
     else if (args.size() == 2)
@@ -31,7 +38,7 @@ void Server::privmsg(Client &c) {
                 return;
             }
             sendReply(*rcvClient, error.RPL_PRIVMSG(c.get_Prefix(),
-                      rcvClient->get_nickname(), args[args.size() - 1]));
+                      rcvClient->get_nickname(), message));
         } else {
             std::map<std::string, Channel>::iterator it = this->channel.find(rcvNick);
             
@@ -42,8 +49,7 @@ void Server::privmsg(Client &c) {
             if (rcvNick[0] == '&')
                 return;
                 
-            it->second.broadcastExpectSender(error.RPL_PRIVMSG(c.get_Prefix(), 
-                                              it->second.get_channel_name(), args[args.size() - 1]), c);
+        it->second.broadcastExpectSender(error.RPL_PRIVMSG(c.get_Prefix(), it->second.get_channel_name(), message), c);
         }
     }
 }

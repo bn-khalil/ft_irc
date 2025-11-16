@@ -26,14 +26,36 @@ int Server::ReadClientMessage(std::string &line)
     (void)line;
     return 0;
 }
+bool isValidNickname(const std::string& nick)
+{
+
+    if (nick.empty())
+    {
+        return false; 
+    }
+
+    std::string forbiddenStartChars = "$:#&";
+    
+    if (forbiddenStartChars.find(nick[0]) != std::string::npos)
+        return false;
+
+    std::string forbiddenChars = " ,*?!@";
+
+    if (nick.find_first_of(forbiddenChars) != std::string::npos)
+        return false;
+    
+    return true;
+}
 
 void Server::NickCmd(Client &client, std::string nick_arg)
 {
-    // parse the nick name  --> ERR_ERRONEUSNICKNAME 432   "<client> <nick> :Erroneus nickname"
     if (client.GetIsSetPass() == false)
     {
         sendReply(client, error.ERR_PASSWDMISMATCH(client.get_nickname(),":Password not set"));
         return;
+    }
+    else if (!isValidNickname(nick_arg)){
+        sendReply(client, error.ERR_ERRONEUSNICKNAME(client.get_nickname(),nick_arg,":Erroneus nickname"));
     }
     else if (nick_arg.empty())
     {

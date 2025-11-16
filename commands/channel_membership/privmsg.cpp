@@ -33,7 +33,7 @@ void Server::privmsg(Client &c) {
             sendReply(*rcvClient, error.RPL_PRIVMSG(c.get_Prefix(),
                       rcvClient->get_nickname(), args[args.size() - 1]));
         } else {
-            std::map<std::string, Channel *>::iterator it = this->channel.find(rcvNick);
+            std::map<std::string, Channel>::iterator it = this->channel.find(rcvNick);
             
             if (it == this->channel.end()) {
                 sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), rcvNick));
@@ -42,8 +42,8 @@ void Server::privmsg(Client &c) {
             if (rcvNick[0] == '&')
                 return;
                 
-            it->second->broadcastExpectSender(error.RPL_PRIVMSG(c.get_Prefix(), 
-                                              it->second->get_channel_name(), args[args.size() - 1]), c);
+            it->second.broadcastExpectSender(error.RPL_PRIVMSG(c.get_Prefix(), 
+                                              it->second.get_channel_name(), args[args.size() - 1]), c);
         }
     }
 }

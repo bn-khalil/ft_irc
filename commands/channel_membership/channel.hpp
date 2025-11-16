@@ -35,6 +35,7 @@ class Channel
         std::string get_channel_name() { return Channel_name; };
 
         Channel(std::string name);
+        Channel();
         void Add_to_admin(Client &c);
         void Add_to_user(Client &c);
         void Add_to_invite(Client &c);

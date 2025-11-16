@@ -6,9 +6,9 @@ static bool isChannelModes(char m) {
     return false;
 }
 
-bool Server::isChannelExist(std::map<std::string, Channel*>::iterator &it_channel, 
+bool Server::isChannelExist(std::map<std::string, Channel>::iterator &it_channel, 
                             std::vector<std::string> cmds, Client &c) {
-    std::map<std::string, Channel*>::iterator it = this->channel.find(cmds[1]);
+    std::map<std::string, Channel>::iterator it = this->channel.find(cmds[1]);
     if (it == channel.end()) {
         sendReply(c, this->error.ERR_NOSUCHCHANNEL(c.get_nickname(), cmds[1]));
         return false;
@@ -19,7 +19,7 @@ bool Server::isChannelExist(std::map<std::string, Channel*>::iterator &it_channe
 
 std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds, 
                                         Client &c, 
-                                        const std::map<std::string, Channel*>::iterator &it_channel) {
+                                        const std::map<std::string, Channel>::iterator &it_channel) {
     std::vector<modes_t> modesWithInfo;
 
     if (cmds.size() <= 2)
@@ -48,10 +48,10 @@ std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds,
                         std::string modeWithFlag(1, modes[i]);
                         if (modes[i] == 'k')
                             sendReply(c, error.ERR_NEEDMODEPARM(c.get_nickname(), 
-                                      it_channel->second->get_channel_name(), modeWithFlag, "Not enough parameters"));
+                                      it_channel->second.get_channel_name(), modeWithFlag, "Not enough parameters"));
                         else if (modes[i] == 'l')
                             sendReply(c, error.ERR_NEEDMODEPARM(c.get_nickname(), 
-                                      it_channel->second->get_channel_name(), modeWithFlag, "Not enough parameters"));
+                                      it_channel->second.get_channel_name(), modeWithFlag, "Not enough parameters"));
                         else if (modes[i] == 'o')
                             ;
                         continue;
@@ -160,7 +160,7 @@ void Channel::popClientFromOperatorList(const std::string &nickname) {
 
 void Server::mode(Client &c) {
     std::vector<modes_t> modes;
-    std::map<std::string, Channel*>::iterator it_channel = this->channel.end();
+    std::map<std::string, Channel>::iterator it_channel = this->channel.end();
     std::vector<std::string> seccessModes;
     std::string sortModes;
     std::string sortModesPlus;
@@ -190,9 +190,9 @@ void Server::mode(Client &c) {
     else {
         if (!isChannelExist(it_channel, cmds, c))
             return;
-        if (!it_channel->second->isClientOperator(c)) {
+        if (!it_channel->second.isClientOperator(c)) {
             sendReply(c, error.ERR_NOTCHANNELOPERATO(c.get_nickname(),
-                      it_channel->second->get_channel_name()));
+                      it_channel->second.get_channel_name()));
             return;
         }
         seccessModes.push_back("");
@@ -201,7 +201,7 @@ void Server::mode(Client &c) {
             return;
             
         for (size_t i = 0; i < modes.size(); i++) {
-            if (it_channel->second->modeExecuter(modes[i], c, *this)) {
+            if (it_channel->second.modeExecuter(modes[i], c, *this)) {
                 if (modes[i].param.empty()) {
                     if (modes[i].sing)
                         sortModesPlus = modes[i].mode + sortModesPlus;
@@ -232,8 +232,8 @@ void Server::mode(Client &c) {
         }
 
         if (!sortModes.empty())
-            it_channel->second->broadcast(error.RPL_MODEOPTIONS(c.get_Prefix(), 
-                                          it_channel->second->get_channel_name(), sortModes));
+            it_channel->second.broadcast(error.RPL_MODEOPTIONS(c.get_Prefix(), 
+                                          it_channel->second.get_channel_name(), sortModes));
     }
     modes.clear();
 }

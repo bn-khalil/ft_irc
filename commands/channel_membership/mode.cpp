@@ -1,4 +1,5 @@
 #include "channel.hpp"
+#include <cstddef>
 
 static bool isChannelModes(char m) {
     if (m == 'i' || m == 'o' || m == 'k' || m == 't' || m == 'l')
@@ -17,6 +18,12 @@ bool Server::isChannelExist(std::map<std::string, Channel>::iterator &it_channel
     return true;
 }
 
+// static std::vector<std::string> checkdots(std::vector<std::string> cmds){
+//       for (size_t indexParam = 0; indexParam < cmds.size();indexParam++) {
+        
+//       }
+// }
+
 std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds, 
                                         Client &c, 
                                         const std::map<std::string, Channel>::iterator &it_channel) {
@@ -30,7 +37,6 @@ std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds,
 
     for (; indexParam < cmds.size();) {
         std::string modes = cmds[indexParam];
-
         for (size_t i = 0; i < modes.size(); i++) {
             if (modes[i] == '+')
                 sing = true;
@@ -44,6 +50,11 @@ std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds,
                     indexParam++;
                     if (indexParam < cmds.size()) {
                         currentMode.param = cmds[indexParam];
+                        if (cmds[indexParam][0] == ':') {
+                            currentMode.param = cmds[indexParam].substr(1);
+                            while (indexParam < cmds.size())
+                                indexParam++;
+                        }
                     } else {
                         std::string modeWithFlag(1, modes[i]);
                         if (modes[i] == 'k')

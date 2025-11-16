@@ -33,7 +33,6 @@ void  Server::topic(Client &c) {
 
         int dotsIndex = command.find(":");
         std::string topic;
-        std::cout << dotsIndex << std::endl;
         if (dotsIndex < 0)
             topic = args[args.size() - 1];
         else

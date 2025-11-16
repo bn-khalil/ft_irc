@@ -1,4 +1,5 @@
 #include "channel.hpp"
+#include <cstddef>
 
 void Server::privmsg(Client &c) {
     std::string command = c.getlineCmd();
@@ -26,30 +27,42 @@ void Server::privmsg(Client &c) {
     else if (args.size() == 2)
         sendReply(c, error.ERR_NOTEXTSEND(c.get_nickname()));
     else {
-        std::string rcvNick = args[1];
-        bool isChannel = false;
-        if (!rcvNick.empty() && (rcvNick[0] == '#' || rcvNick[0] == '&'))
-            isChannel = true;
-            
-        if (!isChannel) {
-            Client *rcvClient = find_client_by_nickname(rcvNick);
-            if (!rcvClient) {
-                sendReply(c, error.ERR_NOSUCHNICK(c.get_nickname(), rcvNick));
-                return;
+        std::vector<std::string> multi_users_or_channels = Channel::splite_coma(args[1], ',');
+        for (size_t i = 0; i < multi_users_or_channels.size(); i++) {
+            std::string rcvNick = multi_users_or_channels[i];
+            size_t j = 0;
+            bool duplicate = false;
+            while (j < i) {
+                if (multi_users_or_channels[j] == multi_users_or_channels[i])
+                    duplicate = true;
+                j++;
             }
-            sendReply(*rcvClient, error.RPL_PRIVMSG(c.get_Prefix(),
-                      rcvClient->get_nickname(), message));
-        } else {
-            std::map<std::string, Channel>::iterator it = this->channel.find(rcvNick);
-            
-            if (it == this->channel.end()) {
-                sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), rcvNick));
-                return;
-            }
-            if (rcvNick[0] == '&')
-                return;
+            if (duplicate)
+                continue;
+            bool isChannel = false;
+            if (!rcvNick.empty() && (rcvNick[0] == '#' || rcvNick[0] == '&'))
+                isChannel = true;
                 
-        it->second.broadcastExpectSender(error.RPL_PRIVMSG(c.get_Prefix(), it->second.get_channel_name(), message), c);
+            if (!isChannel) {
+                Client *rcvClient = find_client_by_nickname(rcvNick);
+                if (!rcvClient) {
+                    sendReply(c, error.ERR_NOSUCHNICK(c.get_nickname(), rcvNick));
+                    return;
+                }
+                sendReply(*rcvClient, error.RPL_PRIVMSG(c.get_Prefix(),
+                        rcvClient->get_nickname(), message));
+            } else {
+                std::map<std::string, Channel>::iterator it = this->channel.find(rcvNick);
+                
+                if (it == this->channel.end()) {
+                    sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), rcvNick));
+                    return;
+                }
+                if (rcvNick[0] == '&')
+                    return;
+
+                it->second.broadcastExpectSender(error.RPL_PRIVMSG(c.get_Prefix(), it->second.get_channel_name(), message), c);
+            }
         }
     }
 }

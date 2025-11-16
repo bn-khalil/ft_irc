@@ -117,3 +117,18 @@ privmsg nm      hello sd
 @REM sd!~a@0.0.0.0 #bn -iit+t
 
 @REM sd!~a@0.0.0.0 #sd +i
+
+@mode #mn l-k :12 sdf :12
+
+
+mode #mn k :321k1f
+:sn!~a@197.230.30.146 MODE #mn +k 321k1f
+mode #mn -k :321k1f
+:sn!~a@197.230.30.146 MODE #mn -k 321k1f
+mode #mn k :321k1f sdf sd
+:sn!~a@197.230.30.146 MODE #mn +k 321k1f
+mode #mn l :1 2 3
+:sn!~a@197.230.30.146 MODE #mn +l 1
+mode #mn l-k :321k1f 12
+:adrift.sg.quakenet.org 461 sn MODE -k :Not enough parameters
+:sn!~a@197.230.30.146 MODE #mn +l 321

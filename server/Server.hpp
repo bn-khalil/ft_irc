@@ -48,7 +48,7 @@ class Server
 
     public:
     
-		std::map<std::string,Channel*> channel;
+		std::map<std::string,Channel> channel;
         Reply   error;
         Channel *chan;
 
@@ -70,13 +70,12 @@ class Server
         void join_all_channel(Client &c);
         Client *find_client_by_nickname(std::string nick);
        std::vector<std::string>  new_splite(std::string &strr, char d);
-       bool isChannelExist(std::map<std::string,Channel*>::iterator & it_channel, 
+       bool isChannelExist(std::map<std::string,Channel>::iterator & it_channel, 
         std::vector<std::string> cmds, Client &c);
         std::vector<modes_t> parseModes(std::vector<std::string> cmds, 
         Client &c, 
-        const std::map<std::string,Channel*>::iterator & it_channel) ;
+        const std::map<std::string,Channel>::iterator & it_channel) ;
        std::vector<std::string> isUserInvited_to_channel(Client &c);
-        bool the_boot_alone_in_channel(Client &Client);
 
         ~Server();
 };

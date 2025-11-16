@@ -47,33 +47,33 @@ void Server::kick(Client &c)
         return;
     }
 
-    std::map<std::string, Channel *>::iterator it = channel.find(one_channel);
+    std::map<std::string, Channel>::iterator it = channel.find(one_channel);
     if (one_channel.length() < 2 || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || it == channel.end())
     {
         sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), one_channel));
         return;
     }
 
-    Channel *real_one = it->second;
+    Channel &real_one = it->second;
 
-    if (!real_one->isUserInChannel(c))
+    if (!real_one.isUserInChannel(c))
     {
         sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(), one_channel));
         return;
     }
 
-    if (!real_one->isUserInChannel(*client_to_kick))
+    if (!real_one.isUserInChannel(*client_to_kick))
     {
         sendReply(c, error.ERR_USERNOTINCHANNEL(c.get_nickname(), name_c_to_kick, one_channel));
         return;
     }
 
-    if (real_one->isClientOperator(c) == false)
+    if (real_one.isClientOperator(c) == false)
     {
         sendReply(c, error.ERR_CHANOPRIVSNEEDED(c.get_nickname(), one_channel));
         return;
     }
 
-    real_one->broadcast(error.MSG_KICK(c.get_Prefix(), real_one->get_channel_name(), name_c_to_kick, reason));
-    real_one->removeClientFromOneChannels(*client_to_kick);
+    real_one.broadcast(error.MSG_KICK(c.get_Prefix(), real_one.get_channel_name(), name_c_to_kick, reason));
+    real_one.removeClientFromOneChannels(*client_to_kick);
 }

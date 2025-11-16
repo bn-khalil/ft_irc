@@ -28,28 +28,28 @@ void Server::invit(Client &c)
             return;
         }
     
-        std::map<std::string, Channel*>::iterator it = channel.find(one_channel);
+        std::map<std::string, Channel>::iterator it = channel.find(one_channel);
         if (one_channel.length() < 2 || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || it == channel.end())
         {
              sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), one_channel));
              return;
         }
         
-        Channel *real_one = it->second;
+        Channel &real_one = it->second;
 
-        if (real_one->isUserInChannel(*client_invited) == true)
+        if (real_one.isUserInChannel(*client_invited) == true)
         {
             sendReply(c, error.ERR_USERONCHANNEL(c.get_nickname(), name_c_invited, one_channel));
             return;
         }
 
-        if (real_one->isClientOperator(c) == false)
+        if (real_one.isClientOperator(c) == false)
         {
             sendReply(c, error.ERR_CHANOPRIVSNEEDED(c.get_nickname(), one_channel));
             return;
         }
         
-        real_one->Add_to_invite(*client_invited);
+        real_one.Add_to_invite(*client_invited);
         sendReply(c, error.RPL_INVITING(c.get_nickname(), name_c_invited, one_channel));
         sendReply(*client_invited, error.MSG_INVITE(c.get_Prefix(), name_c_invited, one_channel));
     }

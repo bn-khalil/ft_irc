@@ -378,46 +378,27 @@ Server::Server(std::string &port, std::string &password)
 
 // -------------------------------------------------------------------CHANNEL_PART----------------------------------------------------------------------------------------------
 
-bool Server::the_boot_alone_in_channel(Client &Client)
-{
-    // if the user kick itself rm habo lboot
-    std::map<std::string, Channel*>::iterator it = channel.begin();
-    Channel *ch = it->second;
-    if (ch->get_number_of_users() == 1 && Client.get_nickname() == "SKHAYTI!")
-        return true;
-    return false;
-}
-
 void Server::removeClientFromAllChannels(Client &c)
 {
     std::vector<std::string> channel_to_leave;
-    std::map<std::string, Channel *>::iterator it = this->channel.begin();
+    std::map<std::string, Channel>::iterator it = this->channel.begin();
     while (it != this->channel.end())
     {
-        Channel *ch = it->second;
-        if (ch->isUserInChannel(c))
-            channel_to_leave.push_back(ch->get_channel_name());
+        Channel ch = it->second;
+        if (ch.isUserInChannel(c))
+            channel_to_leave.push_back(ch.get_channel_name());
         it++;
     }
     for (size_t i = 0; i < channel_to_leave.size(); i++)
     {
-        std::map<std::string, Channel*>::iterator it1 = channel.find(channel_to_leave[i]);
+        std::map<std::string, Channel>::iterator it1 = channel.find(channel_to_leave[i]);
         if (it1 == channel.end())
             continue;
-        Channel *chan = it1->second;
-        chan->broadcast(error.MSG_PART(c.get_Prefix(), chan->get_channel_name(), "Left all channels"));
-        chan->rm_user_from_channel(c);
-        if (chan->isEmpty() == true)
-        {
+        Channel chan = it1->second;
+        chan.broadcast(error.MSG_PART(c.get_Prefix(), chan.get_channel_name(), "Left all channels"));
+        chan.rm_user_from_channel(c);
+        if (chan.isEmpty() == true)
             channel.erase(it1);
-            delete chan;
-        }
-        if (the_boot_alone_in_channel(c))
-        {
-            chan->rm_user_from_channel(c);
-            channel.erase(it1);
-            delete chan;
-        }
     }
 }
 
@@ -456,12 +437,12 @@ std::vector<std::string> Server::new_splite(std::string &strr, char d)
 
 std::vector<std::string> Server::isUserInvited_to_channel(Client &c)
 {
-    std::map<std::string, Channel*>::iterator it = channel.begin();
+    std::map<std::string, Channel>::iterator it = channel.begin();
     std::vector<std::string> all_channel;
     while (it != channel.end())
     {
-        Channel *ch = it->second;
-        if (ch->isInvited(c))
+        Channel ch = it->second;
+        if (ch.isInvited(c))
             all_channel.push_back(it->first);
         it++;
     }
@@ -470,9 +451,9 @@ std::vector<std::string> Server::isUserInvited_to_channel(Client &c)
 
 void Server::join_all_channel(Client &c)
 {
-    for (std::map<std::string, Channel*>::iterator it = channel.begin(); it != channel.end(); it++)
+    for (std::map<std::string, Channel>::iterator it = channel.begin(); it != channel.end(); it++)
     {
-        Channel *ch = it->second;
-        ch->Add_to_user(c);
+        Channel ch = it->second;
+        ch.Add_to_user(c);
     }
 }

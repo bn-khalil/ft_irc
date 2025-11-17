@@ -324,6 +324,7 @@ void Server::GetClientEvents()
                 else if (bytes_read == 0)
                 {
                     std::cout << "client number " << poll_fds[i].fd << " disconnect" << std::endl;
+                    removeClientFromAllChannels(client);
                     close(poll_fds[i].fd);
                     ClientsInfo.erase(poll_fds[i].fd);
                     poll_fds.erase(poll_fds.begin() + i);
@@ -437,6 +438,10 @@ void Server::sendReply(Client &c, std::string msg)
     if (send(c.getfd(), full_msg.c_str(), full_msg.length(), 0) <= -1)
     {
         std::cerr << "Client Disconnected" << std::endl;
+        removeClientFromAllChannels(c);
+        close(c.getfd());
+        ClientsInfo.erase(c.getfd());
+        poll_fds.erase(poll_fds.begin());
     }
 }
 

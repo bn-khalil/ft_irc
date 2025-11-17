@@ -64,7 +64,7 @@ std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds,
                 }
                 modesWithInfo.push_back(currentMode);
             } else
-                sendReply(c, error.ERR_INVALIDMODEPARM(c.get_nickname(), modes[i]));
+                sendReply(c, error.ERR_UNKNOWNMODE(c.get_nickname(), modes[i]));
         }
         indexParam++;
     }

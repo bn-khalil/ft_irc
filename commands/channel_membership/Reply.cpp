@@ -159,7 +159,7 @@ std::string Reply::ERR_KEYALREADYSET(const std::string& nick, const std::string&
     return ":" + server_name + " 467 " + nick + " " + channel + " :Channel key already set";
 }
 
-std::string Reply::ERR_INVALIDMODEPARM(const std::string& nick, char mode)
+std::string Reply::ERR_UNKNOWNMODE(const std::string& nick, char mode)
 {
     std::string m(1, mode);
     return ":" + server_name + " 472 " + nick + " " + m + " :is unknown mode char to me";

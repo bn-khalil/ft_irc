@@ -52,7 +52,7 @@ void  Server::topic(Client &c) {
         }
 
         if (!it->second.isClientOperator(c) && it->second.getTopicRestriction()) {
-            sendReply(c, this->error.ERR_NOTCHANNELOPERATO(c.get_nickname(), it->second.get_channel_name()));
+            sendReply(c, this->error.ERR_CHANOPRIVSNEEDED(c.get_nickname(), it->second.get_channel_name()));
             return ;
         }
     

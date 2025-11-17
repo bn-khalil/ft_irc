@@ -27,7 +27,6 @@ class Reply
     	std::string ERR_NOTONCHANNEL(const std::string& nick, const std::string& channel);
     	std::string ERR_NOT_REGESTRED(const std::string& nick);
 		std::string ERR_UNKNOWNCOMMAND_N(const std::string &nick, const std::string & command);
-		std::string ERR_NOTCHANNELOPERATO(const std::string &nick, const std::string & channel);
 		std::string ERR_NOT_REGESTRED(const std::string &nick, const std::string & channel);
 		std::string ERR_INPUTTOOLONG(const std::string & nick);
 
@@ -68,8 +67,8 @@ class Reply
 		std::string ERR_NICKNOTFOUND(const std::string& nick, const std::string& otherNick);
 
 		std::string RPL_MODEOPTIONS(const std::string & prefix, const std::string& channel, const std::string& modes);
-    	std::string RPL_CHANNELCREATIONTIME(const std::string& nick, const std::string& time, const std::string & channel);
-    	std::string RPL_CHANNELACTIVEMODES(const std::string& nick, const std::string& modes, const std::string & channel);
+    	std::string  RPL_CREATIONTIME (const std::string& nick, const std::string& time, const std::string & channel);
+    	std::string  RPL_CHANNELMODEIS(const std::string& nick, const std::string& modes, const std::string & channel);
 
 		// --- PRIVMSG ----
 		std::string ERR_NORECIPIENT(const std::string & nick);

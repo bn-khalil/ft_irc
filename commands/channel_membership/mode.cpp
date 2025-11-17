@@ -226,15 +226,19 @@ void Server::mode(Client &c) {
 
             std::stringstream s_object;
             s_object <<  it_channel->second.getCreationTime();
-            sendReply(c, error.RPL_CHANNELACTIVEMODES(c.get_nickname(), modes, it_channel->second.get_channel_name()));
-            sendReply(c, error.RPL_CHANNELCREATIONTIME(c.get_nickname(), s_object.str(), it_channel->second.get_channel_name()));
+            sendReply(c, error. RPL_CHANNELMODEIS(c.get_nickname(), modes, it_channel->second.get_channel_name()));
+            sendReply(c, error. RPL_CREATIONTIME (c.get_nickname(), s_object.str(), it_channel->second.get_channel_name()));
         }
     }
     else {
         if (!isChannelExist(it_channel, cmds, c))
             return;
+        if (!it_channel->second.isUserInChannel(c)) {
+            sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(),it_channel->second.get_channel_name()));
+            return;
+        }
         if (!it_channel->second.isClientOperator(c)) {
-            sendReply(c, error.ERR_NOTCHANNELOPERATO(c.get_nickname(),
+            sendReply(c, error.ERR_CHANOPRIVSNEEDED(c.get_nickname(),
                       it_channel->second.get_channel_name()));
             return;
         }

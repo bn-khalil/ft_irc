@@ -144,5 +144,16 @@ privmsg nm      hello sd
 @REM :tngnet.nl.quakenet.org 417 sb :Input line was too long
 
 
-
+1
 @REM nick name parsing
+
+2
+@REM ctl^c quit client from a channel should brodcast
+@REM :bn!~a@197.230.30.146 QUIT :EOF from client
+
+3
+@REM ctl^d should broadcast for channels that client joind 
+@REM ERROR :Closing Link: sd by atw.hu.quakenet.org (EOF from client)
+
+4
+@REM ➜  create a channel and quite let the server running and reconnect with same old client nickname than join the same channel 

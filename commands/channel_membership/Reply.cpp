@@ -40,10 +40,6 @@ std::string Reply::ERR_UNKNOWNCOMMAND_N(const std::string &nick, const std::stri
     return ":*." + server_name + " 421 " + nick + " " + command + " :Unknown command";
 }
 
-std::string Reply::ERR_NOTCHANNELOPERATO(const std::string &nick, const std::string & channel) {
-    return ":*." + server_name + " 482 " + nick + " " + channel + " : You're not channel operator";
-}
-
 std::string Reply::RPL_MODEOPTIONS(const std::string & prefix, const std::string& channel, const std::string& modes) {
     return prefix + " " + channel + " " + modes;
 }
@@ -216,11 +212,11 @@ std::string Reply::ERR_ERRONEUSNICKNAME(std::string nick, std::string used_nick,
 {
     return ":" + server_name + " 433 " + nick + " " + used_nick + " " + command;
 }
-std::string Reply::RPL_CHANNELCREATIONTIME(const std::string& nick, const std::string& time, const std::string & channel)
+std::string Reply:: RPL_CREATIONTIME (const std::string& nick, const std::string& time, const std::string & channel)
 {
     return ":" + server_name + " 333 " + nick + " " + channel + " " + time;
 }
-std::string Reply::RPL_CHANNELACTIVEMODES(const std::string& nick, const std::string& modes, const std::string & channel)
+std::string Reply:: RPL_CHANNELMODEIS(const std::string& nick, const std::string& modes, const std::string & channel)
 {
     return ":" + server_name + " 324 " + nick + " " + channel + " " + modes;
 }

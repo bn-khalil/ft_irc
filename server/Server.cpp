@@ -7,6 +7,7 @@
 #include "../exception/SocketListenFailedException.hpp"
 #include "Client.hpp"
 #include <cstddef>
+#include <ctime>
 #include <iostream>
 #include <iterator>
 #include <sstream>
@@ -79,7 +80,7 @@ void Server::NickCmd(Client &client, std::string nick_arg)
     client.SetIsSetNick(true);
     if (client.GetIsSetuser() == true)
     {
-        std::cout << " authentication dazet nick set\n";
+        std::cout <<"hada -->" << client.get_nickname() << " authentication dazet nick set\n";
         client.Set_isAuthenticated(true);
     }
 }
@@ -170,7 +171,7 @@ void Server::PassCmd(Client &client, std::string password_arg)
     if (client.Get_isAuthenticated() == true)
     {
         sendReply(client, error.ERR_ALREADYREGISTERED(client.get_nickname(),":You may not reregister"));
-        client.SetIsSetPass(false);
+        // client.SetIsSetPass(false);
         return;
     }
     if (password_arg.empty())
@@ -221,7 +222,7 @@ void Server::UserCmd(Client &client, std::vector<std::string> &arg)
     client.set_username(userName);
     if (client.GetIsSetNick() == true)
     {
-        std::cout << " authentication dazet  \n";
+        std::cout <<"hada -->" << client.get_nickname() << " authentication dazet nick set\n";
         client.Set_isAuthenticated(true);
     }
 }
@@ -316,6 +317,7 @@ void Server::GetClientEvents()
                 else if (bytes_read == 0)
                 {
                     std::cout << "client number " << poll_fds[i].fd << " disconnect" << std::endl;
+                    removeClientFromAllChannels(client);
                     close(poll_fds[i].fd);
                     ClientsInfo.erase(poll_fds[i].fd);
                     poll_fds.erase(poll_fds.begin() + i);
@@ -323,6 +325,7 @@ void Server::GetClientEvents()
                 }
                 else
                 {
+
                 }
             }
         }

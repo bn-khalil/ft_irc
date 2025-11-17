@@ -121,14 +121,28 @@ privmsg nm      hello sd
 @mode #mn l-k :12 sdf :12
 
 
-mode #mn k :321k1f
-:sn!~a@197.230.30.146 MODE #mn +k 321k1f
-mode #mn -k :321k1f
-:sn!~a@197.230.30.146 MODE #mn -k 321k1f
-mode #mn k :321k1f sdf sd
-:sn!~a@197.230.30.146 MODE #mn +k 321k1f
-mode #mn l :1 2 3
-:sn!~a@197.230.30.146 MODE #mn +l 1
-mode #mn l-k :321k1f 12
-:adrift.sg.quakenet.org 461 sn MODE -k :Not enough parameters
-:sn!~a@197.230.30.146 MODE #mn +l 321
+@REM mode #mn k :321k1f
+@REM :sn!~a@197.230.30.146 MODE #mn +k 321k1f
+@REM mode #mn -k :321k1f
+@REM :sn!~a@197.230.30.146 MODE #mn -k 321k1f
+@REM mode #mn k :321k1f sdf sd
+@REM :sn!~a@197.230.30.146 MODE #mn +k 321k1f
+@REM mode #mn l :1 2 3
+@REM :sn!~a@197.230.30.146 MODE #mn +l 1
+@REM mode #mn l-k :321k1f 12
+@REM :adrift.sg.quakenet.org 461 sn MODE -k :Not enough parameters
+@REM :sn!~a@197.230.30.146 MODE #mn +l 321
+
+//
+
+@REM privmsg #bn hello
+@REM :tngnet.nl.quakenet.org 404 sb #bn :Cannot send to channel
+
+@REM :tngnet.nl.quakenet.org 366 sb #bn :End of /NAMES list.
+@REM privmsg #bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn sdf
+@REM privmsg #bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn ,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn ,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn ,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn ,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn he  
+@REM :tngnet.nl.quakenet.org 417 sb :Input line was too long
+
+
+
+@REM nick name parsing

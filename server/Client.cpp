@@ -36,5 +36,3 @@ std::string Client::    get_Prefix() const
 Client::~Client(void)
 {
 }
-
-// :bn!~SD@freenode-obu.d75.6g0qj4.IP TOPIC #b :new

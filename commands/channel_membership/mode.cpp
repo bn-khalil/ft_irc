@@ -18,12 +18,6 @@ bool Server::isChannelExist(std::map<std::string, Channel>::iterator &it_channel
     return true;
 }
 
-// static std::vector<std::string> checkdots(std::vector<std::string> cmds){
-//       for (size_t indexParam = 0; indexParam < cmds.size();indexParam++) {
-        
-//       }
-// }
-
 std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds, 
                                         Client &c, 
                                         const std::map<std::string, Channel>::iterator &it_channel) {
@@ -223,8 +217,12 @@ void Server::mode(Client &c) {
                 n_obj << it_channel->second.get_num_limite();
                 modes += " " + n_obj.str();
             }
-            if (it_channel->second.getIsKeySet())
-                modes += " " + it_channel->second.Get_key();
+            if (it_channel->second.getIsKeySet()) {
+                if (it_channel->second.isClientOperator(c))
+                    modes += " " + it_channel->second.Get_key();
+                else
+                    modes += " *";
+            }
 
             std::stringstream s_object;
             s_object <<  it_channel->second.getCreationTime();

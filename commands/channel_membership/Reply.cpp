@@ -171,9 +171,19 @@ std::string Reply::ERR_INVALIDMODEPARM(const std::string& nick, char mode)
 
 //------------------------------PRIVMSG error------------------------------------------------------
 
+std::string Reply::ERR_CANNOTSENDTOCHAN(const std::string & nick , const std::string & channel)
+{
+    return ":" + server_name + " 404 " + nick + " "  + channel + " :Cannot send to channel";
+}
+
 std::string Reply::ERR_NORECIPIENT(const std::string & nick) 
 {
     return ":" + server_name + " 411 " + nick + " :No recipient given (PRIVMSG)";
+}
+
+std::string Reply::ERR_INPUTTOOLONG(const std::string & nick) 
+{
+    return ":" + server_name + " 417 " + nick + " :Input line was too long";
 }
 
 std::string Reply::ERR_NOTEXTSEND(const std::string & nick) 
@@ -181,7 +191,7 @@ std::string Reply::ERR_NOTEXTSEND(const std::string & nick)
     return ":" + server_name + " 412 " + nick + " :No text to send";
 }
 
-std::string Reply::RPL_PRIVMSG(const std::string & prefix, const std::string & nick , const std::string & message) 
+std::string Reply::RPL_AWAY(const std::string & prefix, const std::string & nick , const std::string & message) 
 {
     return prefix + " PRIVMSG " + nick + " :" + message;
 }

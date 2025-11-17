@@ -236,6 +236,14 @@ std::string Server::toLower(std::string str)
 void Server::ParseCmd(Client &client)
 {
     std::vector<std::string> cmds;
+
+    // prompt line still append the new prompt to the old one which allways bigger that 512 
+
+    // if (client.getlineCmd().size() >= 512) {
+    //     sendReply(client, error.ERR_INPUTTOOLONG(client.get_nickname()));
+    //     return ;
+    // }
+    
     cmds = new_splite(client.getlineCmd(), ' ');
 
     if (cmds.size() == 0)

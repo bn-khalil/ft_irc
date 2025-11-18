@@ -3,6 +3,27 @@
 Reply::Reply() : server_name("ircserver42.com")
 {
 }
+std::string Reply::RPL_WELCOME(const std::string& nick, const std::string& user_prefix)
+{
+    return ":" + server_name + " 001 " + nick + " :Welcome to the Internet Relay Network " + user_prefix;
+}
+std::string Reply::RPL_YOURHOST(const std::string& nick)
+{
+    return ( ":" + server_name + " 002 " + nick + " :Your host is " + server_name + ", running version 1.0");
+}
+std::string Reply::RPL_CREATED(const std::string& nick, const std::string& creation_date)
+{
+    (void)creation_date;
+    return ":" + server_name + " 003 " + nick + " :This server was created " + "creation_date";
+}
+std::string Reply::RPL_MYINFO(const std::string& nick)
+{
+    std::string version = "1.0";
+    std::string user_modes = "i"; 
+    std::string channel_modes = "itkol";
+    std::string msg = ":" + server_name + " 004 " + nick + " " + server_name + " " + version + " " + user_modes + " " + channel_modes;
+    return msg;
+}
 
 std::string Reply::ERR_NEEDMOREPARAMS(std::string nick, std::string command)
 {

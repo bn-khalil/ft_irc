@@ -25,6 +25,7 @@ class Server
         int						serverId;
         std::string             password;
         bool                    isGetSignal;
+        std::string creation_date;
         socklen_t addr_len;
         sockaddr_in  serverConfig;
         std::vector<struct pollfd> poll_fds;
@@ -73,7 +74,7 @@ class Server
        std::vector<std::string>  new_splite(std::string &strr, char d);
        bool isChannelExist(std::map<std::string,Channel>::iterator & it_channel, 
         std::vector<std::string> cmds, Client &c);
-        std::vector<modes_t> parseModes(std::vector<std::string> cmds, 
+        std::vector<modes_t> parseModes(std::vector<std::string> cmds,  
         Client &c, 
         const std::map<std::string,Channel>::iterator & it_channel) ;
        std::vector<std::string> isUserInvited_to_channel(Client &c);
@@ -82,4 +83,4 @@ class Server
 };
 
 #endif
-	
+	 

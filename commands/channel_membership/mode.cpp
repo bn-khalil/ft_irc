@@ -288,7 +288,9 @@ void Server::mode(Client &c) {
             if (i < seccessModes.size() - 1)
                 sortModes += " ";
         }
+
         if (!sortModes.empty()) {
+            std::cout << error.RPL_MODEOPTIONS(c.get_Prefix(), it_channel->second.get_channel_name(), sortModes) << std::endl;
             it_channel->second.broadcast(error.RPL_MODEOPTIONS(c.get_Prefix(), 
             it_channel->second.get_channel_name(), sortModes));
         }

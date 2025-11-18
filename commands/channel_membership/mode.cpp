@@ -159,6 +159,8 @@ bool Channel::modeExecuter(modes_t &mode, Client &c, Server &server) {
             this->popClientFromOperatorList(nickName);
         else if (mode.sing && !isClientOperator(*client->second))
             this->Add_to_admin(*client->second);
+        else
+            return false;
     }
     return true;
 }

@@ -160,3 +160,9 @@ privmsg nm      hello sd
 
 5
 @REM 509:13 <qui> Error(442): #mm You're not on that channel
+
+6
+@REM in limechat when join channel
+
+7
+@REM [1]    6688 segmentation fault  ./ircserv 6667 12

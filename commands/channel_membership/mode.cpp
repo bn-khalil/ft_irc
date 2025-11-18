@@ -89,12 +89,16 @@ bool Channel::modeExecuter(modes_t &mode, Client &c, Server &server) {
             this->isInviteOnly = true;
         else if (!mode.sing && this->isInviteOnly)
             this->isInviteOnly = false;
+        else
+            return false;
     }
     else if (mode.mode == 't') {
         if (mode.sing && !this->topicRestriction)
             this->topicRestriction = true;
         else if (!mode.sing && this->topicRestriction)
             this->topicRestriction = false;
+        else 
+            return false;
     }
     else if (mode.mode == 'l') {
         if (!mode.sing) {
@@ -232,12 +236,11 @@ void Server::mode(Client &c) {
                     modes += " *";
             }
 
-            std::stringstream s_object;
-            s_object <<  it_channel->second.getCreationTime();
+
             sendReply(c, error. RPL_CHANNELMODEIS(c.get_nickname(), 
             modes, it_channel->second.get_channel_name()));
             sendReply(c, error. RPL_CREATIONTIME (c.get_nickname(), 
-            s_object.str(), it_channel->second.get_channel_name()));
+            it_channel->second.fromTime(it_channel->second.getCreationTime()), it_channel->second.get_channel_name()));
         }
     }
     else {

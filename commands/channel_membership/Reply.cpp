@@ -42,7 +42,7 @@ std::string Reply::ERR_UNKNOWNCOMMAND_N(const std::string &nick, const std::stri
 }
 
 std::string Reply::RPL_MODEOPTIONS(const std::string & prefix, const std::string& channel, const std::string& modes) {
-    return prefix + " " + channel + " " + modes;
+    return ":" + prefix + " " + channel + " " + modes;
 }
 
 //------------------------------JOIN error------------------------------------------------------
@@ -123,6 +123,10 @@ std::string Reply::RPL_TOPIC(const std::string& nick, const std::string& channel
     return ":" + server_name + " 332 " + nick + " " + channel + " :" + topic;
 }
 
+std::string Reply::RPL_TOPICREATED(const std::string& nick, const std::string& prefix, const std::string& topic)
+{
+    return ":" + prefix + " TOPIC " + nick + " :" + topic;
+}
 std::string Reply::RPL_NOTOPIC(const std::string& nick, const std::string& channel)
 {
     return ":" + server_name + " 331 " + nick + " " + channel + " :No topic is set";
@@ -190,7 +194,7 @@ std::string Reply::ERR_NOTEXTSEND(const std::string & nick)
 
 std::string Reply::RPL_AWAY(const std::string & prefix, const std::string & nick , const std::string & message) 
 {
-    return prefix + " PRIVMSG " + nick + " :" + message;
+    return ":" + prefix + " PRIVMSG " + nick + " :" + message;
 }
 
 std::string Reply::ERR_PASSWDMISMATCH(std::string nick, std::string command)

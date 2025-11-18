@@ -29,6 +29,7 @@ class Channel
         bool topicRestriction;
         unsigned int num_limite;
         time_t time_creat_channel;
+        time_t time_last_topic;
         
     public :
         std::map<std::string, Client*> get_operators_() { return operators_; };
@@ -73,6 +74,9 @@ class Channel
         bool getisLimited();
         bool getIsKeySet();
         bool getIsInviteOnly();
+        void setTimeTopic(time_t topicTime);
+        time_t getTimeTopic();
+        std::string fromTime(time_t time);
 
 };
 

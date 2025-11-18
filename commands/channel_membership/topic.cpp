@@ -26,8 +26,11 @@ void  Server::topic(Client &c) {
 
         if (it->second.getTopic().empty())
             sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), args[1]));
-        else
+        else {
             sendReply(c, error.RPL_TOPIC(c.get_nickname(), args[1], it->second.getTopic()));
+            sendReply(c, error. RPL_CREATIONTIME (
+                c.get_nickname(), it->second.fromTime(it->second.getTimeTopic()), it->second.get_channel_name()));
+        }
     } 
     else {
 
@@ -55,8 +58,8 @@ void  Server::topic(Client &c) {
             sendReply(c, this->error.ERR_CHANOPRIVSNEEDED(c.get_nickname(), it->second.get_channel_name()));
             return ;
         }
-    
         it->second.setTopic(topic);
-        it->second.broadcast(error.RPL_TOPIC(c.get_nickname(), args[1], topic));
+        it->second.setTimeTopic(std::time(0));
+        it->second.broadcast(error.RPL_TOPICREATED(it->second.get_channel_name(), c.get_Prefix(), topic));
     }
 }

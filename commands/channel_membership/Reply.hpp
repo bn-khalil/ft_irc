@@ -55,6 +55,7 @@ class Reply
 
 		// --- TOPIC part ---
     	std::string RPL_TOPIC(const std::string& nick, const std::string& channel, const std::string& topic);
+    	std::string RPL_TOPICREATED(const std::string& nick, const std::string& prefix, const std::string& topic);
     	std::string RPL_NOTOPIC(const std::string& nick, const std::string& channel);
 		std::string ERR_NOSUCHNICK(const std::string& nick, const std::string& target_nick);
 		std::string RPL_INVITELIST(const std::string& nick, const std::string& channel);

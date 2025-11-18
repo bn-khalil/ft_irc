@@ -213,3 +213,15 @@ std::string  Channel::getChannelActiveModes() {
 time_t Channel::getCreationTime() {
     return this->time_creat_channel;
 }
+
+void Channel::setTimeTopic(time_t topicTime) {
+    this->time_last_topic = topicTime;
+}
+time_t Channel::getTimeTopic() {
+    return this->time_last_topic;
+}
+std::string Channel::fromTime(time_t time) {
+    std::stringstream s_object;
+    s_object <<  time;
+    return s_object.str();
+}

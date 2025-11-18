@@ -157,3 +157,6 @@ privmsg nm      hello sd
 
 4
 @REM ➜  create a channel and quite let the server running and reconnect with same old client nickname than join the same channel 
+
+5
+@REM 509:13 <qui> Error(442): #mm You're not on that channel

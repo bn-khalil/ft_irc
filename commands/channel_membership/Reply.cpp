@@ -32,6 +32,7 @@ std::string Reply::ERR_CHANOPRIVSNEEDED(const std::string& nick, const std::stri
 
 std::string Reply::ERR_NOTONCHANNEL(const std::string& nick, const std::string& channel)
 {
+    // std::cout << "yes " << std::endl;
     return ":" + server_name + " 442 " + nick + " " + channel + " :You're not on that channel";
 }
 
@@ -214,7 +215,7 @@ std::string Reply::ERR_ERRONEUSNICKNAME(std::string nick, std::string used_nick,
 }
 std::string Reply:: RPL_CREATIONTIME (const std::string& nick, const std::string& time, const std::string & channel)
 {
-    return ":" + server_name + " 333 " + nick + " " + channel + " " + time;
+    return ":" + server_name + " 329 " + nick + " " + channel + " " + time;
 }
 std::string Reply:: RPL_CHANNELMODEIS(const std::string& nick, const std::string& modes, const std::string & channel)
 {

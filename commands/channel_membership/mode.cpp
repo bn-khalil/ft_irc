@@ -117,7 +117,7 @@ bool Channel::modeExecuter(modes_t &mode, Client &c, Server &server) {
 
             unsigned int limit = static_cast<unsigned int>(std::atol(mode.param.c_str()));
 
-            if (limit < 0 || limit == this->num_limite)
+            if (limit == this->num_limite)
                 return false;
 
             this->num_limite = (limit);
@@ -201,6 +201,14 @@ void Server::mode(Client &c) {
     else if (cmds.size() == 2) {
         if (!isChannelExist(it_channel, cmds, c))
             return;
+        if (!it_channel->second.isUserInChannel(c)) {
+            sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(),it_channel->second.get_channel_name()));
+            return;
+        }
+        if (!it_channel->second.isUserInChannel(c)) {
+            sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(),it_channel->second.get_channel_name()));
+            return;
+        }
         else {
             std::string modes = "+";
             if (it_channel->second.getIsInviteOnly())
@@ -226,15 +234,18 @@ void Server::mode(Client &c) {
 
             std::stringstream s_object;
             s_object <<  it_channel->second.getCreationTime();
-            sendReply(c, error. RPL_CHANNELMODEIS(c.get_nickname(), modes, it_channel->second.get_channel_name()));
-            sendReply(c, error. RPL_CREATIONTIME (c.get_nickname(), s_object.str(), it_channel->second.get_channel_name()));
+            sendReply(c, error. RPL_CHANNELMODEIS(c.get_nickname(), 
+            modes, it_channel->second.get_channel_name()));
+            sendReply(c, error. RPL_CREATIONTIME (c.get_nickname(), 
+            s_object.str(), it_channel->second.get_channel_name()));
         }
     }
     else {
         if (!isChannelExist(it_channel, cmds, c))
             return;
         if (!it_channel->second.isUserInChannel(c)) {
-            sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(),it_channel->second.get_channel_name()));
+            sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(),
+            it_channel->second.get_channel_name()));
             return;
         }
         if (!it_channel->second.isClientOperator(c)) {
@@ -264,12 +275,12 @@ void Server::mode(Client &c) {
                 }
             }
         }
-        
+
         if (!sortModesPlus.empty())
             sortModesPlus = it_channel->second.removeDuplicate("+" + sortModesPlus);
         if (!sortModesMinus.empty())
             sortModesMinus = it_channel->second.removeDuplicate("-" + sortModesMinus);
-            
+
         seccessModes[0] = sortModesMinus + sortModesPlus;
 
         for (size_t i = 0; i < seccessModes.size(); i++) {
@@ -279,7 +290,7 @@ void Server::mode(Client &c) {
         }
         if (!sortModes.empty()) {
             it_channel->second.broadcast(error.RPL_MODEOPTIONS(c.get_Prefix(), 
-                                          it_channel->second.get_channel_name(), sortModes));
+            it_channel->second.get_channel_name(), sortModes));
         }
     }
     modes.clear();

@@ -5,6 +5,8 @@
 #include "../exception/SocketBindFailedException.hpp"
 #include "../exception/SocketOptionFailedException.hpp"
 #include "../exception/SocketListenFailedException.hpp"
+#include "../exception/InvalidPasswordException.hpp"
+#include "../exception/InvalidPortException.hpp"
 #include "Client.hpp"
 #include <cstddef>
 #include <ctime>
@@ -80,7 +82,10 @@ void Server::NickCmd(Client &client, std::string nick_arg)
     client.SetIsSetNick(true);
     if (client.GetIsSetuser() == true)
     {
-        std::cout <<"hada -->" << client.get_nickname() << " authentication dazet nick set\n";
+        sendReply(client, error.RPL_WELCOME(client.get_nickname(),client.get_Prefix())); // 001
+        sendReply(client, error.RPL_YOURHOST(client.get_nickname())) ;// 002
+        sendReply(client, error.RPL_CREATED(client.get_nickname(),""));
+        sendReply(client, error.RPL_MYINFO(client.get_nickname()));
         client.Set_isAuthenticated(true);
     }
 }
@@ -149,8 +154,6 @@ void Server::AddClient()
     Client client(ClientSocketFd);
     client.set_hostname(hostname);
     ClientsInfo[ClientSocketFd] = client;
-    std::cout << client.get_hostname() << std::endl;
-
     std::cout << "client number " << ClientSocketFd << " connect" << std::endl;
 }
 
@@ -222,7 +225,10 @@ void Server::UserCmd(Client &client, std::vector<std::string> &arg)
     client.set_username(userName);
     if (client.GetIsSetNick() == true)
     {
-        std::cout <<"hada -->" << client.get_nickname() << " authentication dazet nick set\n";
+        sendReply(client, error.RPL_WELCOME(client.get_nickname(),client.get_Prefix())); // 001
+        sendReply(client, error.RPL_YOURHOST(client.get_nickname())) ;// 002
+        sendReply(client, error.RPL_CREATED(client.get_nickname(),""));
+        sendReply(client, error.RPL_MYINFO(client.get_nickname()));
         client.Set_isAuthenticated(true);
     }
 }
@@ -238,12 +244,10 @@ void Server::ParseCmd(Client &client)
 {
     std::vector<std::string> cmds;
 
-    // prompt line still append the new prompt to the old one which allways bigger that 512 
-
-    // if (client.getlineCmd().size() >= 512) {
-    //     sendReply(client, error.ERR_INPUTTOOLONG(client.get_nickname()));
-    //     return ;
-    // }
+    if (client.getlineCmd().size() >= 512) {
+        sendReply(client, error.ERR_INPUTTOOLONG(client.get_nickname()));
+        return ;
+    }
     
     cmds = new_splite(client.getlineCmd(), ' ');
 
@@ -268,10 +272,7 @@ void Server::ParseCmd(Client &client)
     else if (cmds[0] == "invite")
         invit(client);
     else if (cmds[0] == "user")
-    {
         UserCmd(client, cmds);
-        std::cout << "USER commmand" << std::endl;
-    }
     else
         sendReply(client, error.ERR_UNKNOWNCOMMAND_N(client.get_nickname(), cmds[0]));
 
@@ -301,10 +302,7 @@ void Server::GetClientEvents()
                     std::string str_buffer(buffer, bytes_read);
 
                     if (str_buffer.find('\n') == std::string::npos)
-                    {
-                        std::cout << "client.getfd()" << client.getfd() << "\n";
                         client.setlineCmd(client.getlineCmd().append(str_buffer));
-                    }
                     else
                     {
                         client.setlineCmd(client.getlineCmd().append(str_buffer));
@@ -344,7 +342,7 @@ void Server::waitConnection()
 {
     while (true)
     {
-        int num_event = poll(&poll_fds[0], poll_fds.size(), 0);
+        int num_event = poll(&poll_fds[0], poll_fds.size(), -1);
 
         if (num_event == -1)
         {
@@ -401,9 +399,26 @@ Server &Server::operator=(const Server &other)
 
 Server::~Server(void) {}
 
+bool isValidPassword(std::string str)
+{
+    if (str.empty() || str.find(" \t\n\r\v\f") != std::string::npos)
+        return false;
+    return true;
+}
+
 Server::Server(std::string &port, std::string &password)
     : port(stringToPort(port)), password(password), isGetSignal(false)
 {
+
+    if (this->port < 0)
+    {
+        throw InvalidPortException();
+    }
+    else if (isValidPassword (password) == false)
+    {
+        throw InvalidPasswordException();
+    }
+
     serverId = -1;
     addr_len = sizeof(sockaddr_in);
 }

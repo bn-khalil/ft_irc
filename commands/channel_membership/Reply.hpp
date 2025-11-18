@@ -27,8 +27,8 @@ class Reply
     	std::string ERR_NOTONCHANNEL(const std::string& nick, const std::string& channel);
     	std::string ERR_NOT_REGESTRED(const std::string& nick);
 		std::string ERR_UNKNOWNCOMMAND_N(const std::string &nick, const std::string & command);
-		std::string ERR_NOTCHANNELOPERATO(const std::string &nick, const std::string & channel);
 		std::string ERR_NOT_REGESTRED(const std::string &nick, const std::string & channel);
+		std::string ERR_INPUTTOOLONG(const std::string & nick);
 
 		// --- General msgs ---
     	std::string RPL_BROADCAST(const std::string& nick, const std::string & command, const std::string & channel, const std::string & message);
@@ -62,18 +62,20 @@ class Reply
 
 		// --- MODE part ---
 		std::string ERR_NEEDMODEPARM(const std::string& nick, const std::string& channelname, const std::string & mode, const std::string& more);
-		std::string ERR_INVALIDMODEPARM(const std::string& nick, const char mode);
+		std::string ERR_UNKNOWNMODE(const std::string& nick, const char mode);
 		std::string ERR_KEYALREADYSET(const std::string& nick, const std::string& channelname);
 		std::string ERR_NICKNOTFOUND(const std::string& nick, const std::string& otherNick);
 
 		std::string RPL_MODEOPTIONS(const std::string & prefix, const std::string& channel, const std::string& modes);
-    	std::string RPL_CHANNELCREATIONTIME(const std::string& nick, const std::string& time, const std::string & channel);
-    	std::string RPL_CHANNELACTIVEMODES(const std::string& nick, const std::string& modes, const std::string & channel);
+    	std::string  RPL_CREATIONTIME (const std::string& nick, const std::string& time, const std::string & channel);
+    	std::string  RPL_CHANNELMODEIS(const std::string& nick, const std::string& modes, const std::string & channel);
 
 		// --- PRIVMSG ----
 		std::string ERR_NORECIPIENT(const std::string & nick);
 		std::string ERR_NOTEXTSEND(const std::string & nick);
-		std::string RPL_PRIVMSG(const std::string & prefix, const std::string & nick , const std::string & message);
+		std::string ERR_CANNOTSENDTOCHAN(const std::string & nick , const std::string & channel);
+
+		std::string RPL_AWAY(const std::string & prefix, const std::string & nick , const std::string & message);
 
 
 };

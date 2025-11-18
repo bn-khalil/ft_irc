@@ -49,11 +49,14 @@ void Server::privmsg(Client &c) {
                     sendReply(c, error.ERR_NOSUCHNICK(c.get_nickname(), rcvNick));
                     return;
                 }
-                sendReply(*rcvClient, error.RPL_PRIVMSG(c.get_Prefix(),
+                sendReply(*rcvClient, error.RPL_AWAY(c.get_Prefix(),
                         rcvClient->get_nickname(), message));
             } else {
                 std::map<std::string, Channel>::iterator it = this->channel.find(rcvNick);
-                
+                if (!it->second.isUserInChannel(c)) {
+                    sendReply(c, error.ERR_CANNOTSENDTOCHAN(c.get_nickname(), rcvNick));
+                    return;
+                }
                 if (it == this->channel.end()) {
                     sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), rcvNick));
                     return;
@@ -61,7 +64,7 @@ void Server::privmsg(Client &c) {
                 if (rcvNick[0] == '&')
                     return;
 
-                it->second.broadcastExpectSender(error.RPL_PRIVMSG(c.get_Prefix(), it->second.get_channel_name(), message), c);
+                it->second.broadcastExpectSender(error.RPL_AWAY(c.get_Prefix(), it->second.get_channel_name(), message), c);
             }
         }
     }

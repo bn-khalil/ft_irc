@@ -18,12 +18,6 @@ bool Server::isChannelExist(std::map<std::string, Channel>::iterator &it_channel
     return true;
 }
 
-// static std::vector<std::string> checkdots(std::vector<std::string> cmds){
-//       for (size_t indexParam = 0; indexParam < cmds.size();indexParam++) {
-        
-//       }
-// }
-
 std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds, 
                                         Client &c, 
                                         const std::map<std::string, Channel>::iterator &it_channel) {
@@ -70,7 +64,7 @@ std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds,
                 }
                 modesWithInfo.push_back(currentMode);
             } else
-                sendReply(c, error.ERR_INVALIDMODEPARM(c.get_nickname(), modes[i]));
+                sendReply(c, error.ERR_UNKNOWNMODE(c.get_nickname(), modes[i]));
         }
         indexParam++;
     }
@@ -223,20 +217,28 @@ void Server::mode(Client &c) {
                 n_obj << it_channel->second.get_num_limite();
                 modes += " " + n_obj.str();
             }
-            if (it_channel->second.getIsKeySet())
-                modes += " " + it_channel->second.Get_key();
+            if (it_channel->second.getIsKeySet()) {
+                if (it_channel->second.isClientOperator(c))
+                    modes += " " + it_channel->second.Get_key();
+                else
+                    modes += " *";
+            }
 
             std::stringstream s_object;
             s_object <<  it_channel->second.getCreationTime();
-            sendReply(c, error.RPL_CHANNELACTIVEMODES(c.get_nickname(), modes, it_channel->second.get_channel_name()));
-            sendReply(c, error.RPL_CHANNELCREATIONTIME(c.get_nickname(), s_object.str(), it_channel->second.get_channel_name()));
+            sendReply(c, error. RPL_CHANNELMODEIS(c.get_nickname(), modes, it_channel->second.get_channel_name()));
+            sendReply(c, error. RPL_CREATIONTIME (c.get_nickname(), s_object.str(), it_channel->second.get_channel_name()));
         }
     }
     else {
         if (!isChannelExist(it_channel, cmds, c))
             return;
+        if (!it_channel->second.isUserInChannel(c)) {
+            sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(),it_channel->second.get_channel_name()));
+            return;
+        }
         if (!it_channel->second.isClientOperator(c)) {
-            sendReply(c, error.ERR_NOTCHANNELOPERATO(c.get_nickname(),
+            sendReply(c, error.ERR_CHANOPRIVSNEEDED(c.get_nickname(),
                       it_channel->second.get_channel_name()));
             return;
         }

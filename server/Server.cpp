@@ -237,6 +237,14 @@ std::string Server::toLower(std::string str)
 void Server::ParseCmd(Client &client)
 {
     std::vector<std::string> cmds;
+
+    // prompt line still append the new prompt to the old one which allways bigger that 512 
+
+    // if (client.getlineCmd().size() >= 512) {
+    //     sendReply(client, error.ERR_INPUTTOOLONG(client.get_nickname()));
+    //     return ;
+    // }
+    
     cmds = new_splite(client.getlineCmd(), ' ');
 
     if (cmds.size() == 0)
@@ -432,6 +440,10 @@ void Server::sendReply(Client &c, std::string msg)
     if (send(c.getfd(), full_msg.c_str(), full_msg.length(), 0) <= -1)
     {
         std::cerr << "Client Disconnected" << std::endl;
+        removeClientFromAllChannels(c);
+        close(c.getfd());
+        ClientsInfo.erase(c.getfd());
+        poll_fds.erase(poll_fds.begin());
     }
 }
 

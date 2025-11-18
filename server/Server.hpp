@@ -65,6 +65,7 @@ class Server
         void  topic(Client &c);
         void  privmsg(Client &c);
         void sendReply(Client &c, std::string msg);
+        void Clean_resource(Client &c);
         void removeClientFromAllChannels(Client &c);
         std::string toLower(std::string str);
         void join_all_channel(Client &c);

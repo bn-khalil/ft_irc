@@ -40,10 +40,6 @@ std::string Reply::ERR_UNKNOWNCOMMAND_N(const std::string &nick, const std::stri
     return ":*." + server_name + " 421 " + nick + " " + command + " :Unknown command";
 }
 
-std::string Reply::ERR_NOTCHANNELOPERATO(const std::string &nick, const std::string & channel) {
-    return ":*." + server_name + " 482 " + nick + " " + channel + " : You're not channel operator";
-}
-
 std::string Reply::RPL_MODEOPTIONS(const std::string & prefix, const std::string& channel, const std::string& modes) {
     return prefix + " " + channel + " " + modes;
 }
@@ -163,7 +159,7 @@ std::string Reply::ERR_KEYALREADYSET(const std::string& nick, const std::string&
     return ":" + server_name + " 467 " + nick + " " + channel + " :Channel key already set";
 }
 
-std::string Reply::ERR_INVALIDMODEPARM(const std::string& nick, char mode)
+std::string Reply::ERR_UNKNOWNMODE(const std::string& nick, char mode)
 {
     std::string m(1, mode);
     return ":" + server_name + " 472 " + nick + " " + m + " :is unknown mode char to me";
@@ -171,9 +167,19 @@ std::string Reply::ERR_INVALIDMODEPARM(const std::string& nick, char mode)
 
 //------------------------------PRIVMSG error------------------------------------------------------
 
+std::string Reply::ERR_CANNOTSENDTOCHAN(const std::string & nick , const std::string & channel)
+{
+    return ":" + server_name + " 404 " + nick + " "  + channel + " :Cannot send to channel";
+}
+
 std::string Reply::ERR_NORECIPIENT(const std::string & nick) 
 {
     return ":" + server_name + " 411 " + nick + " :No recipient given (PRIVMSG)";
+}
+
+std::string Reply::ERR_INPUTTOOLONG(const std::string & nick) 
+{
+    return ":" + server_name + " 417 " + nick + " :Input line was too long";
 }
 
 std::string Reply::ERR_NOTEXTSEND(const std::string & nick) 
@@ -181,7 +187,7 @@ std::string Reply::ERR_NOTEXTSEND(const std::string & nick)
     return ":" + server_name + " 412 " + nick + " :No text to send";
 }
 
-std::string Reply::RPL_PRIVMSG(const std::string & prefix, const std::string & nick , const std::string & message) 
+std::string Reply::RPL_AWAY(const std::string & prefix, const std::string & nick , const std::string & message) 
 {
     return prefix + " PRIVMSG " + nick + " :" + message;
 }
@@ -206,11 +212,11 @@ std::string Reply::ERR_ERRONEUSNICKNAME(std::string nick, std::string used_nick,
 {
     return ":" + server_name + " 433 " + nick + " " + used_nick + " " + command;
 }
-std::string Reply::RPL_CHANNELCREATIONTIME(const std::string& nick, const std::string& time, const std::string & channel)
+std::string Reply:: RPL_CREATIONTIME (const std::string& nick, const std::string& time, const std::string & channel)
 {
     return ":" + server_name + " 333 " + nick + " " + channel + " " + time;
 }
-std::string Reply::RPL_CHANNELACTIVEMODES(const std::string& nick, const std::string& modes, const std::string & channel)
+std::string Reply:: RPL_CHANNELMODEIS(const std::string& nick, const std::string& modes, const std::string & channel)
 {
     return ":" + server_name + " 324 " + nick + " " + channel + " " + modes;
 }

@@ -268,10 +268,7 @@ void Server::ParseCmd(Client &client)
     else if (cmds[0] == "invite")
         invit(client);
     else if (cmds[0] == "user")
-    {
         UserCmd(client, cmds);
-        std::cout << "USER commmand" << std::endl;
-    }
     else
         sendReply(client, error.ERR_UNKNOWNCOMMAND_N(client.get_nickname(), cmds[0]));
 

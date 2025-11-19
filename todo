@@ -157,3 +157,14 @@ privmsg nm      hello sd
 
 4
 @REM ➜  create a channel and quite let the server running and reconnect with same old client nickname than join the same channel 
+
+
+//if client invite   he dont need to enter password
+//fix the reason in  kick 
+user s s s s 
+join #1
+:ircserver42.com 475 a #1 :Cannot join channel (+k)
+join #1 adfa
+:ircserver42.com 475 a #1 :Cannot join channel (+k)
+
+

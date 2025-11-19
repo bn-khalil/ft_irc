@@ -414,8 +414,8 @@ void Server::removeClientFromAllChannels(Client &c)
     std::map<std::string, Channel>::iterator it = this->channel.begin();
     while (it != this->channel.end())
     {
-        Channel ch = it->second;
-        if (ch.isUserInChannel(c))
+        Channel &ch = it->second;
+        if (ch.isUserInChannel(c) == true)
             channel_to_leave.push_back(ch.get_channel_name());
         it++;
     }
@@ -424,9 +424,9 @@ void Server::removeClientFromAllChannels(Client &c)
         std::map<std::string, Channel>::iterator it1 = channel.find(channel_to_leave[i]);
         if (it1 == channel.end())
             continue;
-        Channel chan = it1->second;
+        Channel &chan = it1->second;
         chan.broadcast(error.MSG_PART(c.get_Prefix(), chan.get_channel_name(), "Left all channels"));
-        chan.rm_user_from_channel(c);
+        chan.removeClientFromOneChannels(c);
         if (chan.isEmpty() == true)
             channel.erase(it1);
     }

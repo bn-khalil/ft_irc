@@ -52,9 +52,7 @@ void Server::join(Client &c)
         
         if (i < key_channle.size())
             key = key_channle[i];
-        //CHECK IF ALWAYS THE NAME LOWER OR OPERCASE
-        // handl to many channel
-        if (one_channel.length() < 2 || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || tab_found(one_channel) == true)
+        if (one_channel.empty() || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || tab_found(one_channel) == true)
         {
             sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), one_channel));
             i++;
@@ -80,11 +78,12 @@ void Server::join(Client &c)
         else
         {
             Channel &join = it->second;
-            if (join.Check_mode('l') && join.is_full() == true)
-                sendReply(c, error.ERR_CHANNELISFULL(c.get_nickname(), one_channel));
-            else if (join.Check_mode('i') == true && !join.isInvited(c))
+            bool  is_invited = join.isInvited(c);
+            if (join.Check_mode('i') == true && !is_invited)
                 sendReply(c, error.ERR_INVITEONLYCHAN(c.get_nickname(), one_channel));
-            else if (join.Check_mode('k') == true && key != join.Get_key())
+            else if (join.Check_mode('l') && join.is_full() == true && !is_invited)
+                sendReply(c, error.ERR_CHANNELISFULL(c.get_nickname(), one_channel));
+            else if (join.Check_mode('k') == true && key != join.Get_key() && !is_invited)
                 sendReply(c, error.ERR_BADCHANNELKEY(c.get_nickname(), one_channel));
             else
             {

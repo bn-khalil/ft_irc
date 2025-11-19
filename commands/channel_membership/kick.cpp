@@ -39,7 +39,7 @@ void Server::kick(Client &c)
             reason += *it;
         }
     }
-
+//kick need to kick the user from the invite map
     Client *client_to_kick = find_client_by_nickname(name_c_to_kick);
     if (!client_to_kick)
     {
@@ -48,7 +48,7 @@ void Server::kick(Client &c)
     }
 
     std::map<std::string, Channel>::iterator it = channel.find(one_channel);
-    if (one_channel.length() < 2 || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || it == channel.end())
+    if ((one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || it == channel.end())
     {
         sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), one_channel));
         return;

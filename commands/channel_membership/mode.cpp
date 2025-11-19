@@ -1,5 +1,7 @@
 #include "channel.hpp"
 #include <cstddef>
+#include <map>
+#include <vector>
 
 static bool isChannelModes(char m) {
     if (m == 'i' || m == 'o' || m == 'k' || m == 't' || m == 'l')
@@ -40,6 +42,7 @@ std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds,
                 modes_t currentMode;
                 currentMode.sing = sing;
                 currentMode.mode = modes[i];
+                currentMode.display = false;
                 if (modes[i] == 'k' || (modes[i] == 'l' && sing == true) || modes[i] == 'o') {
                     indexParam++;
                     if (indexParam < cmds.size()) {
@@ -84,11 +87,14 @@ std::map<std::string, Client*>::iterator Channel::findClientByNickName(const std
 }
 
 bool Channel::modeExecuter(modes_t &mode, Client &c, Server &server) {
-    if (mode.mode == 'i') {        
-        if (mode.sing && !this->isInviteOnly)
+
+    if (mode.mode == 'i') { 
+        if (mode.sing && !this->isInviteOnly) {
             this->isInviteOnly = true;
-        else if (!mode.sing && this->isInviteOnly)
+        }
+        else if (!mode.sing && this->isInviteOnly) {
             this->isInviteOnly = false;
+        }
         else
             return false;
     }
@@ -182,13 +188,36 @@ std::string Channel::removeDuplicate(const std::string &s) {
     return result;
 }
 
+static void prepareModesMessage(std::map<char, modes_t>::iterator hold, 
+std::string & sortModesPlus,
+ std::string & sortModesMinus, 
+ std::vector<std::string> & seccessModes) {
+    if (hold->second.param.empty()) {
+        if (hold->second.sing)
+            sortModesPlus = hold->second.mode + sortModesPlus;
+        else
+            sortModesMinus = hold->second.mode + sortModesMinus;
+    }
+    else {
+        if (hold->second.sing)
+            sortModesPlus += hold->second.mode;
+        else
+            sortModesMinus += hold->second.mode;
+        seccessModes.push_back(hold->second.param);
+    }
+}
+
 void Server::mode(Client &c) {
     std::vector<modes_t> modes;
+    std::vector<modes_t> filterdModes;
+    std::vector<modes_t> filterdModesCopy;
+    std::map<char, modes_t> filerM;
     std::map<std::string, Channel>::iterator it_channel = this->channel.end();
     std::vector<std::string> seccessModes;
     std::string sortModes;
     std::string sortModesPlus;
     std::string sortModesMinus;
+    old_channel_modes_t channelCurrentModes; 
 
     if (c.Get_isAuthenticated() == false)
     {
@@ -238,16 +267,18 @@ void Server::mode(Client &c) {
                     modes += " *";
             }
 
-
             sendReply(c, error. RPL_CHANNELMODEIS(c.get_nickname(), 
             modes, it_channel->second.get_channel_name()));
             sendReply(c, error. RPL_CREATIONTIME (c.get_nickname(), 
-            it_channel->second.fromTime(it_channel->second.getCreationTime()), it_channel->second.get_channel_name()));
+            it_channel->second.fromTime(it_channel->second.getCreationTime()),
+            it_channel->second.get_channel_name()));
         }
     }
     else {
         if (!isChannelExist(it_channel, cmds, c))
             return;
+        channelCurrentModes.isInviteOnly = it_channel->second.getIsInviteOnly();
+        channelCurrentModes.topicRestriction = it_channel->second.getTopicRestriction();
         if (!it_channel->second.isUserInChannel(c)) {
             sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(),
             it_channel->second.get_channel_name()));
@@ -262,24 +293,60 @@ void Server::mode(Client &c) {
         modes = parseModes(cmds, c, it_channel);
         if (modes.empty())
             return;
-            
+        std::map<char, bool> storeageModesStatus;
+
         for (size_t i = 0; i < modes.size(); i++) {
-            if (it_channel->second.modeExecuter(modes[i], c, *this)) {
-                if (modes[i].param.empty()) {
-                    if (modes[i].sing)
-                        sortModesPlus = modes[i].mode + sortModesPlus;
-                    else
-                        sortModesMinus = modes[i].mode + sortModesMinus;
-                }
-                else {
-                    if (modes[i].sing)
-                        sortModesPlus += modes[i].mode;
-                    else
-                        sortModesMinus += modes[i].mode;
-                    seccessModes.push_back(modes[i].param);
-                }
-            }
+            if (it_channel->second.modeExecuter(modes[i], c, *this))
+                filerM[modes[i].mode] = modes[i];
         }
+        std::map<char, modes_t>::iterator hold;
+        hold = filerM.find('i');
+        if (hold != filerM.end()) {
+            if (it_channel->second.getIsInviteOnly() != channelCurrentModes.isInviteOnly)
+                prepareModesMessage(hold,sortModesPlus, sortModesMinus, seccessModes );
+        }
+        hold = filerM.find('t');
+        if (hold != filerM.end()) {
+            if (it_channel->second.getTopicRestriction() != channelCurrentModes.topicRestriction)
+                prepareModesMessage(hold,sortModesPlus, sortModesMinus, seccessModes );
+        }
+
+
+        // std::reverse(filterdModesCopy.begin(), filterdModesCopy.end());
+        // for (std::map<char,modes_t>::iterator it = filerM.begin(); it != filerM.end(); ++it) {
+        //     if (it->second->) {
+        //         if (filterdModes[i].param.empty()) {
+        //             if (filterdModes[i].sing)
+        //                 sortModesPlus = filterdModes[i].mode + sortModesPlus;
+        //             else
+        //                 sortModesMinus = filterdModes[i].mode + sortModesMinus;
+        //         }
+        //         else {
+        //             if (filterdModes[i].sing)
+        //                 sortModesPlus += filterdModes[i].mode;
+        //             else
+        //                 sortModesMinus += filterdModes[i].mode;
+        //             seccessModes.push_back(filterdModes[i].param);
+        //         }
+        //     }
+        // }
+            // std::cout << filterdModes[i].mode << "  " << filterdModes[i].sing << " " <<  storeageModesStatus[filterdModes[i].mode] << std::endl;
+            // if (storeageModesStatus[filterdModes[i].mode]) {
+            //     if (filterdModes[i].param.empty()) {
+            //         if (filterdModes[i].sing)
+            //             sortModesPlus = filterdModes[i].mode + sortModesPlus;
+            //         else
+            //             sortModesMinus = filterdModes[i].mode + sortModesMinus;
+            //     }
+            //     else {
+            //         if (filterdModes[i].sing)
+            //             sortModesPlus += filterdModes[i].mode;
+            //         else
+            //             sortModesMinus += filterdModes[i].mode;
+            //         seccessModes.push_back(filterdModes[i].param);
+            //     }
+            // }
+        
 
         if (!sortModesPlus.empty())
             sortModesPlus = it_channel->second.removeDuplicate("+" + sortModesPlus);
@@ -299,4 +366,5 @@ void Server::mode(Client &c) {
         }
     }
     modes.clear();
+    filterdModes.clear();
 }

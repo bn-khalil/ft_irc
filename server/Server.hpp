@@ -13,6 +13,7 @@ typedef struct modes_s {
     std::string param;
     char mode;
     bool sing;
+    bool display;
 } modes_t;
 
 class Client;

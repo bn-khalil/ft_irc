@@ -1,13 +1,12 @@
 #include "channel.hpp"
+#include <cstddef>
 
-bool tab_found(std::string str)
+bool Channel::tab_found(std::string str)
 {
-    size_t i = 0;
-    while (i < str.size())
+    for(size_t i = 0; i < str.size(); i++)
     {
         if (str[i] == 9)
             return true;
-        i++;
     }
     return false;
 }
@@ -42,42 +41,42 @@ void Server::join(Client &c)
     if (cmds.size() > 2)
         key_channle = Channel::splite_coma(cmds[2], ',');
 
-    size_t i = 0;
 
-    while (i < multi_channel.size())
+
+    for(size_t i = 0; i < multi_channel.size() ; i++)
     {
         std::string one_channel = multi_channel[i];
+        std::string one_channel1 = multi_channel[i];
         std::string key = "";
-        one_channel = Channel::to_lower(one_channel);
-        
+        one_channel1 = Channel::to_lower(one_channel1);
         if (i < key_channle.size())
             key = key_channle[i];
-        if (one_channel.empty() || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || tab_found(one_channel) == true)
+        if (one_channel.empty() || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || Channel::tab_found(one_channel) == true)
         {
             sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), one_channel));
-            i++;
             continue;
         }
-        
-        std::map<std::string, Channel>::iterator it = channel.find(one_channel);
+        std::map<std::string, Channel>::iterator it = channel.find(one_channel1);
         if (it == channel.end())
         {
-            Channel new_ch(one_channel);
-            channel.insert(std::make_pair(one_channel, new_ch));
-            Channel &join =  channel[one_channel];
+            Channel new_ch(one_channel1);
+            channel.insert(std::make_pair(one_channel1, new_ch));
+            Channel &join =  channel[one_channel1];
+            std::string topic = join.getTopic();
             join.Add_to_admin(c);
             join.Add_to_user(c);
             join.broadcast(error.MSG_JOIN(c.get_Prefix(), one_channel));
-            if (join.getTopic() == "")
-                    sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), one_channel));
-            if (join.getTopic() != "")
-                    sendReply(c, error.RPL_TOPIC(c.get_nickname(), one_channel, join.getTopic()));
+            if (topic.empty())
+                sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), one_channel));
+            else
+                sendReply(c, error.RPL_TOPIC(c.get_nickname(), one_channel, topic));
             sendReply(c, error.RPL_NAMREPLY(c.get_nickname(), one_channel, join.getNamesList()));
             sendReply(c, error.RPL_ENDOFNAMES(c.get_nickname(), one_channel));
         }
         else
         {
             Channel &join = it->second;
+            std::string topic = join.getTopic();
             bool  is_invited = join.isInvited(c);
             if (join.Check_mode('i') == true && !is_invited)
                 sendReply(c, error.ERR_INVITEONLYCHAN(c.get_nickname(), one_channel));
@@ -87,16 +86,18 @@ void Server::join(Client &c)
                 sendReply(c, error.ERR_BADCHANNELKEY(c.get_nickname(), one_channel));
             else
             {
-                join.Add_to_user(c);
-                join.broadcast(error.MSG_JOIN(c.get_Prefix(), one_channel));
-                if (join.getTopic() == "")
+                if(join.isUserInChannel(c) == false)
+                {
+                    join.Add_to_user(c);
+                    join.broadcast(error.MSG_JOIN(c.get_Prefix(), one_channel));
+                if (topic.empty())
                     sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), one_channel));
-                if (join.getTopic() != "")
-                    sendReply(c, error.RPL_TOPIC(c.get_nickname(), one_channel, join.getTopic()));
+                else
+                    sendReply(c, error.RPL_TOPIC(c.get_nickname(), one_channel, topic));
                 sendReply(c, error.RPL_NAMREPLY(c.get_nickname(), one_channel, join.getNamesList()));
                 sendReply(c, error.RPL_ENDOFNAMES(c.get_nickname(), one_channel));
+                }
             }
         }
-        i++;
     }
 }

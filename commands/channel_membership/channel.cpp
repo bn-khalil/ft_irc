@@ -111,16 +111,6 @@ bool Channel::is_full()
     return (users.size() >= get_num_limite());
 }
 
-// void Channel::rm_user_from_channel(Client &c)
-// {
-//     std::map<std::string, Client*>::iterator it_user = users.find(c.get_nickname());
-//     if (it_user != users.end())
-//         users.erase(c.get_nickname());
-//     std::map<std::string, Client*>::iterator it_operator = operators_.find(c.get_nickname());
-//     if (it_operator != operators_.end())
-//         operators_.erase(c.get_nickname());
-// }
-
 bool Channel::Check_mode(char mode)
 {
     if (mode == 'k')

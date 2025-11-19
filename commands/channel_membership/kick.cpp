@@ -10,16 +10,9 @@ void Server::kick(Client &c)
     std::vector<std::string> cmds = new_splite(command, ' ');
 
     if (c.Get_isAuthenticated() == false)
-    {
-        sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
-        return;
-    }
-
+        return(sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname())));
     if (cmds.size() < 3)
-    {
-        sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "KICK"));
-        return;
-    }
+        return(sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "KICK")));
 
     std::string one_channel = cmds[1];
     std::string name_c_to_kick = cmds[2];
@@ -39,41 +32,21 @@ void Server::kick(Client &c)
             reason += *it;
         }
     }
-//kick need to kick the user from the invite map
     Client *client_to_kick = find_client_by_nickname(name_c_to_kick);
     if (!client_to_kick)
-    {
-        sendReply(c, error.ERR_NOSUCHNICK(c.get_nickname(), name_c_to_kick));
-        return;
-    }
-
+        return(sendReply(c, error.ERR_NOSUCHNICK(c.get_nickname(), name_c_to_kick)));
     std::map<std::string, Channel>::iterator it = channel.find(one_channel);
     if ((one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || it == channel.end())
+        return(sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), one_channel)));
+    else if (!it->second.isUserInChannel(c))
+        return(sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(), one_channel)));
+    else if (!it->second.isUserInChannel(*client_to_kick))
+        return sendReply(c, error.ERR_USERNOTINCHANNEL(c.get_nickname(), name_c_to_kick, one_channel));
+    else if (it->second.isClientOperator(c) == false)
+       return sendReply(c, error.ERR_CHANOPRIVSNEEDED(c.get_nickname(), one_channel));
+    else 
     {
-        sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), one_channel));
-        return;
+        it->second.broadcast(error.MSG_KICK(c.get_Prefix(), it->second.get_channel_name(), name_c_to_kick, reason));
+        it->second.removeClientFromOneChannels(*client_to_kick);
     }
-
-    Channel &real_one = it->second;
-
-    if (!real_one.isUserInChannel(c))
-    {
-        sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(), one_channel));
-        return;
-    }
-
-    if (!real_one.isUserInChannel(*client_to_kick))
-    {
-        sendReply(c, error.ERR_USERNOTINCHANNEL(c.get_nickname(), name_c_to_kick, one_channel));
-        return;
-    }
-
-    if (real_one.isClientOperator(c) == false)
-    {
-        sendReply(c, error.ERR_CHANOPRIVSNEEDED(c.get_nickname(), one_channel));
-        return;
-    }
-
-    real_one.broadcast(error.MSG_KICK(c.get_Prefix(), real_one.get_channel_name(), name_c_to_kick, reason));
-    real_one.removeClientFromOneChannels(*client_to_kick);
 }

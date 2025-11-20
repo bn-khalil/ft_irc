@@ -63,7 +63,7 @@ std::string Reply::ERR_UNKNOWNCOMMAND_N(const std::string &nick, const std::stri
 }
 
 std::string Reply::RPL_MODEOPTIONS(const std::string & prefix, const std::string& channel, const std::string& modes) {
-    return ":" + prefix + " " + channel + " " + modes;
+    return ":" + prefix + " MODE " + channel + " " + modes;
 }
 
 //------------------------------JOIN error------------------------------------------------------

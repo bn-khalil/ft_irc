@@ -311,6 +311,10 @@ void Server::mode(Client &c) {
                 prepareModesMessage(hold,sortModesPlus, sortModesMinus, seccessModes );
         }
 
+        for (std::map<char,modes_t>::iterator it = filerM.begin(); it != filerM.end(); ++it) {
+            if (it->second.mode != 't' && it->second.mode != 'i')
+                prepareModesMessage(it,sortModesPlus, sortModesMinus, seccessModes );
+        }
 
         // std::reverse(filterdModesCopy.begin(), filterdModesCopy.end());
         // for (std::map<char,modes_t>::iterator it = filerM.begin(); it != filerM.end(); ++it) {

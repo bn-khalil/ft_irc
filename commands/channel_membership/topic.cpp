@@ -1,5 +1,6 @@
 #include "channel.hpp"
 #include <sstream>
+#include <string>
 
 
 // static void showChannelTopic(std::map<std::string,Channel*> & channel) {

@@ -2,6 +2,10 @@
 #include <sstream>
 #include  <sys/socket.h>
 #include <sys/poll.h>
+#include <algorithm>
+#include <vector>
+#include <cctype>
+#include <string>
 
 Channel::Channel(std::string name) : Channel_name(name)
 {

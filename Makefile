@@ -13,6 +13,7 @@ EXP_SRC = exception/FcntlFailedException.cpp exception/SocketBindFailedException
 		commands/channel_membership/Reply.cpp \
 		commands/channel_membership/kick.cpp \
 		commands/channel_membership/invite.cpp \
+		commands/channel_membership/privmsg.cpp \
 
 
 CPP = c++

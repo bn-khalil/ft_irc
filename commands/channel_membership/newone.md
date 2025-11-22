@@ -1,7 +1,8 @@
 need to handle the port most be exaclly 4 numbers
 handl digite in nick name
 handle keypassword most be atleast 4 charachter
-print msg when the server start and athontications acully done
+print msg when the server start and athonticati
+ons acully done
 check the behavior of join 0  without joining any channel
 join the same channel twice the secend time most not print the  msg
 join channel UPPERCASS the msg most be upper case 

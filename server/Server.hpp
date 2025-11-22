@@ -47,6 +47,8 @@ class Server
         void NickCmd(Client &client, std::string password_ar);
         void UserCmd(Client &client, std::vector<std::string> &arg);
         std::vector<std::string> splitCmd(std::string &str);
+        void Quit(Client &c);
+
 
     public:
     

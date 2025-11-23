@@ -59,7 +59,7 @@ std::string Reply::ERR_NOTONCHANNEL(const std::string& nick, const std::string& 
 
 std::string Reply::ERR_UNKNOWNCOMMAND_N(const std::string &nick, const std::string & command)
 {
-    return ":*." + server_name + " 421 " + nick + " " + command + " :Unknown command";
+    return ":" + server_name + " 421 " + nick + " " + command + " :Unknown command";
 }
 
 std::string Reply::RPL_MODEOPTIONS(const std::string & prefix, const std::string& channel, const std::string& modes) {
@@ -170,14 +170,9 @@ std::string Reply::RPL_ENDOFINVITELIST(const std::string& nick)
     return ":" + server_name + " 347 " + nick + " :End of Invite List";
 }
 
-std::string Reply::ERR_NEEDMODEPARM(const std::string& nick, const std::string& channel, const std::string & mode, const std::string& description)
+std::string Reply::ERR_NEEDMODEPARM(const std::string& nick, const std::string & mode, const std::string& description)
 {
-    return ":" + server_name + " 461 " + nick + " " + channel + " " + mode + " :" + description;
-}
-
-std::string Reply::ERR_NICKNOTFOUND(const std::string& nick, const std::string& target)
-{
-    return ":" + server_name + " 401 " + nick + " " + target + " :No such nick/channel";
+    return ":" + server_name + " 461 " + nick + " MODE +" + mode + " :" + description;
 }
 
 std::string Reply::ERR_KEYALREADYSET(const std::string& nick, const std::string& channel)

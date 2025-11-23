@@ -20,9 +20,7 @@ bool Server::isChannelExist(std::map<std::string, Channel>::iterator &it_channel
     return true;
 }
 
-std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds, 
-                                        Client &c, 
-                                        const std::map<std::string, Channel>::iterator &it_channel) {
+std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds, Client &c) {
     std::vector<modes_t> modesWithInfo;
 
     if (cmds.size() <= 2)
@@ -56,10 +54,10 @@ std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds,
                         std::string modeWithFlag(1, modes[i]);
                         if (modes[i] == 'k')
                             sendReply(c, error.ERR_NEEDMODEPARM(c.get_nickname(), 
-                                      it_channel->second.get_channel_name(), modeWithFlag, "Not enough parameters"));
+                                    modeWithFlag, "Not enough parameters"));
                         else if (modes[i] == 'l')
                             sendReply(c, error.ERR_NEEDMODEPARM(c.get_nickname(), 
-                                      it_channel->second.get_channel_name(), modeWithFlag, "Not enough parameters"));
+                                    modeWithFlag, "Not enough parameters"));
                         else if (modes[i] == 'o')
                             ;
                         continue;
@@ -156,15 +154,19 @@ bool Channel::modeExecuter(modes_t &mode, Client &c, Server &server) {
     }
     else if (mode.mode == 'o') {
         std::string nickName = mode.param;
-        std::map<std::string, Client*>::iterator client = this->findClientByNickName(nickName);
-        if (client == this->users.end()) {
-            server.sendReply(c, server.error.ERR_NICKNOTFOUND(c.get_nickname(), nickName));
+        Client *client = server.find_client_by_nickname(nickName);
+        if (!client) {
+            server.sendReply(c, server.error.ERR_NOSUCHNICK(c.get_nickname(), nickName));
             return false;
         }
-        if (!mode.sing && isClientOperator(*client->second))
+        if (!isUserInChannel(*client)) {
+            server.sendReply(c, server.error.ERR_USERNOTINCHANNEL(c.get_nickname(), nickName, this->get_channel_name()));
+            return false;
+        }
+        if (!mode.sing && isClientOperator(*client))
             this->popClientFromOperatorList(nickName);
-        else if (mode.sing && !isClientOperator(*client->second))
-            this->Add_to_admin(*client->second);
+        else if (mode.sing && !isClientOperator(*client))
+            this->Add_to_admin(*client);
         else
             return false;
     }
@@ -279,6 +281,7 @@ void Server::mode(Client &c) {
             return;
         channelCurrentModes.isInviteOnly = it_channel->second.getIsInviteOnly();
         channelCurrentModes.topicRestriction = it_channel->second.getTopicRestriction();
+        channelCurrentModes.isLimited = it_channel->second.getisLimited();
         if (!it_channel->second.isUserInChannel(c)) {
             sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(),
             it_channel->second.get_channel_name()));
@@ -290,7 +293,7 @@ void Server::mode(Client &c) {
             return;
         }
         seccessModes.push_back("");
-        modes = parseModes(cmds, c, it_channel);
+        modes = parseModes(cmds, c);
         if (modes.empty())
             return;
         std::map<char, bool> storeageModesStatus;
@@ -310,47 +313,16 @@ void Server::mode(Client &c) {
             if (it_channel->second.getTopicRestriction() != channelCurrentModes.topicRestriction)
                 prepareModesMessage(hold,sortModesPlus, sortModesMinus, seccessModes );
         }
-
-        for (std::map<char,modes_t>::iterator it = filerM.begin(); it != filerM.end(); ++it) {
-            if (it->second.mode != 't' && it->second.mode != 'i')
-                prepareModesMessage(it,sortModesPlus, sortModesMinus, seccessModes );
+        hold = filerM.find('l');
+        if (hold != filerM.end() && !hold->second.sing) {
+            if (it_channel->second.getisLimited() != channelCurrentModes.isLimited)
+                prepareModesMessage(hold,sortModesPlus, sortModesMinus, seccessModes );
         }
 
-        // std::reverse(filterdModesCopy.begin(), filterdModesCopy.end());
-        // for (std::map<char,modes_t>::iterator it = filerM.begin(); it != filerM.end(); ++it) {
-        //     if (it->second->) {
-        //         if (filterdModes[i].param.empty()) {
-        //             if (filterdModes[i].sing)
-        //                 sortModesPlus = filterdModes[i].mode + sortModesPlus;
-        //             else
-        //                 sortModesMinus = filterdModes[i].mode + sortModesMinus;
-        //         }
-        //         else {
-        //             if (filterdModes[i].sing)
-        //                 sortModesPlus += filterdModes[i].mode;
-        //             else
-        //                 sortModesMinus += filterdModes[i].mode;
-        //             seccessModes.push_back(filterdModes[i].param);
-        //         }
-        //     }
-        // }
-            // std::cout << filterdModes[i].mode << "  " << filterdModes[i].sing << " " <<  storeageModesStatus[filterdModes[i].mode] << std::endl;
-            // if (storeageModesStatus[filterdModes[i].mode]) {
-            //     if (filterdModes[i].param.empty()) {
-            //         if (filterdModes[i].sing)
-            //             sortModesPlus = filterdModes[i].mode + sortModesPlus;
-            //         else
-            //             sortModesMinus = filterdModes[i].mode + sortModesMinus;
-            //     }
-            //     else {
-            //         if (filterdModes[i].sing)
-            //             sortModesPlus += filterdModes[i].mode;
-            //         else
-            //             sortModesMinus += filterdModes[i].mode;
-            //         seccessModes.push_back(filterdModes[i].param);
-            //     }
-            // }
-        
+        for (std::map<char,modes_t>::iterator it = filerM.begin(); it != filerM.end(); ++it) {
+            if (it->second.mode == 'k' || (it->second.mode == 'l' && it->second.sing) || it->second.mode == 'o')
+                prepareModesMessage(it,sortModesPlus, sortModesMinus, seccessModes );
+        }
 
         if (!sortModesPlus.empty())
             sortModesPlus = it_channel->second.removeDuplicate("+" + sortModesPlus);

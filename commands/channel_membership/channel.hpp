@@ -16,7 +16,6 @@ typedef struct old_channel_modes_s {
     std::string key;
     bool isKeySet;
     bool isInviteOnly;
-    bool limit;
     bool isLimited;
     unsigned int num_limite;
     bool topicRestriction;

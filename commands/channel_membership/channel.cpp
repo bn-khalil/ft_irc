@@ -11,7 +11,6 @@ Channel::Channel(std::string name) : Channel_name(name)
 {
     this->isKeySet = false;
     this->isInviteOnly = false;
-    this->limit = false;
     this->num_limite = 0;
     this->key = "";
     this->isLimited = false;
@@ -24,7 +23,6 @@ Channel::Channel() : Channel_name("Default_Channel_name")
 {
     this->isKeySet = false;
     this->isInviteOnly = false;
-    this->limit = false;
     this->num_limite = 0;
     this->key = "";
     this->isLimited = false;
@@ -122,7 +120,7 @@ bool Channel::Check_mode(char mode)
     else if (mode == 'i')
         return this->isInviteOnly;
     else if (mode == 'l')
-        return this->limit;
+        return this->isLimited;
     return false;
 }
 

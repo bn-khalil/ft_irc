@@ -65,7 +65,7 @@ class Reply
 		std::string RPL_ENDOFINVITELIST(const std::string& nick);
 
 		// --- MODE part ---
-		std::string ERR_NEEDMODEPARM(const std::string& nick, const std::string& channelname, const std::string & mode, const std::string& more);
+		std::string ERR_NEEDMODEPARM(const std::string& nick, const std::string & mode, const std::string& more);
 		std::string ERR_UNKNOWNMODE(const std::string& nick, const char mode);
 		std::string ERR_KEYALREADYSET(const std::string& nick, const std::string& channelname);
 		std::string ERR_NICKNOTFOUND(const std::string& nick, const std::string& otherNick);

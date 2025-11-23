@@ -53,7 +53,12 @@ bool isValidNickname(const std::string& nick)
 
 void Server::NickCmd(Client &client, std::string nick_arg)
 {
-    if (client.GetIsSetPass() == false)
+    if (client.Get_isAuthenticated() == true)
+    {
+        sendReply(client, error.ERR_ALREADYREGISTERED(client.get_nickname(),":You may not reregister"));
+        return;
+    }
+    else if (client.GetIsSetPass() == false)
     {
         sendReply(client, error.ERR_PASSWDMISMATCH(client.get_nickname(),":Password not set"));
         return;

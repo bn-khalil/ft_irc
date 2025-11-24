@@ -3,11 +3,8 @@ NAME = ircserv
 FLAG = -Wall -Werror -Wextra #-std=c++98 -fsanitize=address -g
 
 HEADER = server/Client.hpp server/Server.hpp
-EXP_HEADER =exception/FcntlFailedException.hpp exception/InvalidPasswordException.hpp exception/InvalidPortException.hpp exception/SocketBindFailedException.hpp exception/SocketFailedToCreatException.hpp exception/SocketListenFailedException.hpp exception/SocketOptionFailedException.hpp 
 
-
-EXP_SRC =exception/FcntlFailedException.cpp exception/InvalidPasswordException.cpp exception/InvalidPortException.cpp exception/SocketBindFailedException.cpp exception/SocketFailedToCreatException.cpp exception/SocketListenFailedException.cpp exception/SocketOptionFailedException.cpp \
-		commands/channel_membership/channel.cpp \
+EXP_SRC =commands/channel_membership/channel.cpp \
 		commands/channel_membership/join.cpp  \
 		commands/channel_membership/topic.cpp  \
 		commands/channel_membership/mode.cpp  \
@@ -38,6 +35,7 @@ $(NAME): $(OBJ)
 
 SRC_BONUS = bot.cpp
 OBJ_BONUS = $(SRC_BONUS:.cpp=.o)
+
 bonus: $(OBJ_BONUS)
 	$(CPP) $(FLAG) $(OBJ_BONUS) -o bonus
 

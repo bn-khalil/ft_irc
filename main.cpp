@@ -1,12 +1,7 @@
 #include "server/Server.hpp"
 // #include "server/Authentication.hpp"
 // #include "server/Client.hpp"
-#include "exception/SocketFailedToCreatException.hpp"
-#include "exception/FcntlFailedException.hpp"
-#include "exception/SocketBindFailedException.hpp"
-#include "exception/SocketOptionFailedException.hpp"
-#include "exception/InvalidPortException.hpp"
-#include "exception/SocketListenFailedException.hpp"
+
 #include <cstddef>
 #include <exception>
 #include <iostream>

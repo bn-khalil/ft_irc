@@ -73,10 +73,19 @@ std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds, Client &c
 }
 
 bool validateLimitParams(std::string limit) {
-    for (size_t i = 0; i < limit.size(); i++) {
-        if (!std::isdigit(limit[i]) && !std::isspace(limit[i]) && limit[i] != '+')
-            return false;
-    }
+    size_t i = 0;
+    while (std::isspace(limit[i]))
+        i++;
+    if (i == limit.size())
+        return false;
+    if (limit[i] == '+')
+        i++;
+    if (!std::isdigit(limit[i]) && !std::isspace(limit[i]))
+        return false;
+    // for (; i < limit.size(); i++) {
+    //     if (!std::isdigit(limit[i]) && !std::isspace(limit[i]) && limit[i] != '+')
+    //         return false;
+    // }
     return true;
 }
 
@@ -113,21 +122,11 @@ bool Channel::modeExecuter(modes_t &mode, Client &c, Server &server) {
             if (!validateLimitParams(mode.param))
                 return false;
 
-            size_t count = 0;
-            for (size_t i = 0; i < mode.param.size(); i++) {
-                if (mode.param[i] == '+')
-                    count++;
-                else if (std::isdigit(mode.param[i]))
-                    break;
-            }
-            if (count > 1 || count == mode.param.size())
-                return false;
-
             unsigned int limit = static_cast<unsigned int>(std::atol(mode.param.c_str()));
 
             if (limit == this->num_limite)
                 return false;
-
+            mode.param = fromTime(limit);
             this->num_limite = (limit);
             this->isLimited = true;
         }
@@ -282,6 +281,7 @@ void Server::mode(Client &c) {
         channelCurrentModes.isInviteOnly = it_channel->second.getIsInviteOnly();
         channelCurrentModes.topicRestriction = it_channel->second.getTopicRestriction();
         channelCurrentModes.isLimited = it_channel->second.getisLimited();
+        channelCurrentModes.num_limite = it_channel->second.get_num_limite();
         if (!it_channel->second.isUserInChannel(c)) {
             sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(),
             it_channel->second.get_channel_name()));
@@ -296,9 +296,26 @@ void Server::mode(Client &c) {
         modes = parseModes(cmds, c);
         if (modes.empty())
             return;
-        std::map<char, bool> storeageModesStatus;
-
+        bool ShouldSkeepKeys = false;
+        bool ShouldSkeepLimts = false;
         for (size_t i = 0; i < modes.size(); i++) {
+            if (modes[i].mode == 'k') {
+                if (ShouldSkeepKeys)
+                    continue ;
+                else
+                    ShouldSkeepKeys = true;
+            }
+            if (modes[i].mode == 'l') {
+                if (!ShouldSkeepLimts) {
+                    unsigned int limit = static_cast<unsigned int>(std::atol(modes[i].param.c_str()));
+                    if (modes[i].sing && it_channel->second.getisLimited() && it_channel->second.get_num_limite() == limit)
+                        continue ;
+                    else if (!modes[i].sing && !it_channel->second.getisLimited())
+                        continue ;
+                    ShouldSkeepLimts = true;
+                } else 
+                    continue ;
+            }
             if (it_channel->second.modeExecuter(modes[i], c, *this))
                 filerM[modes[i].mode] = modes[i];
         }
@@ -320,7 +337,7 @@ void Server::mode(Client &c) {
         }
 
         for (std::map<char,modes_t>::iterator it = filerM.begin(); it != filerM.end(); ++it) {
-            if (it->second.mode == 'k' || (it->second.mode == 'l' && it->second.sing) || it->second.mode == 'o')
+            if (it->second.mode == 'k' || (it->second.mode == 'l' && it->second.sing && !it->second.param.empty()) || it->second.mode == 'o')
                 prepareModesMessage(it,sortModesPlus, sortModesMinus, seccessModes );
         }
 
@@ -346,3 +363,31 @@ void Server::mode(Client &c) {
     modes.clear();
     filterdModes.clear();
 }
+
+
+        //    if (modes[i].mode == 'l') {
+        //         if (ShouldSkeepLimts)
+        //             continue ;
+        //         if(modes[i].sing) {
+        //             unsigned int limit = static_cast<unsigned int>(std::atol(modes[i].param.c_str()));
+        //             if (it_channel->second.getisLimited() && it_channel->second.get_num_limite() == limit)
+        //                 continue ;
+        //             if (it_channel->second.modeExecuter(modes[i], c, *this))
+        //                 filerM[modes[i].mode] = modes[i];
+        //             ShouldSkeepLimts = true;
+        //         } else {
+        //             if (!it_channel->second.getisLimited())
+        //                 continue ; 
+        //             if (it_channel->second.modeExecuter(modes[i], c, *this))
+        //                 filerM[modes[i].mode] = modes[i];
+        //             ShouldSkeepLimts = true;
+        //         }
+        //         continue ;
+        //     }
+        //     if (it_channel->second.modeExecuter(modes[i], c, *this))
+        //         filerM[modes[i].mode] = modes[i];
+
+// pass 12
+// user a a a a
+// nick bn
+// join #bn

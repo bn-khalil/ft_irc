@@ -27,7 +27,7 @@ void Server::privmsg(Client &c) {
     else if (args.size() == 2)
         sendReply(c, error.ERR_NOTEXTSEND(c.get_nickname()));
     else {
-        std::vector<std::string> multi_users_or_channels = Channel::splite_coma(args[1], ',');
+        std::vector<std::string> multi_users_or_channels = Channel::split_comma(args[1], ',');
         for (size_t i = 0; i < multi_users_or_channels.size(); i++) {
             std::string rcvNick = multi_users_or_channels[i];
             size_t j = 0;

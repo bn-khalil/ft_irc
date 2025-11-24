@@ -324,8 +324,8 @@ void Server::GetClientEvents()
                 }
                 else if (bytes_read == 0)
                 {
-                    std::cout << "client number " << poll_fds[i].fd << " disconnect" << std::endl;
-                    removeClientFromAllChannels(client);
+                    // std::cout << "client number " << poll_fds[i].fd << " disconnect" << std::endl;
+                    Quit(client);
                     close(poll_fds[i].fd);
                     ClientsInfo.erase(poll_fds[i].fd);
                     poll_fds.erase(poll_fds.begin() + i);

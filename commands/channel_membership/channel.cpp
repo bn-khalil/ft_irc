@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   channel.cpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/22 12:05:30 by akella            #+#    #+#             */
+/*   Updated: 2025/11/22 12:05:31 by akella           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "channel.hpp"
 #include <sstream>
 #include <sys/socket.h>
@@ -133,7 +145,7 @@ bool Channel::isEmpty()
     return false;
 }
 
-std::vector<std::string> Channel::splite_coma(std::string &strr, char d)
+std::vector<std::string> Channel::split_comma(std::string &strr, char d)
 {
     std::string save;
     std::stringstream ss(strr);

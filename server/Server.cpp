@@ -19,21 +19,20 @@
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <errno.h>
+
 int Server::ReadClientMessage(std::string &line)
 {
     (void)line;
     return 0;
 }
-bool isValidNickname(const std::string& nick)
-{
 
+bool isValidNickname(const std::string &nick)
+{
     if (nick.empty())
-    {
-        return false; 
-    }
+        return false;
 
     std::string forbiddenStartChars = "$:#&";
-    
+
     if (forbiddenStartChars.find(nick[0]) != std::string::npos)
         return false;
 
@@ -41,7 +40,7 @@ bool isValidNickname(const std::string& nick)
 
     if (nick.find_first_of(forbiddenChars) != std::string::npos)
         return false;
-    
+
     return true;
 }
 
@@ -49,20 +48,21 @@ void Server::NickCmd(Client &client, std::string nick_arg)
 {
     if (client.Get_isAuthenticated() == true)
     {
-        sendReply(client, error.ERR_ALREADYREGISTERED(client.get_nickname(),":You may not reregister"));
+        sendReply(client, error.ERR_ALREADYREGISTERED(client.get_nickname(), ":You may not reregister"));
         return;
     }
     else if (client.GetIsSetPass() == false)
     {
-        sendReply(client, error.ERR_PASSWDMISMATCH(client.get_nickname(),":Password not set"));
+        sendReply(client, error.ERR_PASSWDMISMATCH(client.get_nickname(), ":Password not set"));
         return;
     }
-    else if (!isValidNickname(nick_arg)){
-        sendReply(client, error.ERR_ERRONEUSNICKNAME(client.get_nickname(),nick_arg,":Erroneus nickname"));
+    else if (!isValidNickname(nick_arg))
+    {
+        sendReply(client, error.ERR_ERRONEUSNICKNAME(client.get_nickname(), nick_arg, ":Erroneus nickname"));
     }
     else if (nick_arg.empty())
     {
-        sendReply(client, error.ERR_NONICKNAMEGIVEN(client.get_nickname(),":No nickname given"));
+        sendReply(client, error.ERR_NONICKNAMEGIVEN(client.get_nickname(), ":No nickname given"));
         return;
     }
     else
@@ -73,7 +73,7 @@ void Server::NickCmd(Client &client, std::string nick_arg)
                 continue;
             if (it->second.GetIsSetNick() == true && it->second.get_nickname() == nick_arg)
             {
-                sendReply(client, error.ERR_NICKNAMEINUSE(client.get_nickname(), nick_arg,":Nickname is already in use"));
+                sendReply(client, error.ERR_NICKNAMEINUSE(client.get_nickname(), nick_arg, ":Nickname is already in use"));
                 return;
             }
         }
@@ -82,9 +82,9 @@ void Server::NickCmd(Client &client, std::string nick_arg)
     client.SetIsSetNick(true);
     if (client.GetIsSetuser() == true)
     {
-        sendReply(client, error.RPL_WELCOME(client.get_nickname(),client.get_Prefix())); // 001
-        sendReply(client, error.RPL_YOURHOST(client.get_nickname())) ;// 002
-        sendReply(client, error.RPL_CREATED(client.get_nickname(),""));
+        sendReply(client, error.RPL_WELCOME(client.get_nickname(), client.get_Prefix()));
+        sendReply(client, error.RPL_YOURHOST(client.get_nickname()));
+        sendReply(client, error.RPL_CREATED(client.get_nickname(), ""));
         sendReply(client, error.RPL_MYINFO(client.get_nickname()));
         client.Set_isAuthenticated(true);
     }
@@ -103,8 +103,6 @@ int Server::stringToPort(std::string &string)
         return port;
     return -1;
 }
-
-Server::Server(void) : password("0123456789") {}
 
 void Server::StartServer()
 {
@@ -126,7 +124,6 @@ Server::Server(const Server &other)
 
 void Server::AddClient()
 {
-    // ------------------fixprefix---------------------
     sockaddr_in client_addr;
     socklen_t addr_len;
 
@@ -152,9 +149,9 @@ void Server::AddClient()
     poll_fds.push_back(ClientPollfd);
 
     Client client(ClientSocketFd);
-    ClientsInfo[ClientSocketFd] = client;
     client.set_hostname(hostname);
-    //need to add username
+    ClientsInfo[ClientSocketFd] = client;
+
     std::cout << "client number " << ClientSocketFd << " connect" << std::endl;
 }
 
@@ -174,19 +171,18 @@ void Server::PassCmd(Client &client, std::string password_arg)
 {
     if (client.Get_isAuthenticated() == true)
     {
-        sendReply(client, error.ERR_ALREADYREGISTERED(client.get_nickname(),":You may not reregister"));
-        // client.SetIsSetPass(false);
+        sendReply(client, error.ERR_ALREADYREGISTERED(client.get_nickname(), ":You may not reregister"));
         return;
     }
     if (password_arg.empty())
     {
-        sendReply(client, error.ERR_NEEDMOREPARAMS(client.get_nickname(),"PASS"));
+        sendReply(client, error.ERR_NEEDMOREPARAMS(client.get_nickname(), "PASS"));
         client.SetIsSetPass(false);
         return;
     }
     if (password_arg != this->password)
     {
-        sendReply(client, error.ERR_PASSWDMISMATCH(client.get_nickname(),":Password incorrect"));
+        sendReply(client, error.ERR_PASSWDMISMATCH(client.get_nickname(), ":Password incorrect"));
         client.SetIsSetPass(false);
         return;
     }
@@ -202,17 +198,17 @@ void Server::UserCmd(Client &client, std::vector<std::string> &arg)
     size_t two = client.getlineCmd().find(" :");
     if (client.Get_isAuthenticated() == true)
     {
-        sendReply(client, error.ERR_ALREADYREGISTERED(client.get_nickname(),":You may not reregister"));
+        sendReply(client, error.ERR_ALREADYREGISTERED(client.get_nickname(), ":You may not reregister"));
         return;
     }
     else if (size_cmd < 5)
     {
-        sendReply(client, error.ERR_NEEDMOREPARAMS(client.get_nickname(),"USER"));
+        sendReply(client, error.ERR_NEEDMOREPARAMS(client.get_nickname(), "USER"));
         return;
     }
     else if (client.GetIsSetPass() == false)
     {
-        sendReply(client, error.ERR_PASSWDMISMATCH(client.get_nickname(),":Password not set"));
+        sendReply(client, error.ERR_PASSWDMISMATCH(client.get_nickname(), ":Password not set"));
         return;
     }
     userName = arg[1];
@@ -226,9 +222,9 @@ void Server::UserCmd(Client &client, std::vector<std::string> &arg)
     client.set_username(userName);
     if (client.GetIsSetNick() == true)
     {
-        sendReply(client, error.RPL_WELCOME(client.get_nickname(),client.get_Prefix())); // 001
-        sendReply(client, error.RPL_YOURHOST(client.get_nickname())) ;// 002
-        sendReply(client, error.RPL_CREATED(client.get_nickname(),""));
+        sendReply(client, error.RPL_WELCOME(client.get_nickname(), client.get_Prefix()));
+        sendReply(client, error.RPL_YOURHOST(client.get_nickname()));
+        sendReply(client, error.RPL_CREATED(client.get_nickname(), ""));
         sendReply(client, error.RPL_MYINFO(client.get_nickname()));
         client.Set_isAuthenticated(true);
     }
@@ -245,11 +241,12 @@ void Server::ParseCmd(Client &client)
 {
     std::vector<std::string> cmds;
 
-    if (client.getlineCmd().size() >= 512) {
+    if (client.getlineCmd().size() >= 512)
+    {
         sendReply(client, error.ERR_INPUTTOOLONG(client.get_nickname()));
-        return ;
+        return;
     }
-    
+
     cmds = new_splite(client.getlineCmd(), ' ');
 
     if (cmds.size() == 0)
@@ -281,58 +278,59 @@ void Server::ParseCmd(Client &client)
     client.setlineCmd(empty);
 }
 
+void Server::processClientBuffer(Client &client, char *buffer, int bytes_read)
+{
+    std::string str_buffer(buffer, bytes_read);
+
+    if (str_buffer.find('\n') == std::string::npos)
+        client.setlineCmd(client.getlineCmd().append(str_buffer));
+    else
+    {
+        client.setlineCmd(client.getlineCmd().append(str_buffer));
+        std::string s = client.getlineCmd();
+
+        for (std::string::size_type pos = 0; (pos = s.find("\r\n", pos)) != std::string::npos;)
+            s.replace(pos, 2, "\n");
+
+        client.setlineCmd(s);
+        std::vector<std::string> cmds = new_splite(client.getlineCmd(), '\n');
+        for (size_t i = 0; i < cmds.size(); i++)
+        {
+            client.setlineCmd(cmds[i]);
+            ParseCmd(client);
+        }
+    }
+}
+
 void Server::GetClientEvents()
 {
     for (size_t i = 0; i < poll_fds.size(); i++)
     {
         if (poll_fds[i].revents & POLLIN)
         {
-            if (i == 0)
+            if (poll_fds[i].fd == this->serverId)
                 AddClient();
             else
             {
                 char buffer[1024];
                 bzero(buffer, 1024);
-                std::string str_buffer;
 
                 Client &client = ClientsInfo[poll_fds[i].fd];
                 int bytes_read = recv(poll_fds[i].fd, buffer, sizeof(buffer) - 1, 0);
 
                 if (bytes_read > 0)
-                {
-                    std::string str_buffer(buffer, bytes_read);
-
-                    if (str_buffer.find('\n') == std::string::npos)
-                        client.setlineCmd(client.getlineCmd().append(str_buffer));
-                    else
-                    {
-                        client.setlineCmd(client.getlineCmd().append(str_buffer));
-                        std::string s = client.getlineCmd();
-
-                        for (std::string::size_type pos = 0; (pos = s.find("\r\n", pos)) != std::string::npos;)
-                            s.replace(pos, 2, "\n");
-
-                        client.setlineCmd(s);
-                        std::vector<std::string> cmds = new_splite(client.getlineCmd(), '\n');
-                        for (size_t i = 0; i < cmds.size(); i++)
-                        {
-                            client.setlineCmd(cmds[i]);
-                            ParseCmd(client);
-                        }
-                    }
-                }
+                    processClientBuffer(client, buffer, bytes_read);
                 else if (bytes_read == 0)
                 {
-                    // std::cout << "client number " << poll_fds[i].fd << " disconnect" << std::endl;
                     Quit(client);
                     close(poll_fds[i].fd);
                     ClientsInfo.erase(poll_fds[i].fd);
                     poll_fds.erase(poll_fds.begin() + i);
                     i--;
                 }
-                else
+                else if (bytes_read < 0 && (errno != EAGAIN && errno != EWOULDBLOCK))
                 {
-
+                    throw std::runtime_error("recv failed");
                 }
             }
         }
@@ -343,13 +341,10 @@ void Server::waitConnection()
 {
     while (true)
     {
-        int num_event = poll(&poll_fds[0], poll_fds.size(), -1);
+        int num_event = poll(&poll_fds[0], poll_fds.size(), 0);
 
         if (num_event == -1)
-        {
-            perror("poll error");
-            continue;
-        }
+            throw std::runtime_error("poll failed");
         else if (num_event == 0)
         {
             continue;
@@ -364,16 +359,17 @@ void Server::waitConnection()
 void Server::PrepareServerSocket()
 {
     serverId = socket(AF_INET, SOCK_STREAM, 0);
+    if (serverId < 0)
+        throw std::runtime_error("Error: Failed to create socket: " + std::string(strerror(errno)));
+
     int opt = 1;
 
-    if (serverId < 0) {
-        throw std::runtime_error("Error: Failed to create socket: " + std::string(strerror(errno)));
-    }
     if (setsockopt(serverId, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
     {
         close(serverId);
         throw std::runtime_error("Error: setsockopt(SO_REUSEADDR) failed: " + std::string(strerror(errno)));
     }
+
     if (fcntl(serverId, F_SETFL, O_NONBLOCK) < 0)
     {
         close(serverId);
@@ -389,6 +385,7 @@ void Server::PrepareServerSocket()
         close(serverId);
         throw std::runtime_error("Error: Bind failed: " + std::string(strerror(errno)));
     }
+
     if (listen(serverId, SOMAXCONN) < 0)
     {
         throw std::runtime_error("Error: Listen failed: " + std::string(strerror(errno)));
@@ -403,14 +400,6 @@ void Server::PrepareServerSocket()
     poll_fds.push_back(ServerPollfd);
 }
 
-Server &Server::operator=(const Server &other)
-{
-    if (&other != this)
-    {
-    }
-    return (*this);
-}
-
 Server::~Server(void) {}
 
 bool isValidPassword(std::string str)
@@ -423,26 +412,19 @@ bool isValidPassword(std::string str)
 Server::Server(std::string &port, std::string &password)
     : port(stringToPort(port)), password(password), isGetSignal(false)
 {
-
     if (this->port < 0)
-    {
-       throw std::runtime_error("Error: Invalid port number provided");
-    }
-    else if (isValidPassword (password) == false)
-    {
+        throw std::runtime_error("Error: Invalid port number provided");
+    else if (isValidPassword(password) == false)
         throw std::runtime_error("Error: Invalid password format");
-    }
 
     serverId = -1;
-    addr_len = sizeof(sockaddr_in);
 }
-
-// -------------------------------------------------------------------CHANNEL_PART----------------------------------------------------------------------------------------------
 
 void Server::removeClientFromAllChannels(Client &c)
 {
     std::vector<std::string> channel_to_leave;
     std::map<std::string, Channel>::iterator it = this->channel.begin();
+
     while (it != this->channel.end())
     {
         Channel &ch = it->second;
@@ -450,6 +432,7 @@ void Server::removeClientFromAllChannels(Client &c)
             channel_to_leave.push_back(ch.get_channel_name());
         it++;
     }
+
     for (size_t i = 0; i < channel_to_leave.size(); i++)
     {
         std::map<std::string, Channel>::iterator it1 = channel.find(channel_to_leave[i]);
@@ -504,6 +487,7 @@ std::vector<std::string> Server::isUserInvited_to_channel(Client &c)
 {
     std::map<std::string, Channel>::iterator it = channel.begin();
     std::vector<std::string> all_channel;
+
     while (it != channel.end())
     {
         Channel ch = it->second;

@@ -35,6 +35,7 @@ class Server
         int ReadClientMessage(std::string &line);
         void AddClient();
         void GetClientEvents();
+        void processClientBuffer(Client &client, char *buffer, int bytes_read);
         void PrepareServerSocket(); // -->1 creat  socket  --2 socket option 3 non  blocking socket --- 4
         void waitConnection();
         void ConfigureSocket();
@@ -55,11 +56,8 @@ class Server
 		std::map<std::string,Channel> channel;
         Reply   error;
         Channel *chan;
-
-        Server(void);
         Server(std::string &port,std::string &password);
         Server(const Server& other);
-        Server &operator=(const Server &other);
         
         void  StartServer();
         void  join(Client &c);

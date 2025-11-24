@@ -154,7 +154,6 @@ void Server::AddClient()
     Client client(ClientSocketFd);
     client.set_hostname(hostname);
     ClientsInfo[ClientSocketFd] = client;
-    //need to add username
     std::cout << "client number " << ClientSocketFd << " connect" << std::endl;
 }
 

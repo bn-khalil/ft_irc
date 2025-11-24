@@ -1,5 +1,4 @@
 #include "channel.hpp"
-#include <cstddef>
 
 void Server::privmsg(Client &c) {
     std::string command = c.getlineCmd();

@@ -82,10 +82,6 @@ bool validateLimitParams(std::string limit) {
         i++;
     if (!std::isdigit(limit[i]) && !std::isspace(limit[i]))
         return false;
-    // for (; i < limit.size(); i++) {
-    //     if (!std::isdigit(limit[i]) && !std::isspace(limit[i]) && limit[i] != '+')
-    //         return false;
-    // }
     return true;
 }
 
@@ -355,7 +351,6 @@ void Server::mode(Client &c) {
         }
 
         if (!sortModes.empty()) {
-            std::cout << error.RPL_MODEOPTIONS(c.get_Prefix(), it_channel->second.get_channel_name(), sortModes) << std::endl;
             it_channel->second.broadcast(error.RPL_MODEOPTIONS(c.get_Prefix(), 
             it_channel->second.get_channel_name(), sortModes));
         }
@@ -363,31 +358,3 @@ void Server::mode(Client &c) {
     modes.clear();
     filterdModes.clear();
 }
-
-
-        //    if (modes[i].mode == 'l') {
-        //         if (ShouldSkeepLimts)
-        //             continue ;
-        //         if(modes[i].sing) {
-        //             unsigned int limit = static_cast<unsigned int>(std::atol(modes[i].param.c_str()));
-        //             if (it_channel->second.getisLimited() && it_channel->second.get_num_limite() == limit)
-        //                 continue ;
-        //             if (it_channel->second.modeExecuter(modes[i], c, *this))
-        //                 filerM[modes[i].mode] = modes[i];
-        //             ShouldSkeepLimts = true;
-        //         } else {
-        //             if (!it_channel->second.getisLimited())
-        //                 continue ; 
-        //             if (it_channel->second.modeExecuter(modes[i], c, *this))
-        //                 filerM[modes[i].mode] = modes[i];
-        //             ShouldSkeepLimts = true;
-        //         }
-        //         continue ;
-        //     }
-        //     if (it_channel->second.modeExecuter(modes[i], c, *this))
-        //         filerM[modes[i].mode] = modes[i];
-
-// pass 12
-// user a a a a
-// nick bn
-// join #bn

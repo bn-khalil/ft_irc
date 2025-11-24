@@ -319,26 +319,13 @@ void Server::mode(Client &c) {
             if (it_channel->second.modeExecuter(modes[i], c, *this))
                 filerM[modes[i].mode] = modes[i];
         }
-        std::map<char, modes_t>::iterator hold;
-        hold = filerM.find('i');
-        if (hold != filerM.end()) {
-            if (it_channel->second.getIsInviteOnly() != channelCurrentModes.isInviteOnly)
-                prepareModesMessage(hold,sortModesPlus, sortModesMinus, seccessModes );
-        }
-        hold = filerM.find('t');
-        if (hold != filerM.end()) {
-            if (it_channel->second.getTopicRestriction() != channelCurrentModes.topicRestriction)
-                prepareModesMessage(hold,sortModesPlus, sortModesMinus, seccessModes );
-        }
-        hold = filerM.find('l');
-        if (hold != filerM.end() && !hold->second.sing) {
-            if (it_channel->second.getisLimited() != channelCurrentModes.isLimited)
-                prepareModesMessage(hold,sortModesPlus, sortModesMinus, seccessModes );
-        }
 
         for (std::map<char,modes_t>::iterator it = filerM.begin(); it != filerM.end(); ++it) {
-            if (it->second.mode == 'k' || (it->second.mode == 'l' && it->second.sing && !it->second.param.empty()) || it->second.mode == 'o')
-                prepareModesMessage(it,sortModesPlus, sortModesMinus, seccessModes );
+            if (it->second.mode == 'i' && it_channel->second.getIsInviteOnly() == channelCurrentModes.isInviteOnly)
+                continue;
+            if (it->second.mode == 't' && it_channel->second.getTopicRestriction() == channelCurrentModes.topicRestriction)
+                continue;
+            prepareModesMessage(it,sortModesPlus, sortModesMinus, seccessModes );
         }
 
         if (!sortModesPlus.empty())

@@ -15,6 +15,7 @@ EXP_SRC =exception/FcntlFailedException.cpp exception/InvalidPasswordException.c
 		commands/channel_membership/kick.cpp \
 		commands/channel_membership/invite.cpp \
 		commands/channel_membership/privmsg.cpp \
+		commands/channel_membership/quite.cpp \
 
 CPP = c++
 

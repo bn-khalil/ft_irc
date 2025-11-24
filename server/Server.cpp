@@ -1,18 +1,12 @@
 #include "Server.hpp"
 #include "../commands/channel_membership/Reply.hpp"
-#include "../exception/SocketFailedToCreatException.hpp"
-#include "../exception/FcntlFailedException.hpp"
-#include "../exception/SocketBindFailedException.hpp"
-#include "../exception/SocketOptionFailedException.hpp"
-#include "../exception/SocketListenFailedException.hpp"
-#include "../exception/InvalidPasswordException.hpp"
-#include "../exception/InvalidPortException.hpp"
 #include "Client.hpp"
 #include <cstddef>
 #include <ctime>
 #include <iostream>
 #include <iterator>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <strings.h>
 #include <sys/poll.h>
@@ -372,21 +366,34 @@ void Server::PrepareServerSocket()
     serverId = socket(AF_INET, SOCK_STREAM, 0);
     int opt = 1;
 
-    if (serverId < 0)
-        throw SocketFailedToCreatException();
+    if (serverId < 0) {
+        throw std::runtime_error("Error: Failed to create socket: " + std::string(strerror(errno)));
+    }
     if (setsockopt(serverId, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
-        throw SocketOptionFailedException();
+    {
+        close(serverId);
+        throw std::runtime_error("Error: setsockopt(SO_REUSEADDR) failed: " + std::string(strerror(errno)));
+    }
     if (fcntl(serverId, F_SETFL, O_NONBLOCK) < 0)
-        throw FcntlFailedException();
+    {
+        close(serverId);
+        throw std::runtime_error("Error: fcntl(O_NONBLOCK) failed: " + std::string(strerror(errno)));
+    }
 
     serverConfig.sin_family = AF_INET;
     serverConfig.sin_port = htons(port);
     serverConfig.sin_addr.s_addr = INADDR_ANY;
 
     if (bind(serverId, (struct sockaddr *)(&serverConfig), sizeof(serverConfig)) < 0)
-        throw SocketBindFailedException();
+    {
+        close(serverId);
+        throw std::runtime_error("Error: Bind failed: " + std::string(strerror(errno)));
+    }
     if (listen(serverId, SOMAXCONN) < 0)
-        throw SocketListenFailedException();
+    {
+        throw std::runtime_error("Error: Listen failed: " + std::string(strerror(errno)));
+        close(serverId);
+    }
 
     struct pollfd ServerPollfd;
     ServerPollfd.fd = serverId;
@@ -419,11 +426,11 @@ Server::Server(std::string &port, std::string &password)
 
     if (this->port < 0)
     {
-        throw InvalidPortException();
+       throw std::runtime_error("Error: Invalid port number provided");
     }
     else if (isValidPassword (password) == false)
     {
-        throw InvalidPasswordException();
+        throw std::runtime_error("Error: Invalid password format");
     }
 
     serverId = -1;

@@ -6,7 +6,7 @@
 /*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:06:44 by akella            #+#    #+#             */
-/*   Updated: 2025/11/24 12:46:57 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/24 17:05:37 by akella           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,11 @@ void Server::invit(Client &c)
             return sendReply(c, error.ERR_NOSUCHNICK(c.get_nickname(), name_c_invited));
 
         std::map<std::string, Channel>::iterator it = channel.find(one_channel);
-
-        if (one_channel.length() < 2 || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || it == channel.end())
-            return sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), one_channel));
-
+        if (one_channel.empty() || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || Channel::tab_found(one_channel) == true  || it == channel.end())
+        {
+         return sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), one_channel));
+        }
+        
         Channel &real_one = it->second;
 
         if (real_one.isUserInChannel(*client_invited) == true)

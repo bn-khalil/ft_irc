@@ -6,7 +6,7 @@
 /*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:07 by akella            #+#    #+#             */
-/*   Updated: 2025/11/22 12:05:08 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/24 17:32:23 by akella           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void Server::kick(Client &c)
 
     std::map<std::string, Channel>::iterator it = channel.find(one_channel);
 
-    if ((one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || it == channel.end())
+    if (one_channel.empty() || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || Channel::tab_found(one_channel) == true  || it == channel.end())
         return sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), one_channel));
     else if (!it->second.isUserInChannel(c))
         return sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(), one_channel));

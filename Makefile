@@ -1,23 +1,22 @@
 NAME = ircserv
 
-FLAG = -Wall -Werror -Wextra #-std=c++98 -fsanitize=address -g
+FLAG = -Wall -Werror -Wextra -std=c++98 -fsanitize=address -g
 
-HEADER = server/Authentication.hpp server/Client.hpp server/Server.hpp
-EXP_HEADER = exception/FcntlFailedException.hpp exception/SocketBindFailedException.hpp  exception/SocketFailedToCreatException.hpp  exception/SocketListenFailedException.hpp  exception/SocketOptionFailedException.hpp 
+HEADER = server/Client.hpp server/Server.hpp
 
-EXP_SRC = exception/FcntlFailedException.cpp exception/SocketBindFailedException.cpp exception/SocketFailedToCreatException.cpp exception/SocketListenFailedException.cpp exception/SocketOptionFailedException.cpp \
-		commands/channel_membership/channel.cpp \
+EXP_SRC =commands/channel_membership/channel.cpp \
 		commands/channel_membership/join.cpp  \
 		commands/channel_membership/topic.cpp  \
 		commands/channel_membership/mode.cpp  \
 		commands/channel_membership/Reply.cpp \
 		commands/channel_membership/kick.cpp \
 		commands/channel_membership/invite.cpp \
-
+		commands/channel_membership/privmsg.cpp \
+		commands/channel_membership/quite.cpp \
 
 CPP = c++
 
-SERVER_SRC = server/Authentication.cpp server/Client.cpp server/Server.cpp main.cpp
+SERVER_SRC = server/Client.cpp server/Server.cpp main.cpp
 CMD_SRC =
 
 SERVER_OBJ = $(SERVER_SRC:.cpp=.o)
@@ -34,6 +33,13 @@ $(NAME): $(OBJ)
 %.o: %.cpp $(HEADER)
 	$(CPP) $(FLAG) -c $< -o $@
 
+
+SRC_BONUS = bot.cpp
+OBJ_BONUS = $(SRC_BONUS:.cpp=.o)
+
+bonus: $(OBJ_BONUS)
+	$(CPP) $(FLAG) $(OBJ_BONUS) -o bonus
+
 clean:
 	rm -rf $(OBJ)
 
@@ -41,3 +47,4 @@ fclean: clean
 	rm -rf $(NAME)
 
 re: fclean all
+

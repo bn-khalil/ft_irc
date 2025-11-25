@@ -1,29 +1,14 @@
 #include "channel.hpp"
-#include <sstream>
 #include <string>
 
-
-// static void showChannelTopic(std::map<std::string,Channel*> & channel) {
-//     std::map<std::string,Channel*>::iterator it = channel.begin();
-//     while (it != channel.end())
-//     {
-
-//     }
-// }
-static std::vector<std::string> new_splite(std::string &strr, char d)
-{
-    std::string save;
-    std::stringstream ss(strr);
-    std::vector<std::string> resulte;
-
-    while(getline(ss,  save , d))
-    {
-            resulte.push_back(save);
-    }
-    return resulte;
-}
-
 void  Server::topic(Client &c) {
+
+    if(c.Get_isAuthenticated() == false)
+    {
+        sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
+        return ;
+    }
+    
     std::string command = c.getlineCmd();
     if (!command.empty() && command.back() == '\n') {
         command.pop_back();
@@ -31,39 +16,50 @@ void  Server::topic(Client &c) {
     std::vector<std::string> args = new_splite(command, ' ');
 
     if (args.size() == 1)
-        sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "TOPIC", "<channel> [:<topic>]"));
+        sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "TOPIC"));
     else if (args.size() == 2) {
-        std::map<std::string,Channel*>::iterator it = this->channel.find(args[1]);
+        std::map<std::string,Channel>::iterator it = this->channel.find(args[1]);
         if (it == channel.end()) {
             sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), args[1]));
             return ;
         }
 
-        if (it->second->getTopic().empty())
+        if (it->second.getTopic().empty())
             sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), args[1]));
-        else
-            sendReply(c, error.RPL_TOPIC(c.get_nickname(), args[1], it->second->getTopic()));
-        
+        else {
+            sendReply(c, error.RPL_TOPIC(c.get_nickname(), args[1], it->second.getTopic()));
+            sendReply(c, error. RPL_CREATIONTIME (
+                c.get_nickname(), it->second.fromTime(it->second.getTimeTopic()), it->second.get_channel_name()));
+        }
     } 
     else {
 
+        int dotsIndex = command.find(":");
         std::string topic;
+        if (dotsIndex < 0)
+            topic = args[args.size() - 1];
+        else
+            topic = command.substr(dotsIndex + 1);
+        
+        std::map<std::string,Channel>::iterator it = this->channel.find(args[1]);
 
-        for (size_t i = 2; i < args.size(); ++i) {
-            if (i > 2) topic.push_back(' ');
-            topic += args[i];
+        if (it == channel.end()) {
+            sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), args[0]));
+            return ;
+        }
+        
+        if (!it->second.isUserInChannel(c))
+        {
+            sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(), it->first));
+            return;
         }
 
-        std::map<std::string,Channel*>::iterator it = this->channel.find(args[1]);
-
-        if (it != channel.end()) {
-            it->second->setTopic(topic);
-            std::cout << it->second->getTopic() << std::endl;
-            sendReply(c, error.RPL_TOPIC(c.get_nickname(), args[1], topic));
-        } else
-            sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), args[0]));
+        if (!it->second.isClientOperator(c) && it->second.getTopicRestriction()) {
+            sendReply(c, this->error.ERR_CHANOPRIVSNEEDED(c.get_nickname(), it->second.get_channel_name()));
+            return ;
+        }
+        it->second.setTopic(topic);
+        it->second.setTimeTopic(std::time(0));
+        it->second.broadcast(error.RPL_TOPICREATED(it->second.get_channel_name(), c.get_Prefix(), topic));
     }
 }
-
-// :*.freenode.net 332 bn #c :
-// :bn!~n@freenode-obu.d75.6g0qj4.IP TOPIC #bn :new content

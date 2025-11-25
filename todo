@@ -1,2 +1,161 @@
 1 nick 
 topic #sd df   df df	gd
+
+
+//topic after set
+=======
+@REM mode #ch
+@REM :*.freenode.net 324 bn #ch :+nt
+@REM :*.freenode.net 329 bn #ch :1762934472
+@REM mode #ch +l
+@REM :*.freenode.net 696 bn #ch l * :You must specify a parameter for the limit mode. Syntax: <limit>.
+@REM mode #ch l
+@REM :*.freenode.net 696 bn #ch l * :You must specify a parameter for the limit mode. Syntax: <limit>.
+@REM mode #ch ++l
+@REM :*.freenode.net 696 bn #ch l * :You must specify a parameter for the limit mode. Syntax: <limit>.
+@REM mode #ch ++l 12
+@REM :bn!~s@freenode-obu.d75.6g0qj4.IP MODE #ch +l :12
+@REM mode #ch l 123
+@REM :bn!~s@freenode-obu.d75.6g0qj4.IP MODE #ch +l :123
+@REM mode #ch ---l
+@REM :bn!~s@freenode-obu.d75.6g0qj4.IP MODE #ch :-l
+@REM mode #ch +++l 12
+@REM :bn!~s@freenode-obu.d75.6g0qj4.IP MODE #ch +l :12
+@REM mode #ch l
+@REM :*.freenode.net 696 bn #ch l * :You must specify a parameter for the limit mode. Syntax: <limit>.
+@REM mode #ch l 123 1        2
+@REM :bn!~s@freenode-obu.d75.6g0qj4.IP MODE #ch +l :123
+@REM mode #ch l	12
+@REM :*.freenode.net 472 bn 	 :is not a recognised channel mode.
+@REM :*.freenode.net 472 bn 1 :is not a recognised channel mode.
+@REM :*.freenode.net 472 bn 2 :is not a recognised channel mode.
+@REM :*.freenode.net 696 bn #ch l * :You must specify a parameter for the limit mode. Syntax: <limit>.
+@REM mode #ch +l     	3
+@REM :*.freenode.net 472 bn 	 :is not a recognised channel mode.
+@REM :*.freenode.net 472 bn 	 :is not a recognised channel mode.
+@REM :*.freenode.net 472 bn 3 :is not a recognised channel mode.
+@REM :*.freenode.net 696 bn #ch l * :You must specify a parameter for the limit mode. Syntax: <limit>.
+@REM mode #ch +l        4
+@REM :bn!~s@freenode-obu.d75.6g0qj4.IP MODE #ch +l :4
+@REM mode #ch l 5
+@REM :bn!~s@freenode-obu.d75.6g0qj4.IP MODE #ch +l :5
+@REM mode #ch o
+@REM :*.freenode.net 696 bn #ch o * :You must specify a parameter for the op mode. Syntax: <nick>.
+
+// each mode changed should broadcast it 
+
+// nick shoul set after user 
+
+should show new topic to joined users
+@REM //:ircserver42.com 331 s #bn :No topic is set
+@REM :ircserver42.com 353 s = #bn :@a s
+@REM :ircserver42.com 366 s #bn :End of /NAMES list
+>>>>>>> test
+//nick with only alpha
+
+
+
+
+:ircserver42.com 366 akella #1 :End of /NAMES list
+topic
+:ircserver42.com 461 akella TOPIC :Not enough parameters
+topic #1
+:ircserver42.com 331 akella #1 :No topic is set
+topic #1 : hello
+:ircserver42.com 332 akella #1 :: hello
+:ircserver42.com 332 akella #1 :: hello
+
+
+// privmsg
+privmsg
+:cymru.us.quakenet.org 411 bn :No recipient given (PRIVMSG)
+PRIVMSG
+:cymru.us.quakenet.org 411 bn :No recipient given (PRIVMSG)
+
+privmsg dg
+:cymru.us.quakenet.org 412 bn :No text to send
+
+privmsg sdf sdf
+:cymru.us.quakenet.org 401 bn sdf :No such nick
+
+:cymru.us.quakenet.org 412 bn :No text to send
+privmsg nm hello // correct
+
+
+privmsg nm      hello sd
+:cymru.us.quakenet.org 401 bn nm	hello :No such nick
+
+// broadcast expected sender
+
+// operator can't kicked from a channel
+
+//kick #bn	as // with tab bet channel and nick
+:hostsailor.ro.quakenet.org 461 as KICK :Not enough parameters 
+
+
+
+@REM akella@e3r4p3 MY_IRC % nc localhost 6677 12
+@REM pass 12
+@REM user a a a a
+@REM nick bn
+
+
+@REM topic #bn :this is nsf           
+@REM :bn!~a@197.230.30.146 TOPIC #bn :this is nsf
+@REM  :this is nsf           
+@REM :stockholm.se.quakenet.org 421 bn is :Unknown command
+@REM topic #bn this sd : hello agailn
+@REM :bn!~a@197.230.30.146 TOPIC #bn : hello agailn
+
+@REM mode #bn
+@REM :stockholm.se.quakenet.org 324 bn #bn +tnCN 
+@REM :stockholm.se.quakenet.org 329 bn #bn 1763280840
+
+@REM duplication of modes printed
+
+@REM mode #bn -ti+t-i
+@REM sd!~a@0.0.0.0 #bn -iit+t
+
+@REM sd!~a@0.0.0.0 #sd +i
+
+@mode #mn l-k :12 sdf :12
+
+
+@REM mode #mn k :321k1f
+@REM :sn!~a@197.230.30.146 MODE #mn +k 321k1f
+@REM mode #mn -k :321k1f
+@REM :sn!~a@197.230.30.146 MODE #mn -k 321k1f
+@REM mode #mn k :321k1f sdf sd
+@REM :sn!~a@197.230.30.146 MODE #mn +k 321k1f
+@REM mode #mn l :1 2 3
+@REM :sn!~a@197.230.30.146 MODE #mn +l 1
+@REM mode #mn l-k :321k1f 12
+@REM :adrift.sg.quakenet.org 461 sn MODE -k :Not enough parameters
+@REM :sn!~a@197.230.30.146 MODE #mn +l 321
+
+//
+
+@REM privmsg #bn hello
+@REM :tngnet.nl.quakenet.org 404 sb #bn :Cannot send to channel
+
+@REM :tngnet.nl.quakenet.org 366 sb #bn :End of /NAMES list.
+@REM privmsg #bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn sdf
+@REM privmsg #bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn ,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn ,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn ,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn ,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn,#bn he  
+@REM :tngnet.nl.quakenet.org 417 sb :Input line was too long
+
+
+1
+@REM nick name parsing
+
+2
+@REM ctl^c quit client from a channel should brodcast
+@REM :bn!~a@197.230.30.146 QUIT :EOF from client
+
+3
+@REM ctl^d should broadcast for channels that client joind 
+@REM ERROR :Closing Link: sd by atw.hu.quakenet.org (EOF from client)
+
+4
+@REM ➜  create a channel and quite let the server running and reconnect with same old client nickname than join the same channel 
+
+@REM mode #bn +i-t+l-k+i+t-l+k 5 x

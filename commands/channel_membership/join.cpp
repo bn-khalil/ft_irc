@@ -6,7 +6,7 @@
 /*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:12 by akella            #+#    #+#             */
-/*   Updated: 2025/11/24 16:46:10 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/25 18:24:54 by akella           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ void Server::join(Client &c)
     //Split The String Using Just Space !!
     std::string command = c.getlineCmd();
     
-    if (!command.empty() && command.back() == '\n')
-        command.pop_back();
+    if (!command.empty() && command[command.size() -1 ] == '\n')
+        command.erase(command.size() -1);
 
     std::vector<std::string> cmds = new_splite(command, ' ');
     //Check if Authenticated Alreddy Done !!

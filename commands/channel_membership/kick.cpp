@@ -6,7 +6,7 @@
 /*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:07 by akella            #+#    #+#             */
-/*   Updated: 2025/11/24 17:32:23 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/25 18:21:05 by akella           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@ void Server::kick(Client &c)
 {
     std::string command = c.getlineCmd();
     
-    if (!command.empty() && command.back() == '\n')
+    if (!command.empty() && command[command.size() -1 ] == '\n')
     {
-        command.pop_back();
+        command.erase(command.size() -1);
     }
 
     std::vector<std::string> cmds = new_splite(command, ' ');

@@ -227,8 +227,8 @@ void Server::mode(Client &c) {
     }
 
     std::string command = c.getlineCmd();
-    if (!command.empty() && command.back() == '\n') {
-        command.pop_back();
+    if (!command.empty() && command[command.size() -1 ] == '\n') {
+        command.erase(command.size() -1);
     }
     std::vector<std::string> cmds = new_splite(command, ' ');
 

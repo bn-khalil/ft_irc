@@ -3,8 +3,8 @@
 
 void Server::privmsg(Client &c) {
     std::string command = c.getlineCmd();
-    if (!command.empty() && command.back() == '\n') {
-        command.pop_back();
+    if (!command.empty() && command[command.size() -1 ] == '\n') {
+        command.erase(command.size() -1);
     }
 
     if (c.Get_isAuthenticated() == false)

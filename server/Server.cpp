@@ -153,7 +153,7 @@ void Server::AddClient()
     ClientsInfo[ClientSocketFd] = client;
     client.set_hostname(hostname);
     //need to add username
-    std::cout << "client number " << ClientSocketFd << " connect" << std::endl;
+    std::cout << "🟢 New Client Connected | FD: " << ClientSocketFd << std::endl;
 }
 
 std::vector<std::string> Server::splitCmd(std::string &str)
@@ -318,11 +318,14 @@ void Server::GetClientEvents()
 
                 Client &client = ClientsInfo[poll_fds[i].fd];
                 int bytes_read = recv(poll_fds[i].fd, buffer, sizeof(buffer) - 1, 0);
-
                 if (bytes_read > 0)
+                {
                     processClientBuffer(client, buffer, bytes_read);
+                }
                 else if (bytes_read == 0)
                 {
+                    std::cout << "🔴 Client Disconnected | FD: " << client.getfd() << " | Nick: " << client.get_nickname() << std::endl;
+
                     Quit(client);
                     close(poll_fds[i].fd);
                     ClientsInfo.erase(poll_fds[i].fd);
@@ -331,7 +334,12 @@ void Server::GetClientEvents()
                 }
                 else if (bytes_read < 0 && (errno != EAGAIN && errno != EWOULDBLOCK))
                 {
-                    throw std::runtime_error("recv failed");
+                    std::cerr << "🔴 Recv Failed | FD: " << client.getfd() << " | Error: " << strerror(errno) << std::endl;
+                    Quit(client); 
+                    close(poll_fds[i].fd);
+                    ClientsInfo.erase(poll_fds[i].fd);
+                    poll_fds.erase(poll_fds.begin() + i);
+                    i--; 
                 }
             }
         }
@@ -452,7 +460,7 @@ void Server::sendReply(Client &c, std::string msg)
     std::string full_msg = msg + "\r\n";
     if (send(c.getfd(), full_msg.c_str(), full_msg.length(), 0) <= -1)
     {
-        std::cerr << "Client Disconnected" << std::endl;
+        std::cout << "🔴 Client Disconnected | FD: " << c.getfd() << " | Nick: " << c.get_nickname() << std::endl;        
         removeClientFromAllChannels(c);
         close(c.getfd());
         ClientsInfo.erase(c.getfd());

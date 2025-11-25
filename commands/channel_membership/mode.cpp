@@ -59,7 +59,7 @@ std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds, Client &c
                             sendReply(c, error.ERR_NEEDMODEPARM(c.get_nickname(), 
                                     modeWithFlag, "Not enough parameters"));
                         else if (modes[i] == 'o')
-                            ;
+                            continue ;
                         continue;
                     }
                 }

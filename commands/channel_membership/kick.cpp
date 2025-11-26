@@ -6,7 +6,7 @@
 /*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:07 by akella            #+#    #+#             */
-/*   Updated: 2025/11/25 18:21:05 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/26 18:40:31 by akella           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,21 +36,24 @@ void Server::kick(Client &c)
 
     if (cmds.size() > 3)
     {
-        std::vector<std::string>::iterator it = cmds.begin() + 3;
-        
-        if (it->size() > 0 && (*it)[0] == ':')
-            reason += it->substr(1);
-        else
-            reason += *it;
-            
-        it++;
-        for (; it != cmds.end(); it++)
+        if (cmds[3][0] == ':')
         {
-            reason += " ";
-            reason += *it;
+            size_t chan_pos = command.find(cmds[1]);
+            size_t user_pos = command.find(cmds[2], chan_pos + cmds[1].length());
+            size_t reason_pos = command.find(cmds[3], user_pos + cmds[2].length());
+            
+            if (reason_pos != std::string::npos)
+                reason = command.substr(reason_pos + 1);
+        }
+        else
+        {
+            reason = cmds[cmds.size() - 1];
         }
     }
-
+    else 
+    {
+        reason = c.get_nickname();
+    }
     Client *client_to_kick = find_client_by_nickname(name_c_to_kick);
 
     if (!client_to_kick)

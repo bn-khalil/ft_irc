@@ -137,7 +137,6 @@ void Server::StartServer()
         std::cout <<  "\033[32mPort        : " << port     << "\033[0m" << std::endl;
         std::cout << "\033[33m" << "Password    : " << password << "\033[0m\n" << std::endl;
         waitConnection();
-        // close fds
     }
     catch (std::exception &ex)
     {
@@ -355,7 +354,7 @@ void Server::GetClientEvents()
                     poll_fds.erase(poll_fds.begin() + i);
                     i--;
                 }
-                else if (bytes_read < 0 )//&& (errno != EAGAIN && errno != EWOULDBLOCK))
+                else if (bytes_read < 0 && (errno != EAGAIN && errno != EWOULDBLOCK))
                 {
                     std::cerr << "🔴 Recv Failed | FD: " << client.getfd() << " | Error: " << strerror(errno) << std::endl;
                     Quit(client); 

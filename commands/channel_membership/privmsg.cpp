@@ -13,7 +13,7 @@ void Server::privmsg(Client &c) {
     }
     
     std::vector<std::string> args = new_splite(command, ' ');
-    args[1] = toLower(args[1]);
+
 
     int dotsIndex = command.find(":");
     std::string message;

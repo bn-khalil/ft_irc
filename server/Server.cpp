@@ -94,7 +94,7 @@ void Server::NickCmd(Client &client, std::string nick_arg)
         {
             if (it->first == client.getfd())
                 continue;
-            if (it->second.GetIsSetNick() == true && it->second.get_nickname() == nick_arg)
+            if (it->second.GetIsSetNick() == true && toLower (it->second.get_nickname()) == toLower(nick_arg))
             {
                 sendReply(client, error.ERR_NICKNAMEINUSE(client.get_nickname(), nick_arg, ":Nickname is already in use"));
                 return;
@@ -504,7 +504,7 @@ Client *Server::find_client_by_nickname(std::string nick)
 {
     for (std::map<int, Client>::iterator it = ClientsInfo.begin(); it != ClientsInfo.end(); it++)
     {
-        if (it->second.get_nickname() == nick)
+        if ( toLower(it->second.get_nickname()) == toLower(nick) )
             return &it->second;
     }
     return NULL;

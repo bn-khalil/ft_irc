@@ -41,7 +41,6 @@ std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds, Client &c
                 modes_t currentMode;
                 currentMode.sing = sing;
                 currentMode.mode = modes[i];
-                currentMode.display = false;
                 if (modes[i] == 'k' || (modes[i] == 'l' && sing == true) || modes[i] == 'o') {
                     indexParam++;
                     if (indexParam < cmds.size()) {
@@ -71,15 +70,11 @@ std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds, Client &c
                                         currentMode.param = message;
                                 }
                                 currentMode.param = message;
-
                             }
                         }
                     } else {
                         std::string modeWithFlag(1, modes[i]);
-                        if (modes[i] == 'k')
-                            sendReply(c, error.ERR_NEEDMODEPARM(c.get_nickname(), 
-                                    modeWithFlag, "Not enough parameters"));
-                        else if (modes[i] == 'l')
+                        if (modes[i] == 'k' || modes[i] == 'l')
                             sendReply(c, error.ERR_NEEDMODEPARM(c.get_nickname(), 
                                     modeWithFlag, "Not enough parameters"));
                         else if (modes[i] == 'o')
@@ -147,7 +142,7 @@ bool Channel::modeExecuter(modes_t &mode, Client &c, Server &server) {
             if (limit == this->num_limite)
                 return false;
             mode.param = fromTime(limit);
-            this->num_limite = (limit);
+            this->num_limite = limit;
             this->isLimited = true;
         }
     }
@@ -230,8 +225,6 @@ std::string & sortModesPlus,
 
 void Server::mode(Client &c) {
     std::vector<modes_t> modes;
-    std::vector<modes_t> filterdModes;
-    std::vector<modes_t> filterdModesCopy;
     std::map<char, modes_t> filerM;
     std::map<std::string, Channel>::iterator it_channel = this->channel.end();
     std::vector<std::string> seccessModes;
@@ -259,10 +252,6 @@ void Server::mode(Client &c) {
     else if (cmds.size() == 2) {
         if (!isChannelExist(it_channel, cmds, c))
             return;
-        if (!it_channel->second.isUserInChannel(c)) {
-            sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(),it_channel->second.get_channel_name()));
-            return;
-        }
         if (!it_channel->second.isUserInChannel(c)) {
             sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(),it_channel->second.get_channel_name()));
             return;
@@ -369,5 +358,4 @@ void Server::mode(Client &c) {
         }
     }
     modes.clear();
-    filterdModes.clear();
 }

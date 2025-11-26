@@ -1,27 +1,6 @@
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <ostream>
+#include "Bot.hpp"
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <strings.h>
-#include <sys/syslimits.h>
-#include <unistd.h>
-
-void    close_all_fds(void)
-{
-    int max_fd = OPEN_MAX;
-    int i = 3;
-
-    while (i < max_fd)
-    {
-        close(i);
-        i++;
-    }
-}
-
+// Helper functions implementation
 int stringToPort(std::string string)
 {
     int port = -1;
@@ -37,123 +16,158 @@ int stringToPort(std::string string)
     return -1;
 }
 
-std::string get_sender_name(std::string &prfx)
+bool isValidPassword(std::string &str)
 {
-    size_t ddot_posi = prfx.find(':');
-    size_t mark_posi = prfx.find('!');
+    std::string W_spaces = " \t\n\r\v\f";
+    if (str.empty() || str.length() > 100)
+        return false;
 
-    if (ddot_posi == std::string::npos || mark_posi == std::string::npos)
-        return "";
-
-    return prfx.substr(0, mark_posi);
+    for(int i = 0; str[i] ; i++)
+    {
+        if (W_spaces.find(str[i]) != std::string::npos)
+            return false;
+    }
+    return true;
 }
 
-std::string get_message(std::string &prfx)
+bool isValidNickname(const std::string &nick)
 {
-    size_t ddot_posi = prfx.find(':');
+    if (nick.empty())
+        return false;
 
-    if (ddot_posi == std::string::npos)
-        return "";
+    std::string forbiddenStartChars = "$:#&";
 
-    std::string arg = prfx.substr(ddot_posi + 1);
-    std::string cmd[6] = {"!amine", "!taha", "!youssef", "!skhayti", "!reda", "!help"};
+    if (forbiddenStartChars.find(nick[0]) != std::string::npos)
+        return false;
 
-    int i;
-    for (i = 0; cmd[i] != arg && i < 6; )
-        i++;
+    std::string forbiddenChars = " ,*?!@";
 
-    switch (i)
+    if (nick.find_first_of(forbiddenChars) != std::string::npos)
+        return false;
+
+    return true;
+}
+
+// Bot Class implementation
+Bot::Bot(std::string password, int port, std::string serverIp, std::string nick)
+{
+    if (this->port < 0)
+        throw std::runtime_error("Error: Invalid port number provided");
+    else if (isValidPassword(password) == false)
+        throw std::runtime_error("Error: Invalid password format ");
+    else if (isValidNickname(nick) == false)
+        throw std::runtime_error("Error: Invalid nick name ");
+
+    this->password = password;
+    this->port = port;
+    this->serverIp = serverIp;
+    this->nick = nick;
+    BotFd = -1;
+    authCmds = "PASS " + password + "\r\n" + "NICK " + nick + "\r\n" + "USER " + nick + " 0 * :Bot User\r\n";
+}
+
+void Bot::connectServer()
+{
+    struct sockaddr_in serv_addr;
+    
+    BotFd = socket(AF_INET, SOCK_STREAM, 0);
+    if (BotFd < 0)
+        throw std::runtime_error("Socket creation failed");
+
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(port);
+    serv_addr.sin_addr.s_addr = inet_addr(serverIp.c_str());
+
+    if (connect(BotFd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+        throw std::runtime_error("Connection failed");
+
+    std::cout << " Connected to server! " << std::endl;
+    
+    send(BotFd,authCmds.c_str(),authCmds.length(),0);
+    
+    char check_auth[1024];
+    bzero(check_auth, 1024);
+
+    int bytes = recv(BotFd, check_auth, 1023, 0);
+
+    if (bytes > 0)
     {
-        case 0: return "amine";
-        case 1: return "taha";
-        case 2: return "youssef";
-        case 3: return "skhayti";
-        case 4: return "reda";
-        default: return "help message";
+        std::string response = check_auth;
+
+        if (response.find(" 464 ") != std::string::npos) 
+            throw std::runtime_error("Error: Authentication Failed - Incorrect Password.");
+
+        if (response.find(" 433 ") != std::string::npos) 
+            throw std::runtime_error("Error: Authentication Failed - Nickname '" + nick + "' is already in use.");
+
+        if (response.find(" 461 ") != std::string::npos) 
+            throw std::runtime_error("Error: Authentication Failed - Not enough parameters.");
+    }
+}
+
+void Bot::run()
+{
+    char buffer_char[1024];
+
+    while (true) 
+    {
+        bzero(buffer_char, sizeof(buffer_char) );    
+        int bytesReceived = recv(BotFd, buffer_char, sizeof(buffer_char) -1, 0);
+
+        if (bytesReceived <= 0)
+        {
+            throw std::runtime_error("Error: Server disconnected.");
+        }
+
+        buffer.append(buffer_char);
+
+        size_t pos;
+        while ((pos = buffer.find("\r\n")) != std::string::npos)
+        {
+            std::string line = buffer.substr(0, pos);
+            buffer.erase(0, pos + 2);
+            hundleLineMsg(line); 
+        }
+    }
+}
+
+void Bot::hundleLineMsg(std::string line)
+{
+    if (line.find("PRIVMSG") != std::string::npos) 
+    {
+        size_t exclamation = line.find('!');
+        size_t colon = line.find(':', 1);
+
+        if (exclamation != std::string::npos && colon != std::string::npos) 
+        {
+            std::string sender = line.substr(1, exclamation - 1);
+            std::string msg = line.substr(colon + 1);
+            std::string to_send;
+
+            if (msg == "!help") 
+                to_send = "Available commands: !help, !hello";
+            else if (msg == "!hello")
+                to_send = "Available commands: !help, !hello";
+            std::string cmd = "PRIVMSG " + sender + " :" + to_send + "\r\n";
+            send(BotFd,cmd.c_str(),cmd.length(),0);
+        }
     }
 }
 
 int main(int ac, char **av)
 {
-    std::string password;
-    int port;
-    if (ac != 4)
+    if (ac != 5)
     {
-        std::cerr << "./bot <password of server> <Port> <IP of server>" << std::endl;
+        std::cerr << "./bot <password of server> <Port> <IP of server> <nickname of Bot>" << std::endl;
         return 1;
     }
-    password  = av[1];
-    port  = stringToPort(av[2]);
-    std::string ip = av[3];
+    try {
+        Bot bot(av[1], atoi(av[2]), av[3],av[4]);
+        bot.connectServer();
+        bot.run();
 
-    int boot_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (boot_fd < 0)
-        throw std::runtime_error("Error: Failed to create socket: " + std::string(strerror(errno)));
-
-    sockaddr_in server_data;
-    server_data.sin_family = AF_INET;
-    server_data.sin_port = htons(port);
-    server_data.sin_addr.s_addr = inet_addr(ip.c_str());
-    
-    if (connect(boot_fd, (const struct sockaddr *)&server_data, sizeof(sockaddr_in)) < 0)
+    } catch (std::exception &e)
     {
-        throw std::runtime_error("Error: connect to server failed: " + std::string(strerror(errno)));
-        return 1;
-    }
-
-    std::string pass_msg = "PASS amine\r\n";
-    send(boot_fd, pass_msg.c_str(), pass_msg.length(), 0);
-
-    std::string nick_msg = "NICK Bot\r\n";
-    send(boot_fd, nick_msg.c_str(), nick_msg.length(), 0);
-
-    std::string user_msg = "USER Bot 0 * :Bot\r\n";
-    send(boot_fd, user_msg.c_str(), user_msg.length(), 0);
-
-    char buffer[1024];
-    bzero(buffer, 1024);
-
-    int byte_recv = recv(boot_fd, buffer, 1000, 0);
-
-    if (byte_recv > 0)
-    {
-        std::string recv_msg = buffer;
-        if (recv_msg.find(" 462 ") != std::string::npos ||
-            recv_msg.find(" 461 ") != std::string::npos ||
-            recv_msg.find(" 464 ") != std::string::npos ||
-            recv_msg.find(" 431 ") != std::string::npos ||
-            recv_msg.find(" 433 ") != std::string::npos)
-        {
-            std::cerr << "error failed connection recv_msg " << recv_msg << std::endl;
-            return 1;
-        }
-    }
-
-    while (true)
-    {
-        char buffer[1024];
-
-        bzero(buffer, 1024);
-        int byte_recv = recv(boot_fd, buffer, 1000, 0);
-
-        if (byte_recv > 0)
-        {
-            
-            std::string recv_msg = buffer;
-            recv_msg = recv_msg.substr(0,recv_msg.length() - 2) + "\0";
-            std::cerr << "recv_msg [" << recv_msg << "]" << std::endl;
-            std::string sender = get_sender_name(recv_msg);
-
-            if (sender.empty())
-                continue;
-            std::string to_send = "privmsg " + sender + " :" + get_message(recv_msg) + "\r\n";
-
-            // std::cout << "to_send -> [" << to_send << "]" << std::endl;
-
-            send(boot_fd, to_send.c_str(), to_send.length(), 0);
-        }
-        else  {
-            std::cout << "byte_recv  " << byte_recv << std::endl; 
-        }
+        std::cerr << e.what() << std::endl;
     }
 }

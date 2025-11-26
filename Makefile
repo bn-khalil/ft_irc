@@ -3,7 +3,6 @@ NAME = ircserv
 FLAG = -Wall -Werror -Wextra -std=c++98 -fsanitize=address -g
 
 HEADER = server/Client.hpp server/Server.hpp
-
 EXP_SRC =commands/channel_membership/channel.cpp \
 		commands/channel_membership/join.cpp  \
 		commands/channel_membership/topic.cpp  \
@@ -33,7 +32,8 @@ $(NAME): $(OBJ)
 %.o: %.cpp $(HEADER)
 	$(CPP) $(FLAG) -c $< -o $@
 
-
+%.o: %.cpp $(HEADER)
+	$(CPP) $(FLAG) -c $< -o $@
 SRC_BONUS = bot.cpp
 OBJ_BONUS = $(SRC_BONUS:.cpp=.o)
 

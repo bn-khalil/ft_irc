@@ -19,7 +19,6 @@ void    close_all_fds(void)
     }
 }
 
-
 int main(int ac,char **av)
 {
     

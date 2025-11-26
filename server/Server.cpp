@@ -54,7 +54,7 @@ bool isValidNickname(const std::string &nick)
     if (nick.empty())
         return false;
 
-    std::string forbiddenStartChars = "$:#&";
+    std::string forbiddenStartChars = "0123456789$:#&";
 
     if (forbiddenStartChars.find(nick[0]) != std::string::npos)
         return false;

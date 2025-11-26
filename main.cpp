@@ -1,15 +1,10 @@
 #include "server/Server.hpp"
-// #include "server/Authentication.hpp"
-// #include "server/Client.hpp"
-
 #include <csignal>
-#include <cstddef>
 #include <exception>
 #include <iostream>
 #include <sys/poll.h>
 #include <sys/socket.h>
 #include <fcntl.h>
-#include <vector>
 #include <unistd.h>
 
 void    close_all_fds(void)

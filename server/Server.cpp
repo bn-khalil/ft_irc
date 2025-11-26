@@ -294,6 +294,15 @@ void Server::ParseCmd(Client &client)
         invit(client);
     else if (cmds[0] == "user")
         UserCmd(client, cmds);
+    else if (cmds[0] == "pong" || cmds[0] == "ping")
+    {
+        if (cmds[0] == "ping")
+        {
+            std::string token = (cmds.size() > 0) ? cmds[0] : "";
+            std::string reply = "PONG " + token + "\r\n";
+            send(client.getfd(), reply.c_str(), reply.length(), 0);
+        }
+    }
     else
         sendReply(client, error.ERR_UNKNOWNCOMMAND_N(client.get_nickname(), cmds[0]));
 

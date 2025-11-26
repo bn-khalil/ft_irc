@@ -1,5 +1,4 @@
 #include "channel.hpp"
-#include "../../server/Server.hpp"
 
 void Server::Quit(Client &c)
 {

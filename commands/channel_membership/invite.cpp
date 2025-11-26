@@ -6,13 +6,11 @@
 /*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:06:44 by akella            #+#    #+#             */
-/*   Updated: 2025/11/25 18:24:54 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/26 22:45:45 by akella           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../server/Server.hpp"
 #include "channel.hpp"
-#include <cstddef>
 
 void Server::invit(Client &c)
 {
@@ -42,10 +40,10 @@ void Server::invit(Client &c)
         }
         
         Channel &real_one = it->second;
-
+        if(real_one.isUserInChannel(c) == false)
+            return sendReply(c,error.ERR_NOTONCHANNEL(c.get_nickname(),one_channel));
         if (real_one.isUserInChannel(*client_invited) == true)
             return sendReply(c, error.ERR_USERONCHANNEL(c.get_nickname(), name_c_invited, one_channel));
-
         if (real_one.isClientOperator(c) == false)
             return sendReply(c, error.ERR_CHANOPRIVSNEEDED(c.get_nickname(), one_channel));
 

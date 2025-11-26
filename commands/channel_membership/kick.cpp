@@ -6,7 +6,7 @@
 /*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:07 by akella            #+#    #+#             */
-/*   Updated: 2025/11/26 18:40:31 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/26 23:30:39 by akella           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,5 +73,7 @@ void Server::kick(Client &c)
     {
         it->second.broadcast(error.MSG_KICK(c.get_Prefix(), it->second.get_channel_name(), name_c_to_kick, reason));
         it->second.removeClientFromOneChannels(*client_to_kick);
+        if(it->second.isEmpty())
+            channel.erase(it); 
     }
 }

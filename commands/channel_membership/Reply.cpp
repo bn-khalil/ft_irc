@@ -53,7 +53,6 @@ std::string Reply::ERR_CHANOPRIVSNEEDED(const std::string& nick, const std::stri
 
 std::string Reply::ERR_NOTONCHANNEL(const std::string& nick, const std::string& channel)
 {
-    // std::cout << "yes " << std::endl;
     return ":" + server_name + " 442 " + nick + " " + channel + " :You're not on that channel";
 }
 

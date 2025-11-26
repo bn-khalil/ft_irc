@@ -7,7 +7,20 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <strings.h>
+#include <sys/syslimits.h>
 #include <unistd.h>
+
+void    close_all_fds(void)
+{
+    int max_fd = OPEN_MAX;
+    int i = 3;
+
+    while (i < max_fd)
+    {
+        close(i);
+        i++;
+    }
+}
 
 int stringToPort(std::string string)
 {
@@ -74,6 +87,8 @@ int main(int ac, char **av)
     std::string ip = av[3];
 
     int boot_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (boot_fd < 0)
+        throw std::runtime_error("Error: Failed to create socket: " + std::string(strerror(errno)));
 
     sockaddr_in server_data;
     server_data.sin_family = AF_INET;
@@ -82,7 +97,7 @@ int main(int ac, char **av)
     
     if (connect(boot_fd, (const struct sockaddr *)&server_data, sizeof(sockaddr_in)) < 0)
     {
-        std::cerr << "Connection failed" << std::endl;
+        throw std::runtime_error("Error: connect to server failed: " + std::string(strerror(errno)));
         return 1;
     }
 
@@ -96,8 +111,8 @@ int main(int ac, char **av)
     send(boot_fd, user_msg.c_str(), user_msg.length(), 0);
 
     char buffer[1024];
-
     bzero(buffer, 1024);
+
     int byte_recv = recv(boot_fd, buffer, 1000, 0);
 
     if (byte_recv > 0)
@@ -125,7 +140,7 @@ int main(int ac, char **av)
         {
             
             std::string recv_msg = buffer;
-            recv_msg = recv_msg.substr(0,recv_msg.length() - 2);
+            recv_msg = recv_msg.substr(0,recv_msg.length() - 2) + "\0";
             std::cerr << "recv_msg [" << recv_msg << "]" << std::endl;
             std::string sender = get_sender_name(recv_msg);
 
@@ -136,6 +151,9 @@ int main(int ac, char **av)
             // std::cout << "to_send -> [" << to_send << "]" << std::endl;
 
             send(boot_fd, to_send.c_str(), to_send.length(), 0);
+        }
+        else  {
+            std::cout << "byte_recv  " << byte_recv << std::endl; 
         }
     }
 }

@@ -159,3 +159,6 @@ privmsg nm      hello sd
 @REM ➜  create a channel and quite let the server running and reconnect with same old client nickname than join the same channel 
 
 @REM mode #bn +i-t+l-k+i+t-l+k 5 x
+
+
+@REM channel names upper/lower should be accepted

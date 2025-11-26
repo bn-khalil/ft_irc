@@ -14,6 +14,7 @@ void  Server::topic(Client &c) {
         command.pop_back();
     }
     std::vector<std::string> args = new_splite(command, ' ');
+    args[1] = toLower(args[1]);
 
     if (args.size() == 1)
         sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "TOPIC"));

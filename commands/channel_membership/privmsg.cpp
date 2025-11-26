@@ -13,6 +13,7 @@ void Server::privmsg(Client &c) {
     }
     
     std::vector<std::string> args = new_splite(command, ' ');
+    args[1] = toLower(args[1]);
 
     int dotsIndex = command.find(":");
     std::string message;
@@ -47,6 +48,10 @@ void Server::privmsg(Client &c) {
                 if (!rcvClient) {
                     sendReply(c, error.ERR_NOSUCHNICK(c.get_nickname(), rcvNick));
                     return;
+                }
+                if (message.empty()) {
+                    sendReply(c, error.ERR_NOTEXTSEND(c.get_nickname()));
+                    return ;
                 }
                 sendReply(*rcvClient, error.RPL_AWAY(c.get_Prefix(),
                         rcvClient->get_nickname(), message));

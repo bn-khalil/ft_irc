@@ -1,4 +1,5 @@
 #include "channel.hpp"
+#include <cctype>
 #include <cstddef>
 #include <map>
 #include <vector>
@@ -44,11 +45,34 @@ std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds, Client &c
                 if (modes[i] == 'k' || (modes[i] == 'l' && sing == true) || modes[i] == 'o') {
                     indexParam++;
                     if (indexParam < cmds.size()) {
+                        std::string message;
                         currentMode.param = cmds[indexParam];
+                        if (modes[i] == 'k' && std::isspace(currentMode.param[0])) {
+                                std::string modeWithFlag(1, modes[i]);
+                                sendReply(c, error.ERR_NEEDMODEPARM(c.get_nickname(), modeWithFlag, "Not enough parameters"));
+                                continue;
+                        }
                         if (cmds[indexParam][0] == ':') {
-                            currentMode.param = cmds[indexParam].substr(1);
+                            int dotsIndex = c.getlineCmd().find(":");
+                                message = c.getlineCmd().substr(dotsIndex + 1);
                             while (indexParam < cmds.size())
                                 indexParam++;
+                            
+                            if (modes[i] == 'k' && std::isspace(message[0])) {
+                                std::string modeWithFlag(1, modes[i]);
+                                sendReply(c, error.ERR_NEEDMODEPARM(c.get_nickname(), modeWithFlag, "Not enough parameters"));
+                                continue;
+                            } else {
+                                if (modes[i] == 'k' || modes[i] == 'l') {
+                                    int ind = message.find_first_of(" \t\n");
+                                    if (ind != -1)
+                                        currentMode.param = message.substr(0, ind + 1);
+                                    else
+                                        currentMode.param = message;
+                                }
+                                currentMode.param = message;
+
+                            }
                         }
                     } else {
                         std::string modeWithFlag(1, modes[i]);
@@ -226,7 +250,9 @@ void Server::mode(Client &c) {
     if (!command.empty() && command.back() == '\n') {
         command.pop_back();
     }
+    c.setlineCmd(command);
     std::vector<std::string> cmds = new_splite(command, ' ');
+    cmds[1] = toLower(cmds[1]);
 
     if (cmds.size() == 1) 
         sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "MODE"));

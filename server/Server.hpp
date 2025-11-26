@@ -25,13 +25,12 @@ class Server
         int						port;
         int						serverId;
         std::string             password;
-        bool                    isGetSignal;
+        static bool                    isGetSignal;
         std::string creation_date;
         socklen_t addr_len;
         sockaddr_in  serverConfig;
         std::vector<struct pollfd> poll_fds;
         std::map<int, Client>	ClientsInfo;
-
         int ReadClientMessage(std::string &line);
         void AddClient();
         void GetClientEvents();
@@ -52,7 +51,9 @@ class Server
 
 
     public:
-    
+        static void set_Signal(bool sign);
+        static bool get_Signal(void);
+        static void receve_signal(int sign);
 		std::map<std::string,Channel> channel;
         Reply   error;
         Channel *chan;

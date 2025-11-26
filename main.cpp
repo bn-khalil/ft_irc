@@ -10,6 +10,20 @@
 #include <sys/socket.h>
 #include <fcntl.h>
 #include <vector>
+#include <unistd.h>
+
+void    close_all_fds(void)
+{
+    int max_fd = OPEN_MAX;
+    int i = 3;
+
+    while (i < max_fd)
+    {
+        close(i);
+        i++;
+    }
+}
+
 
 int main(int ac,char **av)
 {
@@ -21,6 +35,9 @@ int main(int ac,char **av)
     }
     try {
         signal(SIGPIPE, SIG_IGN);
+        signal(SIGINT,Server::receve_signal);
+        signal(SIGQUIT,Server::receve_signal);
+
         std::string port = av[1];
         std::string password = av[2];
         Server server(port,password);
@@ -30,4 +47,5 @@ int main(int ac,char **av)
     {
         std::cout << ex.what() <<std::endl;
     }    
+    close_all_fds();
 } 

@@ -20,6 +20,29 @@
 #include <stdio.h>
 #include <errno.h>
 
+bool Server::isGetSignal = false;
+
+bool Server::get_Signal(void)
+{
+    return (isGetSignal );
+}
+void Server::set_Signal(bool sign)
+{
+    isGetSignal = sign;
+}
+
+void Server::receve_signal(int sign)
+{
+    isGetSignal = true;
+    if (sign == SIGINT)
+        std::cout << "\n\n \033[31m Interrupted by SIGINT \033[0m\n" << std::endl;
+    else if (sign == SIGQUIT)
+        std::cout << "\n\n \033[31m Interrupted by SIGQUIT \033[0m\n" << std::endl;
+    else
+        std::cout << "\n\n \033[31m Interrupted by signal \033[0m\n" << std::endl;
+
+
+}
 int Server::ReadClientMessage(std::string &line)
 {
     (void)line;
@@ -84,7 +107,7 @@ void Server::NickCmd(Client &client, std::string nick_arg)
     {
         sendReply(client, error.RPL_WELCOME(client.get_nickname(), client.get_Prefix()));
         sendReply(client, error.RPL_YOURHOST(client.get_nickname()));
-        sendReply(client, error.RPL_CREATED(client.get_nickname(), ""));
+        sendReply(client, error.RPL_CREATED(client.get_nickname(), creation_date));
         sendReply(client, error.RPL_MYINFO(client.get_nickname()));
         client.Set_isAuthenticated(true);
     }
@@ -109,17 +132,17 @@ void Server::StartServer()
     try
     {
         PrepareServerSocket();
+        std::cout << "\n\033[35mServer is now running and ready!\033[0m" << std::endl;
+        std::cout << "\033[96m\n██╗██████╗░░█████╗░░██████╗███████╗██████╗░██╗░░░██╗███████╗██████╗░\n██║██╔══██╗██╔══██╗██╔════╝██╔════╝██╔══██╗██║░░░██║██╔════╝██╔══██╗\n██║██████╔╝██║░░╚═╝╚█████╗░█████╗░░██████╔╝╚██╗░██╔╝█████╗░░██████╔╝\n██║██╔══██╗██║░░██╗░╚═══██╗██╔══╝░░██╔══██╗░╚████╔╝░██╔══╝░░██╔══██╗\n██║██║░░██║╚█████╔╝██████╔╝███████╗██║░░██║░░╚██╔╝░░███████╗██║░░██║\n╚═╝╚═╝░░╚═╝░╚════╝░╚═════╝░╚══════╝╚═╝░░╚═╝░░░╚═╝░░░╚══════╝╚═╝░░╚═╝\033[0m\n";
+        std::cout <<  "\033[32mPort        : " << port     << "\033[0m" << std::endl;
+        std::cout << "\033[33m" << "Password    : " << password << "\033[0m\n" << std::endl;
         waitConnection();
+        // close fds
     }
     catch (std::exception &ex)
     {
         std::cerr << ex.what() << std::endl;
     }
-}
-
-Server::Server(const Server &other)
-{
-    (void)other;
 }
 
 void Server::AddClient()
@@ -225,7 +248,7 @@ void Server::UserCmd(Client &client, std::vector<std::string> &arg)
     {
         sendReply(client, error.RPL_WELCOME(client.get_nickname(), client.get_Prefix()));
         sendReply(client, error.RPL_YOURHOST(client.get_nickname()));
-        sendReply(client, error.RPL_CREATED(client.get_nickname(), ""));
+        sendReply(client, error.RPL_CREATED(client.get_nickname(), creation_date));
         sendReply(client, error.RPL_MYINFO(client.get_nickname()));
         client.Set_isAuthenticated(true);
     }
@@ -332,7 +355,7 @@ void Server::GetClientEvents()
                     poll_fds.erase(poll_fds.begin() + i);
                     i--;
                 }
-                else if (bytes_read < 0 && (errno != EAGAIN && errno != EWOULDBLOCK))
+                else if (bytes_read < 0 )//&& (errno != EAGAIN && errno != EWOULDBLOCK))
                 {
                     std::cerr << "🔴 Recv Failed | FD: " << client.getfd() << " | Error: " << strerror(errno) << std::endl;
                     Quit(client); 
@@ -348,21 +371,16 @@ void Server::GetClientEvents()
 
 void Server::waitConnection()
 {
-    while (true)
-    {
-        int num_event = poll(&poll_fds[0], poll_fds.size(), 0);
-
-        if (num_event == -1)
+    while (isGetSignal != true)
+    {        
+        int num_event = poll(&poll_fds[0], poll_fds.size(), -1);
+        if (num_event == -1 && errno != EINTR)
             throw std::runtime_error("poll failed");
         else if (num_event == 0)
-        {
             continue;
-        }
         else if (num_event > 0)
-        {
             GetClientEvents();
-        }
-    }
+   }
 }
 
 void Server::PrepareServerSocket()
@@ -413,19 +431,33 @@ Server::~Server(void) {}
 
 bool isValidPassword(std::string str)
 {
-    if (str.empty() || str.find(" \t\n\r\v\f") != std::string::npos)
+    std::string W_spaces = " \t\n\r\v\f";
+    if (str.empty() || str.length() > 100)
         return false;
+
+    for(int i = 0; str[i] ; i++)
+    {
+        if (W_spaces.find(str[i]) != std::string::npos)
+            return false;
+    }
     return true;
 }
 
+
 Server::Server(std::string &port, std::string &password)
-    : port(stringToPort(port)), password(password), isGetSignal(false)
+    : port(stringToPort(port)), password(password)
 {
     if (this->port < 0)
         throw std::runtime_error("Error: Invalid port number provided");
     else if (isValidPassword(password) == false)
-        throw std::runtime_error("Error: Invalid password format");
-
+        throw std::runtime_error("Error: Invalid password format ");
+    
+    std::time_t time = std::time(NULL);
+    std::tm* localTime = std::localtime(&time);
+    char buffer[30];
+    bzero(buffer, sizeof(buffer));
+    std::strftime(buffer,sizeof(buffer),"%Y-%m-%d | %H:%M:%S",localTime);
+    creation_date = buffer;
     serverId = -1;
 }
 

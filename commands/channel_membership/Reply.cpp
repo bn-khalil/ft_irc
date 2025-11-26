@@ -14,7 +14,7 @@ std::string Reply::RPL_YOURHOST(const std::string& nick)
 std::string Reply::RPL_CREATED(const std::string& nick, const std::string& creation_date)
 {
     (void)creation_date;
-    return ":" + server_name + " 003 " + nick + " :This server was created " + "creation_date";
+    return ":" + server_name + " 003 " + nick + " :This server was created " + creation_date;
 }
 std::string Reply::RPL_MYINFO(const std::string& nick)
 {

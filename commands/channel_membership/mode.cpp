@@ -1,4 +1,5 @@
 #include "channel.hpp"
+#include <cctype>
 #include <cstddef>
 #include <map>
 #include <vector>
@@ -44,11 +45,34 @@ std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds, Client &c
                 if (modes[i] == 'k' || (modes[i] == 'l' && sing == true) || modes[i] == 'o') {
                     indexParam++;
                     if (indexParam < cmds.size()) {
+                        std::string message;
                         currentMode.param = cmds[indexParam];
+                        if (modes[i] == 'k' && std::isspace(currentMode.param[0])) {
+                                std::string modeWithFlag(1, modes[i]);
+                                sendReply(c, error.ERR_NEEDMODEPARM(c.get_nickname(), modeWithFlag, "Not enough parameters"));
+                                continue;
+                        }
                         if (cmds[indexParam][0] == ':') {
-                            currentMode.param = cmds[indexParam].substr(1);
+                            int dotsIndex = c.getlineCmd().find(":");
+                                message = c.getlineCmd().substr(dotsIndex + 1);
                             while (indexParam < cmds.size())
                                 indexParam++;
+                            
+                            if (modes[i] == 'k' && std::isspace(message[0])) {
+                                std::string modeWithFlag(1, modes[i]);
+                                sendReply(c, error.ERR_NEEDMODEPARM(c.get_nickname(), modeWithFlag, "Not enough parameters"));
+                                continue;
+                            } else {
+                                if (modes[i] == 'k' || modes[i] == 'l') {
+                                    int ind = message.find_first_of(" \t\n");
+                                    if (ind != -1)
+                                        currentMode.param = message.substr(0, ind + 1);
+                                    else
+                                        currentMode.param = message;
+                                }
+                                currentMode.param = message;
+
+                            }
                         }
                     } else {
                         std::string modeWithFlag(1, modes[i]);
@@ -59,7 +83,7 @@ std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds, Client &c
                             sendReply(c, error.ERR_NEEDMODEPARM(c.get_nickname(), 
                                     modeWithFlag, "Not enough parameters"));
                         else if (modes[i] == 'o')
-                            ;
+                            continue ;
                         continue;
                     }
                 }
@@ -82,10 +106,6 @@ bool validateLimitParams(std::string limit) {
         i++;
     if (!std::isdigit(limit[i]) && !std::isspace(limit[i]))
         return false;
-    // for (; i < limit.size(); i++) {
-    //     if (!std::isdigit(limit[i]) && !std::isspace(limit[i]) && limit[i] != '+')
-    //         return false;
-    // }
     return true;
 }
 
@@ -227,10 +247,12 @@ void Server::mode(Client &c) {
     }
 
     std::string command = c.getlineCmd();
-    if (!command.empty() && command.back() == '\n') {
-        command.pop_back();
+    if (!command.empty() && command[command.size() -1 ] == '\n') {
+        command.erase(command.size() -1);
     }
+    c.setlineCmd(command);
     std::vector<std::string> cmds = new_splite(command, ' ');
+    cmds[1] = toLower(cmds[1]);
 
     if (cmds.size() == 1) 
         sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "MODE"));
@@ -342,7 +364,6 @@ void Server::mode(Client &c) {
         }
 
         if (!sortModes.empty()) {
-            std::cout << error.RPL_MODEOPTIONS(c.get_Prefix(), it_channel->second.get_channel_name(), sortModes) << std::endl;
             it_channel->second.broadcast(error.RPL_MODEOPTIONS(c.get_Prefix(), 
             it_channel->second.get_channel_name(), sortModes));
         }
@@ -350,31 +371,3 @@ void Server::mode(Client &c) {
     modes.clear();
     filterdModes.clear();
 }
-
-
-        //    if (modes[i].mode == 'l') {
-        //         if (ShouldSkeepLimts)
-        //             continue ;
-        //         if(modes[i].sing) {
-        //             unsigned int limit = static_cast<unsigned int>(std::atol(modes[i].param.c_str()));
-        //             if (it_channel->second.getisLimited() && it_channel->second.get_num_limite() == limit)
-        //                 continue ;
-        //             if (it_channel->second.modeExecuter(modes[i], c, *this))
-        //                 filerM[modes[i].mode] = modes[i];
-        //             ShouldSkeepLimts = true;
-        //         } else {
-        //             if (!it_channel->second.getisLimited())
-        //                 continue ; 
-        //             if (it_channel->second.modeExecuter(modes[i], c, *this))
-        //                 filerM[modes[i].mode] = modes[i];
-        //             ShouldSkeepLimts = true;
-        //         }
-        //         continue ;
-        //     }
-        //     if (it_channel->second.modeExecuter(modes[i], c, *this))
-        //         filerM[modes[i].mode] = modes[i];
-
-// pass 12
-// user a a a a
-// nick bn
-// join #bn

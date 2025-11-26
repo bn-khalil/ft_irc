@@ -1,10 +1,9 @@
 #include "channel.hpp"
-#include <cstddef>
 
 void Server::privmsg(Client &c) {
     std::string command = c.getlineCmd();
-    if (!command.empty() && command.back() == '\n') {
-        command.pop_back();
+    if (!command.empty() && command[command.size() -1 ] == '\n') {
+        command.erase(command.size() -1);
     }
 
     if (c.Get_isAuthenticated() == false)
@@ -14,6 +13,7 @@ void Server::privmsg(Client &c) {
     }
     
     std::vector<std::string> args = new_splite(command, ' ');
+    args[1] = toLower(args[1]);
 
     int dotsIndex = command.find(":");
     std::string message;
@@ -27,7 +27,7 @@ void Server::privmsg(Client &c) {
     else if (args.size() == 2)
         sendReply(c, error.ERR_NOTEXTSEND(c.get_nickname()));
     else {
-        std::vector<std::string> multi_users_or_channels = Channel::splite_coma(args[1], ',');
+        std::vector<std::string> multi_users_or_channels = Channel::split_comma(args[1], ',');
         for (size_t i = 0; i < multi_users_or_channels.size(); i++) {
             std::string rcvNick = multi_users_or_channels[i];
             size_t j = 0;
@@ -48,6 +48,10 @@ void Server::privmsg(Client &c) {
                 if (!rcvClient) {
                     sendReply(c, error.ERR_NOSUCHNICK(c.get_nickname(), rcvNick));
                     return;
+                }
+                if (message.empty()) {
+                    sendReply(c, error.ERR_NOTEXTSEND(c.get_nickname()));
+                    return ;
                 }
                 sendReply(*rcvClient, error.RPL_AWAY(c.get_Prefix(),
                         rcvClient->get_nickname(), message));

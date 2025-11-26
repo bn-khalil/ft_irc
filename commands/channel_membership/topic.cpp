@@ -1,5 +1,4 @@
 #include "channel.hpp"
-#include <sstream>
 #include <string>
 
 void  Server::topic(Client &c) {
@@ -11,10 +10,11 @@ void  Server::topic(Client &c) {
     }
     
     std::string command = c.getlineCmd();
-    if (!command.empty() && command.back() == '\n') {
-        command.pop_back();
+    if (!command.empty() && command[command.size() -1 ] == '\n') {
+        command.erase(command.size() -1);
     }
     std::vector<std::string> args = new_splite(command, ' ');
+    args[1] = toLower(args[1]);
 
     if (args.size() == 1)
         sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "TOPIC"));

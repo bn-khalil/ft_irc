@@ -19,9 +19,6 @@ Client::Client(int fd)
 
 std::string Client::    get_Prefix() const
 {
-    std::cout << this->_nickname << std::endl;
-    std::cout << this->_username << std::endl;
-    std::cout << "hostname" << this->_hostname<< std::endl;
 	return  this->_nickname + "!~" + this->_username + "@" + this->_hostname;
 }
 

@@ -453,10 +453,7 @@ void Server::sendReply(Client &c, std::string msg)
     if (send(c.getfd(), full_msg.c_str(), full_msg.length(), 0) <= -1)
     {
         std::cerr << "Client Disconnected" << std::endl;
-        removeClientFromAllChannels(c);
-        close(c.getfd());
-        ClientsInfo.erase(c.getfd());
-        poll_fds.erase(poll_fds.begin());
+        Quit(c);
     }
 }
 
@@ -464,7 +461,7 @@ Client *Server::find_client_by_nickname(std::string nick)
 {
     for (std::map<int, Client>::iterator it = ClientsInfo.begin(); it != ClientsInfo.end(); it++)
     {
-        if (it->second.get_nickname() == nick)
+        if (it->second.get_nickname() == nick) // Amine = amine
             return &it->second;
     }
     return NULL;

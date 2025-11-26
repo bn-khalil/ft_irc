@@ -112,7 +112,7 @@ std::string Reply::ERR_USERNOTINCHANNEL(const std::string& nick, const std::stri
 
 std::string Reply::MSG_KICK(const std::string& kicker_prefix, const std::string& channel, const std::string& target_nick, const std::string &reason)
 {
-    return ":" + kicker_prefix + " KICK " + channel + " " + target_nick + " " + reason;
+    return ":" + kicker_prefix + " KICK " + channel + " " + target_nick + " :" + reason;
 }
 
 std::string Reply::MSG_PART(const std::string& user_prefix, const std::string& channel, const std::string& reason)

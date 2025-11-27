@@ -170,3 +170,6 @@ privmsg nm      hello sd
 //the nick name most not be digite at all a23 not valide
 
 //check if the user param can content number 
+//:b!~a@127.0.0.1 PRIVMSG #ch :
+
+:ircserver42.com 331 kella #a :No topic is set

@@ -235,7 +235,7 @@ void Server::mode(Client &c) {
 
     if (c.Get_isAuthenticated() == false)
     {
-        sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
+        sendReply(c, error.ERR_NOT_REGESTRED());
         return;
     }
 

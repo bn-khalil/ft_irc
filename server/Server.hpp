@@ -78,7 +78,7 @@ class Server
         std::vector<modes_t> parseModes(std::vector<std::string> cmds,  
         Client &c) ;
        std::vector<std::string> isUserInvited_to_channel(Client &c);
-        std::string  handle_the_resone(std::vector<std::string> cmds, std::string command);
+        std::string  handle_the_resone(std::vector<std::string> cmds, std::string command, Client &c);
        void  kick_with_brodcast(std::map<std::string, Channel>::iterator it, std::vector<std::string>cmds, std::string reason, Client & c);
         bool name_perfect(std::vector<std::string> cmds, std::map<std::string, Channel>::iterator it);
 

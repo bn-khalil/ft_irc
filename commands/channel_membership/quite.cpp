@@ -1,5 +1,6 @@
 #include "channel.hpp"
 #include <unistd.h>
+
 void Server::Quit(Client &c)
 {
     std::vector<std::string> channel_to_leave;
@@ -22,8 +23,6 @@ void Server::Quit(Client &c)
         if (chan.isEmpty() == true)
             channel.erase(it1);
     }
-    close(c.getfd());
-    ClientsInfo.erase(c.getfd());
     for (size_t i = 0; i < poll_fds.size(); i++)
     {
         if (poll_fds[i].fd == c.getfd())
@@ -32,5 +31,6 @@ void Server::Quit(Client &c)
             break;
         }
     }
-    
+    close(c.getfd());
+    ClientsInfo.erase(c.getfd());
 }

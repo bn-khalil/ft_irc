@@ -6,7 +6,7 @@
 /*   By: kben-tou <kben-tou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:07 by akella            #+#    #+#             */
-/*   Updated: 2025/11/28 12:02:14 by kben-tou         ###   ########.fr       */
+/*   Updated: 2025/11/28 12:28:34 by kben-tou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void Server::kick(Client &c)
     {
         return sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "KICK"));
     }
-    std::string reason = handle_the_resone(cmds, command);
+    std::string reason = handle_the_resone(cmds, command, c);
 
     if (!find_client_by_nickname(cmds[2]))
     {

@@ -282,6 +282,8 @@ void Server::ParseCmd(Client &client)
         Server::NickCmd(client, cmds[1]);
     else if (cmds[0] == "join")
         join(client);
+    else if (cmds[0] == "quit")
+        Quit(client);
     else if (cmds[0] == "topic")
         topic(client);
     else if (cmds[0] == "privmsg")
@@ -550,9 +552,9 @@ void Server::join_all_channel(Client &c)
         ch.Add_to_user(c);
     }
 }
-std::string  Server::handle_the_resone(std::vector<std::string>cmds, std::string command)
+std::string  Server::handle_the_resone(std::vector<std::string>cmds, std::string command, Client &c)
 {
-     std::string reason = "";
+     std::string reason = c.get_nickname();
     if (cmds.size() > 3)
     {
         if (cmds[3][0] == ':')

@@ -166,10 +166,7 @@ privmsg nm      hello sd
 
 
 
-@REM //check if the password valide with just one char
-@REM //the nick name most not be digite at all a23 not valide
-@REM //check if the user param can content number 
+//check if the password valide with just one char
+//the nick name most not be digite at all a23 not valide
 
-
-@REM nick mn         lk
-@REM :bn!~a@197.230.30.146 NICK :mn
+//check if the user param can content number 

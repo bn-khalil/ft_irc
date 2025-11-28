@@ -6,7 +6,7 @@
 /*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:07 by akella            #+#    #+#             */
-/*   Updated: 2025/11/26 23:30:39 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/27 10:24:54 by akella           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void Server::kick(Client &c)
     std::vector<std::string> cmds = new_splite(command, ' ');
 
     if (c.Get_isAuthenticated() == false)
-        return sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
+        return sendReply(c, error.ERR_NOT_REGESTRED());
 
     if (cmds.size() < 3)
         return sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "KICK"));

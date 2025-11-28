@@ -6,7 +6,7 @@
 /*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:12 by akella            #+#    #+#             */
-/*   Updated: 2025/11/26 22:48:08 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/27 10:24:26 by akella           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void Server::join(Client &c)
     std::vector<std::string> cmds = new_splite(command, ' ');
     //Check if Authenticated Alreddy Done !!
     if (c.Get_isAuthenticated() == false)
-        return sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
+        return sendReply(c, error.ERR_NOT_REGESTRED());
     //If Size Less than 2 ERROR !!
     if (cmds.size() < 2)
         return sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "JOIN"));

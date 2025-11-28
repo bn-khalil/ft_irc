@@ -308,6 +308,7 @@ void Server::ParseCmd(Client &client)
 
     std::string empty = "";
     client.setlineCmd(empty);
+    cmds.clear();
 }
 
 void Server::processClientBuffer(Client &client, char *buffer, int bytes_read)

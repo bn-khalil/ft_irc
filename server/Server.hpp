@@ -57,7 +57,7 @@ class Server
         Channel *chan;
         Server(std::string &port,std::string &password);
         Server(const Server& other);
-        
+
         bool isValid(std::map<std::string, Channel>::iterator it_channel, std::vector<std::string> cmds, Client & c);
         void  StartServer();
         void  join(Client &c);
@@ -79,7 +79,7 @@ class Server
         Client &c) ;
        std::vector<std::string> isUserInvited_to_channel(Client &c);
         std::string  handle_the_resone(std::vector<std::string> cmds, std::string command);
-       void  kick_with_brodcast(std::map<std::string, Channel>::iterator it, std::vector<std::string>cmds, std::string reason);
+       void  kick_with_brodcast(std::map<std::string, Channel>::iterator it, std::vector<std::string>cmds, std::string reason, Client & c);
         bool name_perfect(std::vector<std::string> cmds, std::map<std::string, Channel>::iterator it);
 
 

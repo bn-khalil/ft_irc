@@ -565,7 +565,7 @@ std::string  Server::handle_the_resone(std::vector<std::string>cmds, std::string
     }
     return reason;
 }
-void  Server::kick_with_brodcast(std::map<std::string, Channel>::iterator it, std::vector<std::string>cmds, std::string reason)
+void  Server::kick_with_brodcast(std::map<std::string, Channel>::iterator it, std::vector<std::string>cmds, std::string reason, Client & c)
 {
         it->second.broadcast(error.MSG_KICK(c.get_Prefix(), it->second.get_channel_name(), cmds[2], reason));
         it->second.removeClientFromOneChannels(*find_client_by_nickname(cmds[2]));

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   kick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kben-tou <kben-tou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:07 by akella            #+#    #+#             */
-/*   Updated: 2025/11/28 11:33:07 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/28 12:02:14 by kben-tou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,6 @@ void Server::kick(Client &c)
     }
     else
     {
-        kick_with_brodcast(it, cmds, reason);
+        kick_with_brodcast(it, cmds, reason, c);
     }
 }

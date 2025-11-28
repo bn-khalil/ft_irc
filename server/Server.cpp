@@ -355,26 +355,17 @@ void Server::GetClientEvents()
                 Client &client = ClientsInfo[poll_fds[i].fd];
                 int bytes_read = recv(poll_fds[i].fd, buffer, sizeof(buffer) - 1, 0);
                 if (bytes_read > 0)
-                {
                     processClientBuffer(client, buffer, bytes_read);
-                }
                 else if (bytes_read == 0)
                 {
                     std::cout << "🔴 Client Disconnected | FD: " << client.getfd() << " | Nick: " << client.get_nickname() << std::endl;
-
                     Quit(client);
-                    close(poll_fds[i].fd);
-                    ClientsInfo.erase(poll_fds[i].fd);
-                    poll_fds.erase(poll_fds.begin() + i);
                     i--;
                 }
                 else if (bytes_read < 0 && (errno != EAGAIN && errno != EWOULDBLOCK))
                 {
                     std::cerr << "🔴 Recv Failed | FD: " << client.getfd() << " | Error: " << strerror(errno) << std::endl;
                     Quit(client); 
-                    close(poll_fds[i].fd);
-                    ClientsInfo.erase(poll_fds[i].fd);
-                    poll_fds.erase(poll_fds.begin() + i);
                     i--; 
                 }
             }
@@ -558,4 +549,30 @@ void Server::join_all_channel(Client &c)
         Channel ch = it->second;
         ch.Add_to_user(c);
     }
+}
+std::string  Server::handle_the_resone(std::vector<std::string>cmds, std::string command)
+{
+     std::string reason = "";
+    if (cmds.size() > 3)
+    {
+        if (cmds[3][0] == ':')
+        {
+            if (command.find(cmds[3], command.find(cmds[2], command.find(cmds[1]) + cmds[1].length()) + cmds[2].length()) != std::string::npos)
+                reason = command.substr(command.find(cmds[3], command.find(cmds[2], command.find(cmds[1]) + cmds[1].length()) + cmds[2].length()) + 1);
+        }
+        else
+            reason = cmds[cmds.size() - 1];
+    }
+    return reason;
+}
+void  Server::kick_with_brodcast(std::map<std::string, Channel>::iterator it, std::vector<std::string>cmds, std::string reason)
+{
+        it->second.broadcast(error.MSG_KICK(c.get_Prefix(), it->second.get_channel_name(), cmds[2], reason));
+        it->second.removeClientFromOneChannels(*find_client_by_nickname(cmds[2]));
+        if(it->second.isEmpty())
+            channel.erase(it); 
+}
+bool   Server::name_perfect(std::vector<std::string> cmds, std::map<std::string, Channel>::iterator it)
+{
+    return cmds[1].empty() || (cmds[1][0] != '&' && cmds[1][0] != '#') || cmds[1].length() > 200 || Channel::tab_found(cmds[1]) == true  || it == channel.end();
 }

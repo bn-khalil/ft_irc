@@ -223,6 +223,50 @@ std::string & sortModesPlus,
     }
 }
 
+bool Server::isValid(std::map<std::string, Channel>::iterator it_channel, std::vector<std::string> cmds, Client & c) {
+    if (!isChannelExist(it_channel, cmds, c))
+        return false;
+    if (!it_channel->second.isUserInChannel(c)) {
+        sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(),it_channel->second.get_channel_name()));
+        return false;
+    }
+    return true;
+}
+
+old_channel_modes_t Channel::initChannelModes(std::map<std::string, Channel>::iterator it_channel) {
+    old_channel_modes_t channelCurrentModes; 
+    channelCurrentModes.isInviteOnly = it_channel->second.getIsInviteOnly();
+    channelCurrentModes.topicRestriction = it_channel->second.getTopicRestriction();
+    channelCurrentModes.isLimited = it_channel->second.getisLimited();
+    channelCurrentModes.num_limite = it_channel->second.get_num_limite();
+    return channelCurrentModes;
+}
+
+static std::string displayChannelMode(std::map<std::string, Channel>::iterator it_channel, Client & c){
+    std::string modes = "+";
+    if (it_channel->second.getIsInviteOnly())
+        modes += "i";
+    if (it_channel->second.getTopicRestriction())
+        modes += "t";
+    if (it_channel->second.getisLimited())
+        modes += "l";
+    if (it_channel->second.getIsKeySet())
+        modes += "k";
+
+    if (it_channel->second.getisLimited()) {
+        std::stringstream n_obj;
+        n_obj << it_channel->second.get_num_limite();
+        modes += " " + n_obj.str();
+    }
+    if (it_channel->second.getIsKeySet()) {
+        if (it_channel->second.isClientOperator(c))
+            modes += " " + it_channel->second.Get_key();
+        else
+            modes += " *";
+    }
+    return modes;
+}
+
 void Server::mode(Client &c) {
     std::vector<modes_t> modes;
     std::map<char, modes_t> filerM;
@@ -231,7 +275,6 @@ void Server::mode(Client &c) {
     std::string sortModes;
     std::string sortModesPlus;
     std::string sortModesMinus;
-    old_channel_modes_t channelCurrentModes; 
 
     if (c.Get_isAuthenticated() == false)
     {
@@ -250,57 +293,22 @@ void Server::mode(Client &c) {
     if (cmds.size() == 1) 
         sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "MODE"));
     else if (cmds.size() == 2) {
-        if (!isChannelExist(it_channel, cmds, c))
-            return;
-        if (!it_channel->second.isUserInChannel(c)) {
-            sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(),it_channel->second.get_channel_name()));
-            return;
-        }
-        else {
-            std::string modes = "+";
-            if (it_channel->second.getIsInviteOnly())
-                modes += "i";
-            if (it_channel->second.getTopicRestriction())
-                modes += "t";
-            if (it_channel->second.getisLimited())
-                modes += "l";
-            if (it_channel->second.getIsKeySet())
-                modes += "k";
+        if (!isValid(it_channel, cmds, c))
+            return ;
 
-            if (it_channel->second.getisLimited()) {
-                std::stringstream n_obj;
-                n_obj << it_channel->second.get_num_limite();
-                modes += " " + n_obj.str();
-            }
-            if (it_channel->second.getIsKeySet()) {
-                if (it_channel->second.isClientOperator(c))
-                    modes += " " + it_channel->second.Get_key();
-                else
-                    modes += " *";
-            }
-
-            sendReply(c, error. RPL_CHANNELMODEIS(c.get_nickname(), 
-            modes, it_channel->second.get_channel_name()));
-            sendReply(c, error. RPL_CREATIONTIME (c.get_nickname(), 
-            it_channel->second.fromTime(it_channel->second.getCreationTime()),
-            it_channel->second.get_channel_name()));
-        }
+        sendReply(c, error. RPL_CHANNELMODEIS(c.get_nickname(), 
+        displayChannelMode(it_channel, c), it_channel->second.get_channel_name()));
+        sendReply(c, error. RPL_CREATIONTIME (c.get_nickname(), 
+        it_channel->second.fromTime(it_channel->second.getCreationTime()),
+        it_channel->second.get_channel_name()));
     }
     else {
-        if (!isChannelExist(it_channel, cmds, c))
-            return;
-        channelCurrentModes.isInviteOnly = it_channel->second.getIsInviteOnly();
-        channelCurrentModes.topicRestriction = it_channel->second.getTopicRestriction();
-        channelCurrentModes.isLimited = it_channel->second.getisLimited();
-        channelCurrentModes.num_limite = it_channel->second.get_num_limite();
-        if (!it_channel->second.isUserInChannel(c)) {
-            sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(),
-            it_channel->second.get_channel_name()));
-            return;
-        }
+
+        if (!isValid(it_channel, cmds, c))
+            return ;
+        old_channel_modes_t channelCurrentModes = it_channel->second.initChannelModes(it_channel);
         if (!it_channel->second.isClientOperator(c)) {
-            sendReply(c, error.ERR_CHANOPRIVSNEEDED(c.get_nickname(),
-                      it_channel->second.get_channel_name()));
+            sendReply(c, error.ERR_CHANOPRIVSNEEDED(c.get_nickname(),it_channel->second.get_channel_name()));
             return;
         }
         seccessModes.push_back("");

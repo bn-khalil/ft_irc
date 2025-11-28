@@ -14,7 +14,6 @@ void Server::privmsg(Client &c) {
     
     std::vector<std::string> args = new_splite(command, ' ');
 
-
     int dotsIndex = command.find(":");
     std::string message;
     if (dotsIndex < 0)

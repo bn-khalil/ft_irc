@@ -326,8 +326,12 @@ void Server::processClientBuffer(Client &client, char *buffer, int bytes_read)
 
         client.setlineCmd(s);
         std::vector<std::string> cmds = new_splite(client.getlineCmd(), '\n');
+        int client_fd = client.getfd();
+
         for (size_t i = 0; i < cmds.size(); i++)
         {
+            if (ClientsInfo.find(client_fd) == ClientsInfo.end())
+                break ;
             client.setlineCmd(cmds[i]);
             ParseCmd(client);
         }
@@ -504,7 +508,6 @@ void Server::sendReply(Client &c, std::string msg)
         removeClientFromAllChannels(c);
         close(c.getfd());
         ClientsInfo.erase(c.getfd());
-        poll_fds.erase(poll_fds.begin());
     }
 }
 

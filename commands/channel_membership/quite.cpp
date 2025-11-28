@@ -22,5 +22,5 @@ void Server::Quit(Client &c)
         if (chan.isEmpty() == true)
             channel.erase(it1);
     }
-
+    
 }

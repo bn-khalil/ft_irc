@@ -1,6 +1,6 @@
 NAME = ircserv
 
-FLAG = -Wall -Werror -Wextra -std=c++98 -fsanitize=address -MMD
+FLAG = -Wall -Werror -Wextra -std=c++98 -fsanitize=address
 
 HEADER = server/Client.hpp server/Server.hpp
 
@@ -35,23 +35,18 @@ $(NAME): $(OBJ)
 %.o: %.cpp
 	$(CPP) $(FLAG) -c $< -o $@
 
--include $(DEP)
 
 SRC_BONUS = bot.cpp
 OBJ_BONUS = $(SRC_BONUS:.cpp=.o)
-DEP_BONUS = $(OBJ_BONUS:.o=.d)
 
 bonus: $(OBJ_BONUS)
 	$(CPP) $(FLAG) $(OBJ_BONUS) -o bonus
 
--include $(DEP_BONUS)
 
 clean:
-	rm -rf $(OBJ) $(DEP) $(OBJ_BONUS) $(DEP_BONUS)
+	rm -rf $(OBJ) $(DEP) $(OBJ_BONUS)
 
 fclean: clean
 	rm -rf $(NAME) bonus
 
 re: fclean all
-
-.PHONY: all clean fclean re bonus

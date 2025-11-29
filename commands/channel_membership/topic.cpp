@@ -14,12 +14,11 @@ void  Server::topic(Client &c) {
         command.erase(command.size() -1);
     }
     std::vector<std::string> args = new_splite(command, ' ');
-    args[1] = toLower(args[1]);
 
     if (args.size() == 1)
         sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "TOPIC"));
     else if (args.size() == 2) {
-        std::map<std::string,Channel>::iterator it = this->channel.find(args[1]);
+        std::map<std::string,Channel>::iterator it = this->channel.find(toLower(args[1]));
         if (it == channel.end()) {
             sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), args[1]));
             return ;
@@ -42,7 +41,7 @@ void  Server::topic(Client &c) {
         else
             topic = command.substr(dotsIndex + 1);
 
-        std::map<std::string,Channel>::iterator it = this->channel.find(args[1]);
+        std::map<std::string,Channel>::iterator it = this->channel.find(toLower(args[1]));
 
         if (it == channel.end()) {
             sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), args[0]));

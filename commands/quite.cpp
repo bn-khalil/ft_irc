@@ -1,5 +1,5 @@
 #include "channel.hpp"
-#include "../../server/Server.hpp"
+#include <unistd.h>
 
 void Server::Quit(Client &c)
 {
@@ -23,5 +23,14 @@ void Server::Quit(Client &c)
         if (chan.isEmpty() == true)
             channel.erase(it1);
     }
-
+    for (size_t i = 0; i < poll_fds.size(); i++)
+    {
+        if (poll_fds[i].fd == c.getfd())
+        {
+            poll_fds.erase(poll_fds.begin() + i);
+            break;
+        }
+    }
+    close(c.getfd());
+    ClientsInfo.erase(c.getfd());
 }

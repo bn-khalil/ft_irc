@@ -5,20 +5,20 @@ void  Server::topic(Client &c) {
 
     if(c.Get_isAuthenticated() == false)
     {
-        sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
+        sendReply(c, error.ERR_NOT_REGESTRED());
         return ;
     }
     
     std::string command = c.getlineCmd();
-    if (!command.empty() && command.back() == '\n') {
-        command.pop_back();
+    if (!command.empty() && command[command.size() -1 ] == '\n') {
+        command.erase(command.size() -1);
     }
     std::vector<std::string> args = new_splite(command, ' ');
 
     if (args.size() == 1)
         sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "TOPIC"));
     else if (args.size() == 2) {
-        std::map<std::string,Channel>::iterator it = this->channel.find(args[1]);
+        std::map<std::string,Channel>::iterator it = this->channel.find(toLower(args[1]));
         if (it == channel.end()) {
             sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), args[1]));
             return ;
@@ -40,8 +40,8 @@ void  Server::topic(Client &c) {
             topic = args[args.size() - 1];
         else
             topic = command.substr(dotsIndex + 1);
-        
-        std::map<std::string,Channel>::iterator it = this->channel.find(args[1]);
+
+        std::map<std::string,Channel>::iterator it = this->channel.find(toLower(args[1]));
 
         if (it == channel.end()) {
             sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), args[0]));

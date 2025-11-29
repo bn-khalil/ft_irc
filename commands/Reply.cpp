@@ -14,7 +14,7 @@ std::string Reply::RPL_YOURHOST(const std::string& nick)
 std::string Reply::RPL_CREATED(const std::string& nick, const std::string& creation_date)
 {
     (void)creation_date;
-    return ":" + server_name + " 003 " + nick + " :This server was created " + "creation_date";
+    return ":" + server_name + " 003 " + nick + " :This server was created " + creation_date;
 }
 std::string Reply::RPL_MYINFO(const std::string& nick)
 {
@@ -36,9 +36,9 @@ std::string Reply::ERR_NOSUCHCHANNEL(const std::string& nick, const std::string&
     return ":" + server_name + " 403 " + nick + " " + channel_name + " :No such channel";
 }
 
-std::string Reply::ERR_NOT_REGESTRED(const std::string& nick)
+std::string Reply::ERR_NOT_REGESTRED()
 {
-    return ":" + server_name + " 451 " + nick + " :Register first";
+    return ":" + server_name + " 451 " + "*" + " :Register first";
 }
 
 std::string Reply::ERR_LEAVE_ALL_CHANNEL(const std::string& nick, const std::string& channel_name)
@@ -53,7 +53,6 @@ std::string Reply::ERR_CHANOPRIVSNEEDED(const std::string& nick, const std::stri
 
 std::string Reply::ERR_NOTONCHANNEL(const std::string& nick, const std::string& channel)
 {
-    // std::cout << "yes " << std::endl;
     return ":" + server_name + " 442 " + nick + " " + channel + " :You're not on that channel";
 }
 
@@ -112,7 +111,7 @@ std::string Reply::ERR_USERNOTINCHANNEL(const std::string& nick, const std::stri
 
 std::string Reply::MSG_KICK(const std::string& kicker_prefix, const std::string& channel, const std::string& target_nick, const std::string &reason)
 {
-    return ":" + kicker_prefix + " KICK " + channel + " " + target_nick + " " + reason;
+    return ":" + kicker_prefix + " KICK " + channel + " " + target_nick + " :" + reason;
 }
 
 std::string Reply::MSG_PART(const std::string& user_prefix, const std::string& channel, const std::string& reason)

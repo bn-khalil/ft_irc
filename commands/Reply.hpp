@@ -28,9 +28,8 @@ class Reply
     	std::string ERR_NOSUCHCHANNEL(const std::string& nick, const std::string& channel_name);
     	std::string ERR_CHANOPRIVSNEEDED(const std::string& nick, const std::string& channel);
     	std::string ERR_NOTONCHANNEL(const std::string& nick, const std::string& channel);
-    	std::string ERR_NOT_REGESTRED(const std::string& nick);
+    	std::string ERR_NOT_REGESTRED();
 		std::string ERR_UNKNOWNCOMMAND_N(const std::string &nick, const std::string & command);
-		std::string ERR_NOT_REGESTRED(const std::string &nick, const std::string & channel);
 		std::string ERR_INPUTTOOLONG(const std::string & nick);
 
 		// --- General msgs ---

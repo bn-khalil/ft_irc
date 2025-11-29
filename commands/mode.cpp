@@ -1,4 +1,5 @@
 #include "channel.hpp"
+#include <cctype>
 #include <cstddef>
 #include <map>
 #include <vector>
@@ -11,7 +12,7 @@ static bool isChannelModes(char m) {
 
 bool Server::isChannelExist(std::map<std::string, Channel>::iterator &it_channel, 
                             std::vector<std::string> cmds, Client &c) {
-    std::map<std::string, Channel>::iterator it = this->channel.find(cmds[1]);
+    std::map<std::string, Channel>::iterator it = this->channel.find(toLower(cmds[1]));
     if (it == channel.end()) {
         sendReply(c, this->error.ERR_NOSUCHCHANNEL(c.get_nickname(), cmds[1]));
         return false;
@@ -40,22 +41,40 @@ std::vector<modes_t> Server::parseModes(std::vector<std::string> cmds, Client &c
                 modes_t currentMode;
                 currentMode.sing = sing;
                 currentMode.mode = modes[i];
-                currentMode.display = false;
                 if (modes[i] == 'k' || (modes[i] == 'l' && sing == true) || modes[i] == 'o') {
                     indexParam++;
                     if (indexParam < cmds.size()) {
+                        std::string message;
                         currentMode.param = cmds[indexParam];
+                        if (modes[i] == 'k' && std::isspace(currentMode.param[0])) {
+                                std::string modeWithFlag(1, modes[i]);
+                                sendReply(c, error.ERR_NEEDMODEPARM(c.get_nickname(), modeWithFlag, "Not enough parameters"));
+                                continue;
+                        }
                         if (cmds[indexParam][0] == ':') {
-                            currentMode.param = cmds[indexParam].substr(1);
+                            int dotsIndex = c.getlineCmd().find(":");
+                                message = c.getlineCmd().substr(dotsIndex + 1);
                             while (indexParam < cmds.size())
                                 indexParam++;
+                            
+                            if (modes[i] == 'k' && std::isspace(message[0])) {
+                                std::string modeWithFlag(1, modes[i]);
+                                sendReply(c, error.ERR_NEEDMODEPARM(c.get_nickname(), modeWithFlag, "Not enough parameters"));
+                                continue;
+                            } else {
+                                if (modes[i] == 'k' || modes[i] == 'l') {
+                                    int ind = message.find_first_of(" \t\n");
+                                    if (ind != -1)
+                                        currentMode.param = message.substr(0, ind + 1);
+                                    else
+                                        currentMode.param = message;
+                                }
+                                currentMode.param = message;
+                            }
                         }
                     } else {
                         std::string modeWithFlag(1, modes[i]);
-                        if (modes[i] == 'k')
-                            sendReply(c, error.ERR_NEEDMODEPARM(c.get_nickname(), 
-                                    modeWithFlag, "Not enough parameters"));
-                        else if (modes[i] == 'l')
+                        if (modes[i] == 'k' || modes[i] == 'l')
                             sendReply(c, error.ERR_NEEDMODEPARM(c.get_nickname(), 
                                     modeWithFlag, "Not enough parameters"));
                         else if (modes[i] == 'o')
@@ -85,7 +104,7 @@ bool validateLimitParams(std::string limit) {
     return true;
 }
 
-std::map<std::string, Client*>::iterator Channel::findClientByNickName(const std::string &nickname) {
+std::map<std::string, Client>::iterator Channel::findClientByNickName(const std::string &nickname) {
     return this->users.find(nickname);
 }
 
@@ -123,7 +142,7 @@ bool Channel::modeExecuter(modes_t &mode, Client &c, Server &server) {
             if (limit == this->num_limite)
                 return false;
             mode.param = fromTime(limit);
-            this->num_limite = (limit);
+            this->num_limite = limit;
             this->isLimited = true;
         }
     }
@@ -204,88 +223,91 @@ std::string & sortModesPlus,
     }
 }
 
+bool Server::isValid(std::map<std::string, Channel>::iterator & it_channel, std::vector<std::string> cmds, Client & c) {
+    if (!isChannelExist(it_channel, cmds, c))
+        return false;
+    if (!it_channel->second.isUserInChannel(c)) {
+        sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(),it_channel->second.get_channel_name()));
+        return false;
+    }
+    return true;
+}
+
+old_channel_modes_t Channel::initChannelModes(std::map<std::string, Channel>::iterator it_channel) {
+    old_channel_modes_t channelCurrentModes; 
+    channelCurrentModes.isInviteOnly = it_channel->second.getIsInviteOnly();
+    channelCurrentModes.topicRestriction = it_channel->second.getTopicRestriction();
+    channelCurrentModes.isLimited = it_channel->second.getisLimited();
+    channelCurrentModes.num_limite = it_channel->second.get_num_limite();
+    return channelCurrentModes;
+}
+
+static std::string displayChannelMode(std::map<std::string, Channel>::iterator it_channel, Client & c){
+    std::string modes = "+";
+    if (it_channel->second.getIsInviteOnly())
+        modes += "i";
+    if (it_channel->second.getTopicRestriction())
+        modes += "t";
+    if (it_channel->second.getisLimited())
+        modes += "l";
+    if (it_channel->second.getIsKeySet())
+        modes += "k";
+
+    if (it_channel->second.getisLimited()) {
+        std::stringstream n_obj;
+        n_obj << it_channel->second.get_num_limite();
+        modes += " " + n_obj.str();
+    }
+    if (it_channel->second.getIsKeySet()) {
+        if (it_channel->second.isClientOperator(c))
+            modes += " " + it_channel->second.Get_key();
+        else
+            modes += " *";
+    }
+    return modes;
+}
+
 void Server::mode(Client &c) {
     std::vector<modes_t> modes;
-    std::vector<modes_t> filterdModes;
-    std::vector<modes_t> filterdModesCopy;
     std::map<char, modes_t> filerM;
     std::map<std::string, Channel>::iterator it_channel = this->channel.end();
     std::vector<std::string> seccessModes;
     std::string sortModes;
     std::string sortModesPlus;
     std::string sortModesMinus;
-    old_channel_modes_t channelCurrentModes; 
 
     if (c.Get_isAuthenticated() == false)
     {
-        sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
+        sendReply(c, error.ERR_NOT_REGESTRED());
         return;
     }
 
     std::string command = c.getlineCmd();
-    if (!command.empty() && command.back() == '\n') {
-        command.pop_back();
+    if (!command.empty() && command[command.size() -1 ] == '\n') {
+        command.erase(command.size() -1);
     }
+    c.setlineCmd(command);
     std::vector<std::string> cmds = new_splite(command, ' ');
 
     if (cmds.size() == 1) 
         sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "MODE"));
     else if (cmds.size() == 2) {
-        if (!isChannelExist(it_channel, cmds, c))
-            return;
-        if (!it_channel->second.isUserInChannel(c)) {
-            sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(),it_channel->second.get_channel_name()));
-            return;
-        }
-        if (!it_channel->second.isUserInChannel(c)) {
-            sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(),it_channel->second.get_channel_name()));
-            return;
-        }
-        else {
-            std::string modes = "+";
-            if (it_channel->second.getIsInviteOnly())
-                modes += "i";
-            if (it_channel->second.getTopicRestriction())
-                modes += "t";
-            if (it_channel->second.getisLimited())
-                modes += "l";
-            if (it_channel->second.getIsKeySet())
-                modes += "k";
+        if (!isValid(it_channel, cmds, c))
+            return ;
 
-            if (it_channel->second.getisLimited()) {
-                std::stringstream n_obj;
-                n_obj << it_channel->second.get_num_limite();
-                modes += " " + n_obj.str();
-            }
-            if (it_channel->second.getIsKeySet()) {
-                if (it_channel->second.isClientOperator(c))
-                    modes += " " + it_channel->second.Get_key();
-                else
-                    modes += " *";
-            }
-
-            sendReply(c, error. RPL_CHANNELMODEIS(c.get_nickname(), 
-            modes, it_channel->second.get_channel_name()));
-            sendReply(c, error. RPL_CREATIONTIME (c.get_nickname(), 
-            it_channel->second.fromTime(it_channel->second.getCreationTime()),
-            it_channel->second.get_channel_name()));
-        }
+        sendReply(c, error. RPL_CHANNELMODEIS(c.get_nickname(), 
+        displayChannelMode(it_channel, c), it_channel->second.get_channel_name()));
+        sendReply(c, error. RPL_CREATIONTIME (c.get_nickname(), 
+        it_channel->second.fromTime(it_channel->second.getCreationTime()),
+        it_channel->second.get_channel_name()));
     }
     else {
-        if (!isChannelExist(it_channel, cmds, c))
-            return;
-        channelCurrentModes.isInviteOnly = it_channel->second.getIsInviteOnly();
-        channelCurrentModes.topicRestriction = it_channel->second.getTopicRestriction();
-        channelCurrentModes.isLimited = it_channel->second.getisLimited();
-        channelCurrentModes.num_limite = it_channel->second.get_num_limite();
-        if (!it_channel->second.isUserInChannel(c)) {
-            sendReply(c, error.ERR_NOTONCHANNEL(c.get_nickname(),
-            it_channel->second.get_channel_name()));
-            return;
-        }
+
+        if (!isValid(it_channel, cmds, c))
+            return ;
+        old_channel_modes_t channelCurrentModes = it_channel->second.initChannelModes(it_channel);
         if (!it_channel->second.isClientOperator(c)) {
-            sendReply(c, error.ERR_CHANOPRIVSNEEDED(c.get_nickname(),
-                      it_channel->second.get_channel_name()));
+            sendReply(c, error.ERR_CHANOPRIVSNEEDED(c.get_nickname(),it_channel->second.get_channel_name()));
             return;
         }
         seccessModes.push_back("");
@@ -315,26 +337,13 @@ void Server::mode(Client &c) {
             if (it_channel->second.modeExecuter(modes[i], c, *this))
                 filerM[modes[i].mode] = modes[i];
         }
-        std::map<char, modes_t>::iterator hold;
-        hold = filerM.find('i');
-        if (hold != filerM.end()) {
-            if (it_channel->second.getIsInviteOnly() != channelCurrentModes.isInviteOnly)
-                prepareModesMessage(hold,sortModesPlus, sortModesMinus, seccessModes );
-        }
-        hold = filerM.find('t');
-        if (hold != filerM.end()) {
-            if (it_channel->second.getTopicRestriction() != channelCurrentModes.topicRestriction)
-                prepareModesMessage(hold,sortModesPlus, sortModesMinus, seccessModes );
-        }
-        hold = filerM.find('l');
-        if (hold != filerM.end() && !hold->second.sing) {
-            if (it_channel->second.getisLimited() != channelCurrentModes.isLimited)
-                prepareModesMessage(hold,sortModesPlus, sortModesMinus, seccessModes );
-        }
 
         for (std::map<char,modes_t>::iterator it = filerM.begin(); it != filerM.end(); ++it) {
-            if (it->second.mode == 'k' || (it->second.mode == 'l' && it->second.sing && !it->second.param.empty()) || it->second.mode == 'o')
-                prepareModesMessage(it,sortModesPlus, sortModesMinus, seccessModes );
+            if (it->second.mode == 'i' && it_channel->second.getIsInviteOnly() == channelCurrentModes.isInviteOnly)
+                continue;
+            if (it->second.mode == 't' && it_channel->second.getTopicRestriction() == channelCurrentModes.topicRestriction)
+                continue;
+            prepareModesMessage(it,sortModesPlus, sortModesMinus, seccessModes );
         }
 
         if (!sortModesPlus.empty())
@@ -356,5 +365,4 @@ void Server::mode(Client &c) {
         }
     }
     modes.clear();
-    filterdModes.clear();
 }

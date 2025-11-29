@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kben-tou <kben-tou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:30 by akella            #+#    #+#             */
-/*   Updated: 2025/11/22 12:05:31 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/29 18:20:31 by kben-tou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void Channel::removeClientFromOneChannels(Client &c)
 std::string Channel::getNamesList()
 {
     std::string name = "";
-    for (std::map<std::string, Client *>::iterator it = users.begin(); it != users.end(); it++)
+    for (std::map<std::string, Client>::iterator it = users.begin(); it != users.end(); it++)
     {
         if (operators_.find(it->first) != operators_.end())
             name = name + '@';
@@ -82,17 +82,17 @@ bool Channel::getIsInviteOnly() {
 
 void Channel::Add_to_admin(Client &c)
 {
-    operators_.insert(std::make_pair(c.get_nickname(), &c));
+    operators_.insert(std::make_pair(c.get_nickname(), c));
 }
 
 void Channel::Add_to_user(Client &c)
 {
-    users.insert(std::make_pair(c.get_nickname(), &c));
+    users.insert(std::make_pair(c.get_nickname(), c));
 }
 
 void Channel::Add_to_invite(Client &c)
 {
-    invite.insert(std::make_pair(c.get_nickname(), &c));
+    invite.insert(std::make_pair(c.get_nickname(), c));
 }
 
 std::string Channel::Get_key()
@@ -173,7 +173,7 @@ std::string Channel::getTopic() {
 
 bool Channel::isUserInChannel(Client &c)
 {
-    std::map<std::string, Client*>::iterator it = users.find(c.get_nickname());
+    std::map<std::string, Client>::iterator it = users.find(c.get_nickname());
     if (it != users.end())
     {
         return true;
@@ -184,22 +184,22 @@ bool Channel::isUserInChannel(Client &c)
 void Channel::broadcast(const std::string &msg)
 {
     std::string full_msg = msg + "\r\n";
-    for (std::map<std::string, Client*>::iterator it = users.begin(); it != users.end(); it++)
+    for (std::map<std::string, Client>::iterator it = users.begin(); it != users.end(); it++)
     {
-        Client *c = it->second;
-        send(c->getfd(), full_msg.c_str(), full_msg.length(), 0);
+        Client c = it->second;
+        send(c.getfd(), full_msg.c_str(), full_msg.length(), 0);
     }
 }
 
 void Channel::broadcastExpectSender(const std::string &msg, Client &sender)
 {
     std::string full_msg = msg + "\r\n";
-    for (std::map<std::string, Client*>::iterator it = users.begin(); it != users.end(); it++)
+    for (std::map<std::string, Client>::iterator it = users.begin(); it != users.end(); it++)
     {
-        Client *c = it->second;
-        if (c->get_nickname() == sender.get_nickname())
+        Client c = it->second;
+        if (c.get_nickname() == sender.get_nickname())
             continue;
-        send(c->getfd(), full_msg.c_str(), full_msg.length(), 0);
+        send(c.getfd(), full_msg.c_str(), full_msg.length(), 0);
     }
 }
 

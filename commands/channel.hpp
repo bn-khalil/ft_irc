@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kben-tou <kben-tou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:27 by akella            #+#    #+#             */
-/*   Updated: 2025/11/22 12:05:28 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/29 21:45:32 by kben-tou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@
 #include <vector>
 #include <cstdlib>
 #include <sys/socket.h>
-#include "../../server/Server.hpp"
-#include "../../server/Client.hpp"
+#include "../server/Server.hpp"
+#include "../server/Client.hpp"
 #include <sstream>
 
 typedef struct old_channel_modes_s {
@@ -37,9 +37,9 @@ class Channel
 {
     private:
         std::string Channel_name;
-        std::map<std::string, Client*> operators_;
-        std::map<std::string, Client*> users;
-        std::map<std::string, Client*> invite;
+        std::map<std::string, Client> operators_;
+        std::map<std::string, Client> users;
+        std::map<std::string, Client> invite;
         std::string key;
         std::string channelTopic;
         std::string channelActiveModes;
@@ -53,14 +53,16 @@ class Channel
         time_t time_last_topic;
         
     public :
-        std::map<std::string, Client*> get_operators_() { return operators_; };
-        std::map<std::string, Client*> get_users() { return users; };
+        std::map<std::string, Client> get_operators_() { return operators_; };
+        std::map<std::string, Client> get_users() { return users; };
         std::string getNamesList();
         unsigned int get_num_limite() { return num_limite; };
         std::string get_channel_name() { return Channel_name; };
 
         Channel(std::string name);
         Channel();
+
+        old_channel_modes_t initChannelModes(std::map<std::string, Channel>::iterator it_channel);
         void Add_to_admin(Client &c);
         void Add_to_user(Client &c);
         void Add_to_invite(Client &c);
@@ -83,7 +85,7 @@ class Channel
         void broadcast(const std::string &msg);
         void broadcastExpectSender(const std::string &msg, Client &sender);
         bool modeExecuter(modes_t &mode, Client &c, Server &server);
-        std::map<std::string, Client*>::iterator findClientByNickName(const std::string &nickname);
+        std::map<std::string, Client>::iterator findClientByNickName(const std::string &nickname);
         void popClientFromOperatorList(const std::string &nickname);
         bool getTopicRestriction();
         bool isUserInChannel(Client &c);

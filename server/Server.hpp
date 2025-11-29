@@ -1,19 +1,17 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 #include "Client.hpp"
-// # include <iostream>
 #include <poll.h>
 #include <map>
 #include <string>
 #include <vector>
 #include <netinet/in.h> 
-#include "../commands/channel_membership/Reply.hpp"
+#include "../commands/Reply.hpp"
 
 typedef struct modes_s {
     std::string param;
     char mode;
     bool sing;
-    bool display;
 } modes_t;
 
 class Client;
@@ -25,13 +23,12 @@ class Server
         int						port;
         int						serverId;
         std::string             password;
-        bool                    isGetSignal;
+        static bool                    isGetSignal;
         std::string creation_date;
         socklen_t addr_len;
         sockaddr_in  serverConfig;
         std::vector<struct pollfd> poll_fds;
         std::map<int, Client>	ClientsInfo;
-
         int ReadClientMessage(std::string &line);
         void AddClient();
         void GetClientEvents();
@@ -52,13 +49,16 @@ class Server
 
 
     public:
-    
+        static void set_Signal(bool sign);
+        static bool get_Signal(void);
+        static void receve_signal(int sign);
 		std::map<std::string,Channel> channel;
         Reply   error;
         Channel *chan;
         Server(std::string &port,std::string &password);
         Server(const Server& other);
-        
+
+        bool isValid(std::map<std::string, Channel>::iterator & it_channel, std::vector<std::string> cmds, Client & c);
         void  StartServer();
         void  join(Client &c);
         void  kick(Client &c);
@@ -78,9 +78,12 @@ class Server
         std::vector<modes_t> parseModes(std::vector<std::string> cmds,  
         Client &c) ;
        std::vector<std::string> isUserInvited_to_channel(Client &c);
+        std::string  handle_the_resone(std::vector<std::string> cmds, std::string command, Client &c);
+       void  kick_with_brodcast(std::map<std::string, Channel>::iterator it, std::vector<std::string>cmds, std::string reason, Client & c);
+        bool name_perfect(std::vector<std::string> cmds);
+
 
         ~Server();
 };
 
 #endif
-	 

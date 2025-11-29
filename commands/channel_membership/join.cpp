@@ -6,7 +6,7 @@
 /*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:12 by akella            #+#    #+#             */
-/*   Updated: 2025/11/25 18:24:54 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/27 10:24:26 by akella           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void Server::join(Client &c)
     std::vector<std::string> cmds = new_splite(command, ' ');
     //Check if Authenticated Alreddy Done !!
     if (c.Get_isAuthenticated() == false)
-        return sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
+        return sendReply(c, error.ERR_NOT_REGESTRED());
     //If Size Less than 2 ERROR !!
     if (cmds.size() < 2)
         return sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "JOIN"));
@@ -89,7 +89,7 @@ void Server::join(Client &c)
             std::string topic = join.getTopic();
             bool is_invited = join.isInvited(c);
             if (join.isUserInChannel(c) == false) // Brodcast The msg Only if The user  not in the Channel !!
-                {
+            {
             if (join.Check_mode('i') == true && !is_invited)
                 sendReply(c, error.ERR_INVITEONLYCHAN(c.get_nickname(), one_channel));
             else if (join.Check_mode('l') && join.is_full() == true && !is_invited)

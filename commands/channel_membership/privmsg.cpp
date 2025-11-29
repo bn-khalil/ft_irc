@@ -8,12 +8,11 @@ void Server::privmsg(Client &c) {
 
     if (c.Get_isAuthenticated() == false)
     {
-        sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
+        sendReply(c, error.ERR_NOT_REGESTRED());
         return;
     }
     
     std::vector<std::string> args = new_splite(command, ' ');
-
 
     int dotsIndex = command.find(":");
     std::string message;
@@ -57,17 +56,20 @@ void Server::privmsg(Client &c) {
                         rcvClient->get_nickname(), message));
             } else {
                 std::map<std::string, Channel>::iterator it = this->channel.find(rcvNick);
-                if (!it->second.isUserInChannel(c)) {
-                    sendReply(c, error.ERR_CANNOTSENDTOCHAN(c.get_nickname(), rcvNick));
-                    return;
-                }
                 if (it == this->channel.end()) {
                     sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), rcvNick));
                     return;
                 }
+                if (!it->second.isUserInChannel(c)) {
+                    sendReply(c, error.ERR_CANNOTSENDTOCHAN(c.get_nickname(), rcvNick));
+                    return;
+                }
                 if (rcvNick[0] == '&')
                     return;
-
+                if (message.empty()) {
+                    sendReply(c, error.ERR_NOTEXTSEND(c.get_nickname()));
+                    return ;
+                }
                 it->second.broadcastExpectSender(error.RPL_AWAY(c.get_Prefix(), it->second.get_channel_name(), message), c);
             }
         }

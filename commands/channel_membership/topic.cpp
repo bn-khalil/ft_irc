@@ -5,7 +5,7 @@ void  Server::topic(Client &c) {
 
     if(c.Get_isAuthenticated() == false)
     {
-        sendReply(c, error.ERR_NOT_REGESTRED(c.get_nickname()));
+        sendReply(c, error.ERR_NOT_REGESTRED());
         return ;
     }
     
@@ -41,7 +41,7 @@ void  Server::topic(Client &c) {
             topic = args[args.size() - 1];
         else
             topic = command.substr(dotsIndex + 1);
-        
+
         std::map<std::string,Channel>::iterator it = this->channel.find(args[1]);
 
         if (it == channel.end()) {

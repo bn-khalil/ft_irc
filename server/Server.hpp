@@ -1,7 +1,6 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 #include "Client.hpp"
-// # include <iostream>
 #include <poll.h>
 #include <map>
 #include <string>
@@ -58,7 +57,8 @@ class Server
         Channel *chan;
         Server(std::string &port,std::string &password);
         Server(const Server& other);
-        
+
+        bool isValid(std::map<std::string, Channel>::iterator it_channel, std::vector<std::string> cmds, Client & c);
         void  StartServer();
         void  join(Client &c);
         void  kick(Client &c);
@@ -78,6 +78,10 @@ class Server
         std::vector<modes_t> parseModes(std::vector<std::string> cmds,  
         Client &c) ;
        std::vector<std::string> isUserInvited_to_channel(Client &c);
+        std::string  handle_the_resone(std::vector<std::string> cmds, std::string command, Client &c);
+       void  kick_with_brodcast(std::map<std::string, Channel>::iterator it, std::vector<std::string>cmds, std::string reason, Client & c);
+        bool name_perfect(std::vector<std::string> cmds, std::map<std::string, Channel>::iterator it);
+
 
         ~Server();
 };

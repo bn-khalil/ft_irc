@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kben-tou <kben-tou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:27 by akella            #+#    #+#             */
-/*   Updated: 2025/11/22 12:05:28 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/28 11:45:34 by kben-tou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ class Channel
 
         Channel(std::string name);
         Channel();
+
+        old_channel_modes_t initChannelModes(std::map<std::string, Channel>::iterator it_channel);
         void Add_to_admin(Client &c);
         void Add_to_user(Client &c);
         void Add_to_invite(Client &c);

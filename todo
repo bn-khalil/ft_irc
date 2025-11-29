@@ -162,3 +162,11 @@ privmsg nm      hello sd
 
 
 @REM channel names upper/lower should be accepted
+
+
+
+
+//check if the password valide with just one char
+//the nick name most not be digite at all a23 not valide
+
+//check if the user param can content number 

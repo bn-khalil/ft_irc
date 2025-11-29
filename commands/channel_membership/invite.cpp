@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   invite.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kben-tou <kben-tou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:06:44 by akella            #+#    #+#             */
-/*   Updated: 2025/11/27 10:22:44 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/29 17:18:26 by kben-tou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ void Server::invit(Client &c)
         command.erase(command.size() -1);
 
     std::vector<std::string> cmds = new_splite(command, ' ');
+    cmds[1] = toLower(cmds[1]);
 
     if (c.Get_isAuthenticated() == false)
         return sendReply(c, error.ERR_NOT_REGESTRED());

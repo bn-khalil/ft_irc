@@ -104,7 +104,7 @@ bool validateLimitParams(std::string limit) {
     return true;
 }
 
-std::map<std::string, Client*>::iterator Channel::findClientByNickName(const std::string &nickname) {
+std::map<std::string, Client>::iterator Channel::findClientByNickName(const std::string &nickname) {
     return this->users.find(nickname);
 }
 

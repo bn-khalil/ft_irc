@@ -170,3 +170,7 @@ privmsg nm      hello sd
 //the nick name most not be digite at all a23 not valide
 
 //check if the user param can content number 
+
+
+@REM kick #Bn bn
+@REM :ircserver42.com 403  #Bn :No such channel

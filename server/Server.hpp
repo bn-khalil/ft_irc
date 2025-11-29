@@ -80,7 +80,7 @@ class Server
        std::vector<std::string> isUserInvited_to_channel(Client &c);
         std::string  handle_the_resone(std::vector<std::string> cmds, std::string command, Client &c);
        void  kick_with_brodcast(std::map<std::string, Channel>::iterator it, std::vector<std::string>cmds, std::string reason, Client & c);
-        bool name_perfect(std::vector<std::string> cmds, std::map<std::string, Channel>::iterator it);
+        bool name_perfect(std::vector<std::string> cmds);
 
 
         ~Server();

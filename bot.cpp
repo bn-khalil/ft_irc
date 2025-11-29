@@ -1,6 +1,5 @@
 #include "Bot.hpp"
 
-// Helper functions implementation
 int stringToPort(std::string string)
 {
     int port = -1;
@@ -40,7 +39,7 @@ bool isValidNickname(const std::string &nick)
     if (forbiddenStartChars.find(nick[0]) != std::string::npos)
         return false;
 
-    std::string forbiddenChars = " ,*?!@";
+    std::string forbiddenChars = " \t\n\r\v\f,*?!@";
 
     if (nick.find_first_of(forbiddenChars) != std::string::npos)
         return false;
@@ -48,10 +47,10 @@ bool isValidNickname(const std::string &nick)
     return true;
 }
 
-// Bot Class implementation
+
 Bot::Bot(std::string password, int port, std::string serverIp, std::string nick)
 {
-    if (this->port < 0)
+    if (port < 0)
         throw std::runtime_error("Error: Invalid port number provided");
     else if (isValidPassword(password) == false)
         throw std::runtime_error("Error: Invalid password format ");
@@ -162,7 +161,7 @@ int main(int ac, char **av)
         return 1;
     }
     try {
-        Bot bot(av[1], atoi(av[2]), av[3],av[4]);
+        Bot bot(av[1], stringToPort(av[2]), av[3],av[4]);
         bot.connectServer();
         bot.run();
 

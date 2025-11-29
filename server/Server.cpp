@@ -59,7 +59,7 @@ bool isValidNickname(const std::string &nick)
     if (forbiddenStartChars.find(nick[0]) != std::string::npos)
         return false;
 
-    std::string forbiddenChars = " ,*?!@";
+    std::string forbiddenChars = " \t\n\r\v\f,*?!@";
 
     if (nick.find_first_of(forbiddenChars) != std::string::npos)
         return false;

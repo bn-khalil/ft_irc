@@ -1,10 +1,9 @@
 #include "Server.hpp"
-#include "../commands/channel_membership/Reply.hpp"
+#include "../commands/Reply.hpp"
 #include "Client.hpp"
 #include <cstddef>
 #include <ctime>
 #include <iostream>
-#include <iterator>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -15,7 +14,7 @@
 #include <unistd.h>
 #include <vector>
 #include <map>
-#include "../commands/channel_membership/channel.hpp"
+#include "../commands/channel.hpp"
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <errno.h>

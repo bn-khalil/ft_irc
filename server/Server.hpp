@@ -58,7 +58,7 @@ class Server
         Server(std::string &port,std::string &password);
         Server(const Server& other);
 
-        bool isValid(std::map<std::string, Channel>::iterator it_channel, std::vector<std::string> cmds, Client & c);
+        bool isValid(std::map<std::string, Channel>::iterator & it_channel, std::vector<std::string> cmds, Client & c);
         void  StartServer();
         void  join(Client &c);
         void  kick(Client &c);

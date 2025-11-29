@@ -223,7 +223,7 @@ std::string & sortModesPlus,
     }
 }
 
-bool Server::isValid(std::map<std::string, Channel>::iterator it_channel, std::vector<std::string> cmds, Client & c) {
+bool Server::isValid(std::map<std::string, Channel>::iterator & it_channel, std::vector<std::string> cmds, Client & c) {
     if (!isChannelExist(it_channel, cmds, c))
         return false;
     if (!it_channel->second.isUserInChannel(c)) {

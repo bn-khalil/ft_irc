@@ -1,6 +1,6 @@
 NAME = ircserv
 
-FLAG = -Wall -Werror -Wextra -std=c++98 # -fsanitize=address -MMD
+FLAG = -Wall -Werror -Wextra -std=c++98 -fsanitize=address -MMD
 
 HEADER = server/Client.hpp server/Server.hpp
 

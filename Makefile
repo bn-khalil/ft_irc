@@ -2,7 +2,7 @@ NAME = ircserv
 
 FLAG = -Wall -Werror -Wextra -std=c++98 -fsanitize=address
 
-HEADER = server/Client.hpp server/Server.hpp
+HEADER = server/Client.hpp server/Server.hpp  commands/channel_membership/channel.hpp commands/channel_membership/Reply.hpp 
 
 EXP_SRC = commands/channel_membership/channel.cpp \
 		commands/channel_membership/join.cpp \
@@ -17,7 +17,6 @@ EXP_SRC = commands/channel_membership/channel.cpp \
 CPP = c++
 
 SERVER_SRC = server/Client.cpp server/Server.cpp main.cpp
-CMD_SRC =
 
 SERVER_OBJ = $(SERVER_SRC:.cpp=.o)
 CMD_OBJ = $(CMD_SRC:.cpp=.o)
@@ -25,26 +24,24 @@ EXP_OBJ = $(EXP_SRC:.cpp=.o)
 
 OBJ = $(SERVER_OBJ) $(CMD_OBJ) $(EXP_OBJ)
 
-DEP = $(OBJ:.o=.d)
-
 all: $(NAME)
 
 $(NAME): $(OBJ)
 	$(CPP) $(FLAG) $(OBJ) -o $(NAME)
 
-%.o: %.cpp
+%.o: %.cpp  $(HEADER)
 	$(CPP) $(FLAG) -c $< -o $@
 
 
 SRC_BONUS = bot.cpp
 OBJ_BONUS = $(SRC_BONUS:.cpp=.o)
 
-bonus: $(OBJ_BONUS)
+bonus: $(OBJ_BONUS) Bot.hpp
 	$(CPP) $(FLAG) $(OBJ_BONUS) -o bonus
 
 
 clean:
-	rm -rf $(OBJ) $(DEP) $(OBJ_BONUS)
+	rm -rf $(OBJ) $(OBJ_BONUS)
 
 fclean: clean
 	rm -rf $(NAME) bonus

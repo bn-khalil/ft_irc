@@ -1,5 +1,6 @@
 #include "server/Server.hpp"
 #include <csignal>
+#include <cstdlib>
 #include <exception>
 #include <iostream>
 #include <sys/poll.h>
@@ -21,7 +22,6 @@ void    close_all_fds(void)
 
 int main(int ac,char **av)
 {
-    
     if (ac != 3 )
     {   
         std::cerr << "./ircserv <port> <password>" << "\n";

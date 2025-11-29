@@ -574,7 +574,7 @@ void  Server::kick_with_brodcast(std::map<std::string, Channel>::iterator it, st
         if(it->second.isEmpty())
             channel.erase(it); 
 }
-bool   Server::name_perfect(std::vector<std::string> cmds, std::map<std::string, Channel>::iterator it)
+bool   Server::name_perfect(std::vector<std::string> cmds)
 {
-    return cmds[1].empty() || (cmds[1][0] != '&' && cmds[1][0] != '#') || cmds[1].length() > 200 || Channel::tab_found(cmds[1]) == true  || it == channel.end();
+    return cmds[1].empty() || (cmds[1][0] != '&' && cmds[1][0] != '#') || cmds[1].length() > 200 || Channel::tab_found(cmds[1]) == true ;
 }

@@ -12,7 +12,7 @@ static bool isChannelModes(char m) {
 
 bool Server::isChannelExist(std::map<std::string, Channel>::iterator &it_channel, 
                             std::vector<std::string> cmds, Client &c) {
-    std::map<std::string, Channel>::iterator it = this->channel.find(cmds[1]);
+    std::map<std::string, Channel>::iterator it = this->channel.find(toLower(cmds[1]));
     if (it == channel.end()) {
         sendReply(c, this->error.ERR_NOSUCHCHANNEL(c.get_nickname(), cmds[1]));
         return false;
@@ -104,7 +104,7 @@ bool validateLimitParams(std::string limit) {
     return true;
 }
 
-std::map<std::string, Client*>::iterator Channel::findClientByNickName(const std::string &nickname) {
+std::map<std::string, Client>::iterator Channel::findClientByNickName(const std::string &nickname) {
     return this->users.find(nickname);
 }
 
@@ -288,7 +288,6 @@ void Server::mode(Client &c) {
     }
     c.setlineCmd(command);
     std::vector<std::string> cmds = new_splite(command, ' ');
-    cmds[1] = toLower(cmds[1]);
 
     if (cmds.size() == 1) 
         sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "MODE"));

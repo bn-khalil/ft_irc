@@ -6,7 +6,7 @@
 /*   By: kben-tou <kben-tou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:27 by akella            #+#    #+#             */
-/*   Updated: 2025/11/28 11:45:34 by kben-tou         ###   ########.fr       */
+/*   Updated: 2025/11/29 18:18:02 by kben-tou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,9 @@ class Channel
 {
     private:
         std::string Channel_name;
-        std::map<std::string, Client*> operators_;
-        std::map<std::string, Client*> users;
-        std::map<std::string, Client*> invite;
+        std::map<std::string, Client> operators_;
+        std::map<std::string, Client> users;
+        std::map<std::string, Client> invite;
         std::string key;
         std::string channelTopic;
         std::string channelActiveModes;
@@ -53,8 +53,8 @@ class Channel
         time_t time_last_topic;
         
     public :
-        std::map<std::string, Client*> get_operators_() { return operators_; };
-        std::map<std::string, Client*> get_users() { return users; };
+        std::map<std::string, Client> get_operators_() { return operators_; };
+        std::map<std::string, Client> get_users() { return users; };
         std::string getNamesList();
         unsigned int get_num_limite() { return num_limite; };
         std::string get_channel_name() { return Channel_name; };
@@ -85,7 +85,7 @@ class Channel
         void broadcast(const std::string &msg);
         void broadcastExpectSender(const std::string &msg, Client &sender);
         bool modeExecuter(modes_t &mode, Client &c, Server &server);
-        std::map<std::string, Client*>::iterator findClientByNickName(const std::string &nickname);
+        std::map<std::string, Client>::iterator findClientByNickName(const std::string &nickname);
         void popClientFromOperatorList(const std::string &nickname);
         bool getTopicRestriction();
         bool isUserInChannel(Client &c);

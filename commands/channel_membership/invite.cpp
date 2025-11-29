@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   invite.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kben-tou <kben-tou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:06:44 by akella            #+#    #+#             */
-/*   Updated: 2025/11/27 10:22:44 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/29 18:29:37 by kben-tou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ void Server::invit(Client &c)
         command.erase(command.size() -1);
 
     std::vector<std::string> cmds = new_splite(command, ' ');
-
     if (c.Get_isAuthenticated() == false)
         return sendReply(c, error.ERR_NOT_REGESTRED());
 
@@ -33,7 +32,7 @@ void Server::invit(Client &c)
         if (!client_invited)
             return sendReply(c, error.ERR_NOSUCHNICK(c.get_nickname(), name_c_invited));
 
-        std::map<std::string, Channel>::iterator it = channel.find(one_channel);
+        std::map<std::string, Channel>::iterator it = channel.find(toLower(one_channel));
         if (one_channel.empty() || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || Channel::tab_found(one_channel) == true  || it == channel.end())
         {
          return sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), one_channel));

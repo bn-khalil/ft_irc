@@ -55,7 +55,7 @@ void Server::privmsg(Client &c) {
                 sendReply(*rcvClient, error.RPL_AWAY(c.get_Prefix(),
                         rcvClient->get_nickname(), message));
             } else {
-                std::map<std::string, Channel>::iterator it = this->channel.find(rcvNick);
+                std::map<std::string, Channel>::iterator it = this->channel.find(toLower(rcvNick));
                 if (it == this->channel.end()) {
                     sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), rcvNick));
                     return;

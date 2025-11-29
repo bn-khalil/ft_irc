@@ -497,10 +497,8 @@ void Server::sendReply(Client &c, std::string msg)
     std::string full_msg = msg + "\r\n";
     if (send(c.getfd(), full_msg.c_str(), full_msg.length(), 0) <= -1)
     {
-        std::cout << "🔴 Client Disconnected | FD: " << c.getfd() << " | Nick: " << c.get_nickname() << std::endl;        
-        removeClientFromAllChannels(c);
-        close(c.getfd());
-        ClientsInfo.erase(c.getfd());
+        std::cout << "🔴 Client Disconnected | FD: " << c.getfd() << " | Nick: " << c.get_nickname() << std::endl;
+        Quit(c);
     }
 }
 

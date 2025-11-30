@@ -549,18 +549,15 @@ void Server::join_all_channel(Client &c)
 }
 std::string  Server::handle_the_resone(std::vector<std::string>cmds, std::string command, Client &c)
 {
-     std::string reason = c.get_nickname();
-    if (cmds.size() > 3)
+if (cmds.size() < 4)
+        return c.get_nickname();
+    if (cmds[3][0] == ':' || cmds[2][0] == ':')
     {
-        if (cmds[3][0] == ':')
-        {
-            if (command.find(cmds[3], command.find(cmds[2], command.find(cmds[1]) + cmds[1].length()) + cmds[2].length()) != std::string::npos)
-                reason = command.substr(command.find(cmds[3], command.find(cmds[2], command.find(cmds[1]) + cmds[1].length()) + cmds[2].length()) + 1);
-        }
-        else
-            reason = cmds[cmds.size() - 1];
+        size_t pos = command.find(" :");
+        if (pos != std::string::npos)
+            return command.substr(pos + 2);
     }
-    return reason;
+    return cmds[3];
 }
 void  Server::kick_with_brodcast(std::map<std::string, Channel>::iterator it, std::vector<std::string>cmds, std::string reason, Client & c)
 {

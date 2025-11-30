@@ -43,7 +43,6 @@ class Client
         std::string get_Prefix() const;
         Client(int fd);
         Client();
-        ~Client();
 };  
 
 

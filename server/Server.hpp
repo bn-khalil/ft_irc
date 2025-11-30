@@ -1,12 +1,27 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
+
 #include "Client.hpp"
+#include "../commands/Reply.hpp"
+#include "../commands/channel.hpp"
+
 #include <poll.h>
 #include <map>
 #include <string>
 #include <vector>
 #include <netinet/in.h> 
-#include "../commands/Reply.hpp"
+#include <string>
+#include <strings.h>
+#include <sys/poll.h>
+#include <sys/socket.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <vector>
+#include <map>
+#include <arpa/inet.h>
+#include <stdio.h>
+
+
 
 typedef struct modes_s {
     std::string param;
@@ -16,6 +31,7 @@ typedef struct modes_s {
 
 class Client;
 class Channel;
+
 class Server
 {
     private:
@@ -33,7 +49,7 @@ class Server
         void AddClient();
         void GetClientEvents();
         void processClientBuffer(Client &client, char *buffer, int bytes_read);
-        void PrepareServerSocket(); // -->1 creat  socket  --2 socket option 3 non  blocking socket --- 4
+        void PrepareServerSocket();
         void waitConnection();
         void ConfigureSocket();
         void bindSocket();
@@ -56,7 +72,7 @@ class Server
         Reply   error;
         Channel *chan;
         Server(std::string &port,std::string &password);
-        Server(const Server& other);
+        
 
         bool isValid(std::map<std::string, Channel>::iterator & it_channel, std::vector<std::string> cmds, Client & c);
         void  StartServer();
@@ -82,8 +98,6 @@ class Server
        void  kick_with_brodcast(std::map<std::string, Channel>::iterator it, std::vector<std::string>cmds, std::string reason, Client & c);
         bool name_perfect(std::vector<std::string> cmds);
 
-
-        ~Server();
 };
 
 #endif

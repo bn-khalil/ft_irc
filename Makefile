@@ -1,6 +1,6 @@
 NAME = ircserv
 
-FLAG = -Wall -Werror -Wextra -std=c++98 -fsanitize=address
+FLAG = -Wall -Werror -Wextra -std=c++98 #-fsanitize=address
 
 HEADER = server/Client.hpp server/Server.hpp  commands/channel.hpp commands/Reply.hpp 
 
@@ -33,10 +33,10 @@ $(NAME): $(OBJ)
 	$(CPP) $(FLAG) -c $< -o $@
 
 
-SRC_BONUS = bot.cpp
+SRC_BONUS = bot_Bonus/Bot.cpp
 OBJ_BONUS = $(SRC_BONUS:.cpp=.o)
 
-bonus: $(OBJ_BONUS) Bot.hpp
+bonus: $(OBJ_BONUS) bot_Bonus/Bot.hpp
 	$(CPP) $(FLAG) $(OBJ_BONUS) -o bonus
 
 

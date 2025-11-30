@@ -147,6 +147,14 @@ void Bot::hundleLineMsg(std::string line)
                 to_send = "Available commands: !help, !hello";
             else if (msg == "!hello")
                 to_send = "Available commands: !help, !hello";
+            else if (msg == "advice day") {
+                std::string ad1 = "The only thing I know is that I know nothing.";
+                std::string ad2 = "Happiness depends upon ourselves.";
+                if (std::time(0) % 2)
+                    to_send = ad1;
+                else
+                    to_send = ad2;
+            }
             std::string cmd = "PRIVMSG " + sender + " :" + to_send + "\r\n";
             send(BotFd,cmd.c_str(),cmd.length(),0);
         }

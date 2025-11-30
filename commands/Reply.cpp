@@ -145,11 +145,11 @@ std::string Reply::RPL_TOPIC(const std::string& nick, const std::string& channel
 
 std::string Reply::RPL_TOPICREATED(const std::string& nick, const std::string& prefix, const std::string& topic)
 {
-    return ":" + prefix + " TOPIC " + nick + " :" + topic;
+    return ":" + prefix + " TOPIC "  + nick + " :" + topic;
 }
 std::string Reply::RPL_NOTOPIC(const std::string& nick, const std::string& channel)
 {
-    return ":" + server_name + " 331 " + nick + " " + channel + " :No topic is set";
+    return ":" + server_name + " 331 " + nick + " " + channel + " :No topic is set.";
 }
 
 /* ************************************************************************** */
@@ -234,7 +234,7 @@ std::string Reply::ERR_ERRONEUSNICKNAME(std::string nick, std::string used_nick,
 }
 std::string Reply:: RPL_CREATIONTIME (const std::string& nick, const std::string& time, const std::string & channel)
 {
-    return ":" + server_name + " 329 " + nick + " " + channel + " " + time;
+    return ":" + server_name + " 333 " + nick + " " + channel + " " + time;
 }
 std::string Reply:: RPL_CHANNELMODEIS(const std::string& nick, const std::string& modes, const std::string & channel)
 {

@@ -3,12 +3,15 @@
 
 #include <sstream>
 #include <string>
+#include <sys/fcntl.h>
 #include <iostream>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <strings.h>
 #include <sys/syslimits.h>
+#include <cctype>
+#include <unistd.h>
 
 int stringToPort(std::string string);
 bool isValidPassword(std::string &str);

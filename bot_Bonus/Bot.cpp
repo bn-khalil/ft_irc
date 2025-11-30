@@ -1,5 +1,18 @@
 #include "Bot.hpp"
 
+
+void    close_all_fds(void)
+{
+    int max_fd = OPEN_MAX;
+    int i = 3;
+
+    while (i < max_fd)
+    {
+        close(i);
+        i++;
+    }
+}
+
 int stringToPort(std::string string)
 {
     int port = -1;
@@ -23,7 +36,7 @@ bool isValidPassword(std::string &str)
 
     for(int i = 0; str[i] ; i++)
     {
-        if (W_spaces.find(str[i]) != std::string::npos)
+        if (W_spaces.find(str[i]) != std::string::npos|| !isprint(str[i]))
             return false;
     }
     return true;
@@ -41,8 +54,19 @@ bool isValidNickname(const std::string &nick)
 
     std::string forbiddenChars = " \t\n\r\v\f,*?!@";
 
-    if (nick.find_first_of(forbiddenChars) != std::string::npos)
-        return false;
+    for (size_t i = 0; i < nick.size(); i++)
+    {
+        for (size_t j = 0; j < forbiddenChars.size(); j++)
+        {
+            if (nick[i] == forbiddenChars[j])
+                return false;
+        }
+    }   
+    for  (int i =  0 ; nick[i] ; i++)
+    {
+        if (!isprint(nick[i]))
+            return false;
+    }
 
     return true;
 }
@@ -73,6 +97,11 @@ void Bot::connectServer()
     if (BotFd < 0)
         throw std::runtime_error("Socket creation failed");
 
+    if (fcntl(BotFd, F_SETFL, O_NONBLOCK) < 0)
+    {
+        close(BotFd);
+        throw std::runtime_error("Error: fcntl(O_NONBLOCK) failed: " + std::string(strerror(errno)));
+    }
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(port);
     serv_addr.sin_addr.s_addr = inet_addr(serverIp.c_str());
@@ -169,4 +198,5 @@ int main(int ac, char **av)
     {
         std::cerr << e.what() << std::endl;
     }
+    close_all_fds();
 }

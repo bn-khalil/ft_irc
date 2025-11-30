@@ -1,23 +1,6 @@
+
 #include "Server.hpp"
-#include "../commands/Reply.hpp"
-#include "Client.hpp"
-#include <cstddef>
-#include <ctime>
-#include <iostream>
-#include <sstream>
-#include <stdexcept>
-#include <string>
-#include <strings.h>
-#include <sys/poll.h>
-#include <sys/socket.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <vector>
-#include <map>
-#include "../commands/channel.hpp"
-#include <arpa/inet.h>
-#include <stdio.h>
-#include <errno.h>
+// #include "../commands/channel.hpp"
 
 bool Server::isGetSignal = false;
 
@@ -39,13 +22,6 @@ void Server::receve_signal(int sign)
         std::cout << "\n\n \033[31m Interrupted by SIGQUIT \033[0m\n" << std::endl;
     else
         std::cout << "\n\n \033[31m Interrupted by signal \033[0m\n" << std::endl;
-
-
-}
-int Server::ReadClientMessage(std::string &line)
-{
-    (void)line;
-    return 0;
 }
 
 bool isValidNickname(const std::string &nick)
@@ -60,8 +36,19 @@ bool isValidNickname(const std::string &nick)
 
     std::string forbiddenChars = " \t\n\r\v\f,*?!@";
 
-    if (nick.find_first_of(forbiddenChars) != std::string::npos)
-        return false;
+    for (size_t i = 0; i < nick.size(); i++)
+    {
+        for (size_t j = 0; j < forbiddenChars.size(); j++)
+        {
+            if (nick[i] == forbiddenChars[j])
+                return false;
+        }
+    }   
+    for  (int i =  0 ; nick[i] ; i++)
+    {
+        if (!isprint(nick[i]))
+            return false;
+    }
 
     return true;
 }
@@ -78,13 +65,14 @@ void Server::NickCmd(Client &client, std::string nick_arg)
         sendReply(client, error.ERR_PASSWDMISMATCH(client.get_nickname(), ":Password not set"));
         return;
     }
-    else if (!isValidNickname(nick_arg))
-    {
-        sendReply(client, error.ERR_ERRONEUSNICKNAME(client.get_nickname(), nick_arg, ":Erroneus nickname"));
-    }
     else if (nick_arg.empty())
     {
         sendReply(client, error.ERR_NONICKNAMEGIVEN(client.get_nickname(), ":No nickname given"));
+        return;
+    }
+    else if (!isValidNickname(nick_arg))
+    {
+        sendReply(client, error.ERR_ERRONEUSNICKNAME(client.get_nickname(), nick_arg, ":Erroneus nickname"));
         return;
     }
     else
@@ -172,21 +160,8 @@ void Server::AddClient()
     Client client(ClientSocketFd);
     client.set_hostname(hostname);
     ClientsInfo[ClientSocketFd] = client;
-    client.set_hostname(hostname);
-    //need to add username
+
     std::cout << "🟢 New Client Connected | FD: " << ClientSocketFd << std::endl;
-}
-
-std::vector<std::string> Server::splitCmd(std::string &str)
-{
-    std::vector<std::string> result;
-    std::stringstream ss(str);
-    std::string item;
-
-    while (ss >> item)
-        result.push_back(item);
-
-    return result;
 }
 
 void Server::PassCmd(Client &client, std::string password_arg)
@@ -223,25 +198,42 @@ void Server::UserCmd(Client &client, std::vector<std::string> &arg)
         sendReply(client, error.ERR_ALREADYREGISTERED(client.get_nickname(), ":You may not reregister"));
         return;
     }
-    else if (size_cmd < 5)
-    {
-        sendReply(client, error.ERR_NEEDMOREPARAMS(client.get_nickname(), "USER"));
-        return;
-    }
     else if (client.GetIsSetPass() == false)
     {
         sendReply(client, error.ERR_PASSWDMISMATCH(client.get_nickname(), ":Password not set"));
         return;
     }
+    else if (size_cmd < 5)
+    {
+        sendReply(client, error.ERR_NEEDMOREPARAMS(client.get_nickname(), "USER"));
+        return;
+    }
     userName = arg[1];
+    
+    for (size_t i = 0; i < userName.size(); i++)
+    {
+        if (!isalnum(userName[i]) && userName[i] != '_' && userName[i] != '-')
+        {
+            sendReply(client, error.ERR_NEEDMOREPARAMS(client.get_nickname(), "USER :Your username is not valid"));
+            return ;
+        }
+    }
+
     if (two == std::string::npos)
         realName = arg[4];
     else
         realName = client.getlineCmd().substr(two + 2);
 
+    if (realName.empty())
+    {
+        sendReply(client, error.ERR_NEEDMOREPARAMS(client.get_nickname(), "USER :Realname is missing"));
+        return ;
+    }
+
     client.SetIsSetuser(true);
     client.set_realname(realName);
     client.set_username(userName);
+    
     if (client.GetIsSetNick() == true)
     {
         sendReply(client, error.RPL_WELCOME(client.get_nickname(), client.get_Prefix()));
@@ -295,16 +287,7 @@ void Server::ParseCmd(Client &client)
         invit(client);
     else if (cmds[0] == "user")
         UserCmd(client, cmds);
-    else if (cmds[0] == "pong" || cmds[0] == "ping")
-    {
-        if (cmds[0] == "ping")
-        {
-            std::string token = (cmds.size() > 0) ? cmds[0] : "";
-            std::string reply = "PONG " + token + "\r\n";
-            send(client.getfd(), reply.c_str(), reply.length(), 0);
-        }
-    }
-    else
+    else if (cmds[0] != "pong")
         sendReply(client, error.ERR_UNKNOWNCOMMAND_N(client.get_nickname(), cmds[0]));
 
     std::string empty = "";
@@ -357,17 +340,11 @@ void Server::GetClientEvents()
                 int bytes_read = recv(poll_fds[i].fd, buffer, sizeof(buffer) - 1, 0);
                 if (bytes_read > 0)
                     processClientBuffer(client, buffer, bytes_read);
-                else if (bytes_read == 0)
+                else if (bytes_read <= 0)
                 {
                     std::cout << "🔴 Client Disconnected | FD: " << client.getfd() << " | Nick: " << client.get_nickname() << std::endl;
                     Quit(client);
                     i--;
-                }
-                else if (bytes_read < 0 && (errno != EAGAIN && errno != EWOULDBLOCK))
-                {
-                    std::cerr << "🔴 Recv Failed | FD: " << client.getfd() << " | Error: " << strerror(errno) << std::endl;
-                    Quit(client); 
-                    i--; 
                 }
             }
         }
@@ -378,7 +355,7 @@ void Server::waitConnection()
 {
     while (isGetSignal != true)
     {        
-        int num_event = poll(&poll_fds[0], poll_fds.size(), -1);
+        int num_event = poll(&poll_fds[0], poll_fds.size(), 0);
         if (num_event == -1 && errno != EINTR)
             throw std::runtime_error("poll failed");
         else if (num_event == 0)
@@ -432,7 +409,6 @@ void Server::PrepareServerSocket()
     poll_fds.push_back(ServerPollfd);
 }
 
-Server::~Server(void) {}
 
 bool isValidPassword(std::string str)
 {
@@ -442,7 +418,7 @@ bool isValidPassword(std::string str)
 
     for(int i = 0; str[i] ; i++)
     {
-        if (W_spaces.find(str[i]) != std::string::npos)
+        if (W_spaces.find(str[i]) != std::string::npos || !isprint(str[i]))
             return false;
     }
     return true;

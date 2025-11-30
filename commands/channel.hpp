@@ -24,6 +24,10 @@
 #include "../server/Client.hpp"
 #include <sstream>
 
+
+class Server;
+typedef struct modes_s modes_t;
+
 typedef struct old_channel_modes_s {
     std::string key;
     bool isKeySet;

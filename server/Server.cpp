@@ -142,12 +142,7 @@ void Server::AddClient()
         std::cerr << "ClientSocketFd \n";
         return;
     }
-    if (fcntl(ClientSocketFd, F_SETFL, O_NONBLOCK) < 0)
-    {
-        std::cerr << "FcntlFailedException  \n";
-        close(ClientSocketFd);
-        return;
-    }
+  
     std::string hostname = inet_ntoa(client_addr.sin_addr);
 
     pollfd ClientPollfd;
@@ -547,5 +542,5 @@ void  Server::kick_with_brodcast(std::map<std::string, Channel>::iterator it, st
 }
 bool   Server::name_perfect(std::vector<std::string> cmds)
 {
-    return cmds[1].empty() || (cmds[1][0] != '&' && cmds[1][0] != '#') || cmds[1].length() > 200 || Channel::tab_found(cmds[1]) == true ;
+    return cmds[1].empty() || (cmds[1][0] != '&' && cmds[1][0] != '#') || cmds[1].length() > 200 || Channel::whitespace_found(cmds[1]) == true ;
 }

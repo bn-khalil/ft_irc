@@ -6,7 +6,7 @@
 /*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:06:44 by akella            #+#    #+#             */
-/*   Updated: 2025/11/30 14:38:10 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/30 20:36:19 by akella           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void Server::invit(Client &c)
         std::string name_c_invited = cmds[1];
 
         std::map<std::string, Channel>::iterator it = channel.find(toLower(one_channel));
-        if (one_channel.empty() || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || Channel::tab_found(one_channel) == true  || it == channel.end())
+        if (one_channel.empty() || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || Channel::whitespace_found(one_channel) == true  || it == channel.end())
         {
          return sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), one_channel));
         }

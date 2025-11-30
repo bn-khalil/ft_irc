@@ -6,7 +6,7 @@
 /*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:07 by akella            #+#    #+#             */
-/*   Updated: 2025/11/30 17:14:19 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/30 20:54:28 by akella           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ void Server::kick(Client &c)
         return sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "KICK"));
     }
     std::string reason = handle_the_resone(cmds, command, c);
-    std::cout << reason << std::endl;
     std::map<std::string, Channel>::iterator it = channel.find(toLower(cmds[1]));
+
     if (it == channel.end() || name_perfect(cmds))
     {
         return sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), cmds[1]));

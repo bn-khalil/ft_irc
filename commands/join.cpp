@@ -3,20 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kben-tou <kben-tou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:12 by akella            #+#    #+#             */
-/*   Updated: 2025/11/30 17:52:03 by kben-tou         ###   ########.fr       */
+/*   Updated: 2025/11/30 20:37:46 by akella           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "channel.hpp"
+#include <cctype>
 #include <cstddef>
 
 
-bool Channel::tab_found(std::string str)
+bool Channel::whitespace_found(std::string str)
 {
-    return str.find(9) != std::string::npos;
+    for(size_t i = 0; i <= str.size(); i++)
+    {
+        if(std::isspace(str[i]))
+            return true;
+    }
+    return false;
 }
 
 void Server::join(Client &c)
@@ -54,7 +60,6 @@ void Server::join(Client &c)
 
         if (i < key_channle.size())
             key = key_channle[i];
-        //handle the case of empty channel after splite
         if (one_channel.empty())
             continue;
         if (one_channel == "0")
@@ -62,8 +67,7 @@ void Server::join(Client &c)
             removeClientFromAllChannels(c);
             continue;
         }
-        //Parse The Name Most be Valide !! 
-        if (one_channel.empty() || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || Channel::tab_found(one_channel) == true)
+        if (one_channel.empty() || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || Channel::whitespace_found(one_channel) == true)
         {
             sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), one_channel));
             continue;

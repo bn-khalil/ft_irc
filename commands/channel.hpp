@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kben-tou <kben-tou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:27 by akella            #+#    #+#             */
-/*   Updated: 2025/11/30 13:05:10 by kben-tou         ###   ########.fr       */
+/*   Updated: 2025/11/30 20:58:51 by akella           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ class Channel
         void join(std::vector<std::string> cmds, Client &c);
         static std::vector<std::string> split_comma(std::string &strr, char d);
         static std::string to_lower(std::string str);
-        static bool tab_found(std::string str);
+        static bool whitespace_found(std::string str);
         std::string Get_key();
         std::string Set_key();
         bool Check_mode(char mode);

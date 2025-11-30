@@ -42,7 +42,7 @@ void  Server::topic(Client &c) {
         std::map<std::string,Channel>::iterator it = this->channel.find(toLower(args[1]));
 
         if (it == channel.end()) {
-            sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), args[0]));
+            sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), args[1]));
             return ;
         }
         

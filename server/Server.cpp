@@ -1,10 +1,9 @@
 #include "Server.hpp"
-#include "../commands/channel_membership/Reply.hpp"
+#include "../commands/Reply.hpp"
 #include "Client.hpp"
 #include <cstddef>
 #include <ctime>
 #include <iostream>
-#include <iterator>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -15,7 +14,7 @@
 #include <unistd.h>
 #include <vector>
 #include <map>
-#include "../commands/channel_membership/channel.hpp"
+#include "../commands/channel.hpp"
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <errno.h>
@@ -498,10 +497,8 @@ void Server::sendReply(Client &c, std::string msg)
     std::string full_msg = msg + "\r\n";
     if (send(c.getfd(), full_msg.c_str(), full_msg.length(), 0) <= -1)
     {
-        std::cout << "🔴 Client Disconnected | FD: " << c.getfd() << " | Nick: " << c.get_nickname() << std::endl;        
-        removeClientFromAllChannels(c);
-        close(c.getfd());
-        ClientsInfo.erase(c.getfd());
+        std::cout << "🔴 Client Disconnected | FD: " << c.getfd() << " | Nick: " << c.get_nickname() << std::endl;
+        Quit(c);
     }
 }
 

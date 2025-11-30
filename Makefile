@@ -2,17 +2,17 @@ NAME = ircserv
 
 FLAG = -Wall -Werror -Wextra -std=c++98 -fsanitize=address
 
-HEADER = server/Client.hpp server/Server.hpp  commands/channel_membership/channel.hpp commands/channel_membership/Reply.hpp 
+HEADER = server/Client.hpp server/Server.hpp  commands/channel.hpp commands/Reply.hpp 
 
-EXP_SRC = commands/channel_membership/channel.cpp \
-		commands/channel_membership/join.cpp \
-		commands/channel_membership/topic.cpp \
-		commands/channel_membership/mode.cpp \
-		commands/channel_membership/Reply.cpp \
-		commands/channel_membership/kick.cpp \
-		commands/channel_membership/invite.cpp \
-		commands/channel_membership/privmsg.cpp \
-		commands/channel_membership/quite.cpp
+EXP_SRC = commands/channel.cpp \
+		commands/join.cpp \
+		commands/topic.cpp \
+		commands/mode.cpp \
+		commands/Reply.cpp \
+		commands/kick.cpp \
+		commands/invite.cpp \
+		commands/privmsg.cpp \
+		commands/quite.cpp
 
 CPP = c++
 

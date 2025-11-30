@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 #include <netinet/in.h> 
-#include "../commands/channel_membership/Reply.hpp"
+#include "../commands/Reply.hpp"
 
 typedef struct modes_s {
     std::string param;

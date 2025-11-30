@@ -146,7 +146,7 @@ void Server::StartServer()
 void Server::AddClient()
 {
     sockaddr_in client_addr;
-    socklen_t addr_len;
+    socklen_t addr_len = sizeof(client_addr);
 
     int ClientSocketFd = accept(serverId, (struct sockaddr *)&client_addr, &addr_len);
     if (ClientSocketFd < 0)
@@ -172,8 +172,6 @@ void Server::AddClient()
     Client client(ClientSocketFd);
     client.set_hostname(hostname);
     ClientsInfo[ClientSocketFd] = client;
-    client.set_hostname(hostname);
-    //need to add username
     std::cout << "🟢 New Client Connected | FD: " << ClientSocketFd << std::endl;
 }
 

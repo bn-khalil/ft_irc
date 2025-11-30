@@ -84,7 +84,7 @@ std::string Reply::ERR_CHANNELISFULL(const std::string& nick, const std::string&
 
 std::string Reply::MSG_JOIN(const std::string& user_prefix, const std::string& channel_name)
 {
-    return ":" + user_prefix + " JOIN :" + channel_name;
+    return ":" + user_prefix + " JOIN " + channel_name;
 }
 
 std::string Reply::RPL_NAMREPLY(const std::string& nick, const std::string& channel, const std::string& names_list)
@@ -94,7 +94,7 @@ std::string Reply::RPL_NAMREPLY(const std::string& nick, const std::string& chan
 
 std::string Reply::RPL_ENDOFNAMES(const std::string& nick, const std::string& channel)
 {
-    return ":" + server_name + " 366 " + nick + " " + channel + " :End of /NAMES list";
+    return ":" + server_name + " 366 " + nick + " " + channel + " :End of /NAMES list.";
 }
 
 std::string Reply::RPL_ENDOFINVIT(const std::string& nick, const std::string& channel)

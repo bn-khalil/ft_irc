@@ -6,7 +6,7 @@
 /*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:12 by akella            #+#    #+#             */
-/*   Updated: 2025/11/30 11:22:56 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/30 17:46:07 by akella           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,15 @@ void Server::join(Client &c)
 
         if (i < key_channle.size())
             key = key_channle[i];
-
-        
+        //handle the case of empty channel after splite
+        if (one_channel.empty())
+            continue;
+        if (one_channel == "0")
+        {
+            removeClientFromAllChannels(c);
+            continue;
+        }
+        //Parse The Name Most be Valide !! 
         if (one_channel.empty() || (one_channel[0] != '&' && one_channel[0] != '#') || one_channel.length() > 200 || Channel::tab_found(one_channel) == true)
         {
             sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), one_channel));

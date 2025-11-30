@@ -134,7 +134,7 @@ void Server::StartServer()
 void Server::AddClient()
 {
     sockaddr_in client_addr;
-    socklen_t addr_len;
+    socklen_t addr_len = sizeof(client_addr);
 
     int ClientSocketFd = accept(serverId, (struct sockaddr *)&client_addr, &addr_len);
     if (ClientSocketFd < 0)

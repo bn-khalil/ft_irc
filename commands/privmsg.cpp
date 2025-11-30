@@ -44,8 +44,7 @@ void Server::privmsg(Client &c) {
                 
             if (!isChannel) {
                 Client *rcvClient = find_client_by_nickname(rcvNick);
-                if (!rcvClient || rcvClient->Get_isAuthenticated() == false) 
-                {
+                if (!rcvClient || rcvClient->Get_isAuthenticated() == false) {
                     sendReply(c, error.ERR_NOSUCHNICK(c.get_nickname(), rcvNick));
                     return;
                 }

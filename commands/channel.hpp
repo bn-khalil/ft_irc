@@ -6,7 +6,7 @@
 /*   By: kben-tou <kben-tou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:27 by akella            #+#    #+#             */
-/*   Updated: 2025/11/29 21:45:32 by kben-tou         ###   ########.fr       */
+/*   Updated: 2025/11/30 13:05:10 by kben-tou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ class Channel
         unsigned int num_limite;
         time_t time_creat_channel;
         time_t time_last_topic;
+        std::string topicChanger;
         
     public :
         std::map<std::string, Client> get_operators_() { return operators_; };
@@ -101,6 +102,8 @@ class Channel
         void setTimeTopic(time_t topicTime);
         time_t getTimeTopic();
         std::string fromTime(time_t time);
+        std::string getTopicChanger();
+        void setTopicChanger(std::string name);
 
 
 };

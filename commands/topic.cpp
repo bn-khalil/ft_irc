@@ -28,18 +28,16 @@ void  Server::topic(Client &c) {
             sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), args[1]));
         else {
             sendReply(c, error.RPL_TOPIC(c.get_nickname(), args[1], it->second.getTopic()));
-            sendReply(c, error. RPL_CREATIONTIME (
-                c.get_nickname(), it->second.fromTime(it->second.getTimeTopic()), it->second.get_channel_name()));
+            sendReply(c, error. RPL_TOPICWHOTIME (c.get_nickname(), it->second.fromTime(it->second.getTimeTopic()), it->second.get_channel_name(), it->second.getTopicChanger()));
         }
-    } 
+    }
     else {
-
-        int dotsIndex = command.find(":");
+        int dotsIndex = command.find(" :");
         std::string topic;
         if (dotsIndex < 0)
             topic = args[args.size() - 1];
         else
-            topic = command.substr(dotsIndex + 1);
+            topic = command.substr(dotsIndex + 2);
 
         std::map<std::string,Channel>::iterator it = this->channel.find(toLower(args[1]));
 
@@ -59,6 +57,7 @@ void  Server::topic(Client &c) {
             return ;
         }
         it->second.setTopic(topic);
+        it->second.setTopicChanger(c.get_nickname());
         it->second.setTimeTopic(std::time(0));
         it->second.broadcast(error.RPL_TOPICREATED(it->second.get_channel_name(), c.get_Prefix(), topic));
     }

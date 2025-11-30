@@ -62,6 +62,7 @@ class Reply
 		std::string ERR_NOSUCHNICK(const std::string& nick, const std::string& target_nick);
 		std::string RPL_INVITELIST(const std::string& nick, const std::string& channel);
 		std::string RPL_ENDOFINVITELIST(const std::string& nick);
+		std::string RPL_TOPICWHOTIME (const std::string& nick, const std::string& time, const std::string & channel, const std::string & topicChanger);
 
 		// --- MODE part ---
 		std::string ERR_NEEDMODEPARM(const std::string& nick, const std::string & mode, const std::string& more);

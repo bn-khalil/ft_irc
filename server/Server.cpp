@@ -271,6 +271,7 @@ void Server::ParseCmd(Client &client)
 
     if (cmds.size() == 0)
         return;
+    std::string befor = cmds[0];
     cmds[0] = toLower(cmds[0]);
 
     if (cmds[0] == "pass")
@@ -303,7 +304,7 @@ void Server::ParseCmd(Client &client)
         }
     }
     else
-        sendReply(client, error.ERR_UNKNOWNCOMMAND_N(client.get_nickname(), cmds[0]));
+        sendReply(client, error.ERR_UNKNOWNCOMMAND_N(client.get_nickname(), befor));
 
     std::string empty = "";
     client.setlineCmd(empty);

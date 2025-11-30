@@ -213,10 +213,10 @@
 			PRIVMSG bale hi guys good to see you [no such nick/chan]
 			NICK jack ; PRIVMSG jack hi me
 			PRIVMSG # hi guru [no such chan]
-			n2 NICK kim ; PRIVMSG kim #pele GOING BACK TO ITALY
-			n2 NICK kim ; PRIVMSG kim :GOING BACK TO ITALY
-			n2 NICK kim ; PRIVMSG kim :::GOING BACK TO ITALY
-			n2 NICK kim ; PRIVMSG kim :::GOING BACK TO ITALY
+			n2 NICK kim ; PRIVMSG bn #pele GOING BACK TO ITALY
+			n2 NICK bn ; PRIVMSG bn :GOING BACK TO ITALY
+			n2 NICK bn ; PRIVMSG bn :::GOING BACK TO ITALY
+			n2 NICK bn ; PRIVMSG bn :::GOING BACK TO ITALY
 			PRIVMSG #going home
 			n1 JOIN #pele ; PRIVMSG #pele anyone guys?
 			n1 JOIN #pele ; n2 JOIN #pele ; PRIVMSG #pele hello guys
@@ -342,3 +342,9 @@
 		USER i i i i
 		JOIN #pele
 	< infile | nc (writing the different here_doc tests to infile would result in the same behavior)
+
+nc << del
+PASS 12
+NICK al
+USER i i i i
+JOIN #pele

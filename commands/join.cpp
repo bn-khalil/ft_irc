@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kben-tou <kben-tou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:12 by akella            #+#    #+#             */
-/*   Updated: 2025/11/30 11:22:56 by akella           ###   ########.fr       */
+/*   Updated: 2025/11/30 13:18:59 by kben-tou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,11 +74,6 @@ void Server::join(Client &c)
             join.Add_to_admin(c);
             join.Add_to_user(c);
             join.broadcast(error.MSG_JOIN(c.get_Prefix(), one_channel));
-            if (!topic.empty())
-            {
-                sendReply(c, error.RPL_TOPIC(c.get_nickname(), one_channel, topic));
-                sendReply(c, error. RPL_CREATIONTIME (c.get_nickname(), it->second.fromTime(it->second.getTimeTopic()), it->second.get_channel_name()));
-            }
             sendReply(c, error.RPL_NAMREPLY(c.get_nickname(), one_channel, join.getNamesList()));
             sendReply(c, error.RPL_ENDOFNAMES(c.get_nickname(), one_channel));
         }
@@ -103,7 +98,10 @@ void Server::join(Client &c)
                     if (topic.empty())
                         sendReply(c, error.RPL_NOTOPIC(c.get_nickname(), one_channel));
                     else
+                    {
                         sendReply(c, error.RPL_TOPIC(c.get_nickname(), one_channel, topic));
+                        sendReply(c, error. RPL_TOPICWHOTIME (c.get_nickname(), it->second.fromTime(it->second.getTimeTopic()), it->second.get_channel_name(), it->second.getTopicChanger()));
+                    }
 
                     sendReply(c, error.RPL_NAMREPLY(c.get_nickname(), one_channel, join.getNamesList()));
                     sendReply(c, error.RPL_ENDOFNAMES(c.get_nickname(), one_channel));

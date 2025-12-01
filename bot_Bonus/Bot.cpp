@@ -179,10 +179,17 @@ void Bot::hundleLineMsg(std::string line)
             else if (msg == "advice day") {
                 std::string ad1 = "The only thing I know is that I know nothing.";
                 std::string ad2 = "Happiness depends upon ourselves.";
-                if (std::time(0) % 2)
+                std::string ad3 = "One cannot step into the same river twice.";
+                std::string ad4 = "The price of anything is the amount of life you exchange for it.";
+                int rn = std::time(0) % 4;
+                if (rn == 0)
                     to_send = ad1;
-                else
+                else if (rn == 1)
                     to_send = ad2;
+                else if (rn == 2)
+                    to_send = ad3;
+                else
+                    to_send = ad4;
             }
             std::string cmd = "PRIVMSG " + sender + " :" + to_send + "\r\n";
             send(BotFd,cmd.c_str(),cmd.length(),0);

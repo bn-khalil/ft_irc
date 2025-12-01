@@ -1,7 +1,6 @@
 
 #include "Server.hpp"
-#include <cctype>
-
+// #include "../commands/channel.hpp"
 
 bool Server::isGetSignal = false;
 
@@ -27,23 +26,32 @@ void Server::receve_signal(int sign)
 
 bool isValidNickname(const std::string &nick)
 {
-    if (nick.empty() || nick.length() > 100)
+    if (nick.empty())
         return false;
 
-    std::string forbiddenStart = "0123456789:#&";
-    if (forbiddenStart.find(nick[0]) != std::string::npos)
+    std::string forbiddenStartChars = "0123456789$:#&";
+
+    if (forbiddenStartChars.find(nick[0]) != std::string::npos)
         return false;
 
-    std::string validSpecial = "[]{}\\|";
+    std::string forbiddenChars = " \t\n\r\v\f,*?!@";
 
     for (size_t i = 0; i < nick.size(); i++)
     {
-        if (!isalnum(nick[i]) && validSpecial.find(nick[i]) == std::string::npos)
+        for (size_t j = 0; j < forbiddenChars.size(); j++)
+        {
+            if (nick[i] == forbiddenChars[j])
+                return false;
+        }
+    }   
+    for  (int i =  0 ; nick[i] ; i++)
+    {
+        if (!isprint(nick[i]))
             return false;
     }
+
     return true;
 }
-
 
 void Server::NickCmd(Client &client, std::string nick_arg)
 {
@@ -131,14 +139,10 @@ void Server::AddClient()
     int ClientSocketFd = accept(serverId, (struct sockaddr *)&client_addr, &addr_len);
     if (ClientSocketFd < 0)
     {
-        std::cerr << "failed to accept new client :"  <<  strerror(errno) << std::endl;
+        std::cerr << "ClientSocketFd \n";
         return;
     }
-    if (fcntl(ClientSocketFd, F_SETFL, O_NONBLOCK) < 0)
-    {
-        close(ClientSocketFd);
-        std::cerr << "Error: fcntl(O_NONBLOCK) failed : " <<  strerror(errno) << std::endl;
-    }
+  
     std::string hostname = inet_ntoa(client_addr.sin_addr);
 
     pollfd ClientPollfd;
@@ -164,14 +168,14 @@ void Server::PassCmd(Client &client, std::string password_arg)
     }
     if (password_arg.empty())
     {
-        sendReply(client, error.ERR_NEEDMOREPARAMS(client.get_nickname(), "PASS"));
         client.SetIsSetPass(false);
+        sendReply(client, error.ERR_NEEDMOREPARAMS(client.get_nickname(), "PASS"));
         return;
     }
     if (password_arg != this->password)
     {
-        sendReply(client, error.ERR_PASSWDMISMATCH(client.get_nickname(), ":Password incorrect"));
         client.SetIsSetPass(false);
+        sendReply(client, error.ERR_PASSWDMISMATCH(client.get_nickname(), ":Password incorrect"));
         return;
     }
     client.SetIsSetPass(true);
@@ -260,9 +264,19 @@ void Server::ParseCmd(Client &client)
     cmds[0] = toLower(cmds[0]);
 
     if (cmds[0] == "pass")
-        PassCmd(client, cmds[1]);
+    {
+        if (cmds.size() >= 2)
+            PassCmd(client, cmds[1]);
+        else
+            PassCmd(client, "");
+    }
     else if (cmds[0] == "nick")
-        Server::NickCmd(client, cmds[1]);
+    {
+        if (cmds.size() >= 2)
+            Server::NickCmd(client, cmds[1]);
+        else
+            Server::NickCmd(client, "");
+    }
     else if (cmds[0] == "join")
         join(client);
     else if (cmds[0] == "quit")

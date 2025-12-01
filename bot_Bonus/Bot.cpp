@@ -44,30 +44,20 @@ bool isValidPassword(std::string &str)
 
 bool isValidNickname(const std::string &nick)
 {
-    if (nick.empty())
+    if (nick.empty() || nick.length() > 100)
         return false;
 
-    std::string forbiddenStartChars = "0123456789$:#&";
-
-    if (forbiddenStartChars.find(nick[0]) != std::string::npos)
+    std::string forbiddenStart = "0123456789:#&";
+    if (forbiddenStart.find(nick[0]) != std::string::npos)
         return false;
 
-    std::string forbiddenChars = " \t\n\r\v\f,*?!@";
+    std::string validSpecial = "[]{}\\|";
 
     for (size_t i = 0; i < nick.size(); i++)
     {
-        for (size_t j = 0; j < forbiddenChars.size(); j++)
-        {
-            if (nick[i] == forbiddenChars[j])
-                return false;
-        }
-    }   
-    for  (int i =  0 ; nick[i] ; i++)
-    {
-        if (!isprint(nick[i]))
+        if (!isalnum(nick[i]) && validSpecial.find(nick[i]) == std::string::npos)
             return false;
     }
-
     return true;
 }
 
@@ -97,11 +87,6 @@ void Bot::connectServer()
     if (BotFd < 0)
         throw std::runtime_error("Socket creation failed");
 
-    if (fcntl(BotFd, F_SETFL, O_NONBLOCK) < 0)
-    {
-        close(BotFd);
-        throw std::runtime_error("Error: fcntl(O_NONBLOCK) failed: " + std::string(strerror(errno)));
-    }
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(port);
     serv_addr.sin_addr.s_addr = inet_addr(serverIp.c_str());

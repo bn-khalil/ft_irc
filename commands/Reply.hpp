@@ -9,8 +9,7 @@ class Reply
 		std::string server_name;
 	public:
 
-		Reply();
-		
+	Reply();
 
 	std::string ERR_PASSWDMISMATCH(std::string nick, std::string command);
 	std::string ERR_ALREADYREGISTERED(std::string nick, std::string command);

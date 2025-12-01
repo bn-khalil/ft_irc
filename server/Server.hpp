@@ -85,7 +85,6 @@ class Server
         void Clean_resource(Client &c);
         void removeClientFromAllChannels(Client &c);
         std::string toLower(std::string str);
-        void join_all_channel(Client &c);
         Client *find_client_by_nickname(std::string nick);
        std::vector<std::string>  new_splite(std::string &strr, char d);
        bool isChannelExist(std::map<std::string,Channel>::iterator & it_channel, 

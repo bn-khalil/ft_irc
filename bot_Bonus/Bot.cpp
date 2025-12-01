@@ -1,4 +1,7 @@
 #include "Bot.hpp"
+#include <cerrno>
+#include <string>
+#include <sys/fcntl.h>
 
 
 void    close_all_fds(void)
@@ -85,15 +88,24 @@ void Bot::connectServer()
     
     BotFd = socket(AF_INET, SOCK_STREAM, 0);
     if (BotFd < 0)
-        throw std::runtime_error("Socket creation failed");
+        throw std::runtime_error("Socket creation failed : " + std::string(strerror(errno)));
 
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(port);
     serv_addr.sin_addr.s_addr = inet_addr(serverIp.c_str());
 
+    
     if (connect(BotFd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-        throw std::runtime_error("Connection failed");
-
+    {
+        close(BotFd);
+        throw std::runtime_error("Connection failed : " + std::string(strerror(errno)) );
+    }
+    if (fcntl(BotFd,F_SETFL,O_NONBLOCK) < 0)
+    {
+        close(BotFd);
+        throw std::runtime_error( "Error: fcntl(O_NONBLOCK) failed : " + std::string(strerror(errno)));
+    }
+    
     std::cout << " Connected to server! " << std::endl;
     
     send(BotFd,authCmds.c_str(),authCmds.length(),0);
@@ -129,7 +141,8 @@ void Bot::run()
 
         if (bytesReceived <= 0)
         {
-            throw std::runtime_error("Error: Server disconnected.");
+            if (bytesReceived == 0 || (bytesReceived == -1 && errno != EAGAIN))
+                throw std::runtime_error("Error: Server disconnected. : " + std::string(strerror(errno)));
         }
 
         buffer.append(buffer_char);

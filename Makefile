@@ -1,49 +1,48 @@
 NAME = ircserv
 
-FLAG = -Wall -Werror -Wextra -std=c++98 -fsanitize=address
+FLAG = -Wall -Werror -Wextra -std=c++98
 
-HEADER = server/Client.hpp server/Server.hpp  commands/channel.hpp commands/Reply.hpp 
-
-EXP_SRC = commands/channel.cpp \
-		commands/join.cpp \
-		commands/topic.cpp \
-		commands/mode.cpp \
-		commands/Reply.cpp \
-		commands/kick.cpp \
-		commands/invite.cpp \
-		commands/privmsg.cpp \
-		commands/quite.cpp
-
+SRC = commands/channel.cpp \
+        commands/join.cpp \
+        commands/topic.cpp \
+        commands/mode.cpp \
+        commands/Reply.cpp \
+        commands/kick.cpp \
+        commands/invite.cpp \
+        commands/privmsg.cpp \
+        commands/quite.cpp \
+        server/Client.cpp \
+        server/Server.cpp\
+        main.cpp
 CPP = c++
 
-SERVER_SRC = server/Client.cpp server/Server.cpp main.cpp
 
-SERVER_OBJ = $(SERVER_SRC:.cpp=.o)
-CMD_OBJ = $(CMD_SRC:.cpp=.o)
-EXP_OBJ = $(EXP_SRC:.cpp=.o)
-
-OBJ = $(SERVER_OBJ) $(CMD_OBJ) $(EXP_OBJ)
+OBJ = $(SRC:.cpp=.o)
+DEP = $(OBJ:.o=.d)
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
 	$(CPP) $(FLAG) $(OBJ) -o $(NAME)
 
-%.o: %.cpp  $(HEADER)
-	$(CPP) $(FLAG) -c $< -o $@
+%.o: %.cpp
+	$(CPP) $(FLAG) -MMD -c $< -o $@
 
 
 SRC_BONUS = bot_Bonus/Bot.cpp
 OBJ_BONUS = $(SRC_BONUS:.cpp=.o)
 
+-include $(DEP)
 bonus: $(OBJ_BONUS) bot_Bonus/Bot.hpp
 	$(CPP) $(FLAG) $(OBJ_BONUS) -o bonus
 
+$(OBJ_BONUS): $(SRC_BONUS)
+	$(CPP) $(FLAG) -c $< -o $@
 
 clean:
-	rm -rf $(OBJ) $(OBJ_BONUS)
+	rm -rf $(OBJ) $(DEP) $(OBJ_BONUS) $(DEP)
 
 fclean: clean
-	rm -rf $(NAME) bonus
+	rm -rf $(NAME) $(DEP) bonus
 
 re: fclean all

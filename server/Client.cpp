@@ -22,101 +22,98 @@ std::string Client::    get_Prefix() const
 	return  this->_nickname + "!~" + this->_username + "@" + this->_hostname;
 }
 
-    std::string Client::get_username()
-    {
-        return _username;
-    }
+std::string Client::get_username()
+{
+    return _username;
+}
 
-    std::string Client::get_realname()
-    {
-        return _realname;
-    }
+std::string Client::get_realname()
+{
+    return _realname;
+}
 
-    void Client::set_username(std::string _username)
-    {
-        this->_username = _username;
-    }
+void Client::set_username(std::string _username)
+{
+    this->_username = _username;
+}
 
-    void Client::set_realname(std::string _realname)
-    {
-        this->_realname = _realname;
-    }
+void Client::set_realname(std::string _realname)
+{
+    this->_realname = _realname;
+}
 
-    void Client::setlineCmd( std::string &line)
-    {
-        lineCmd = line;
-    }
+void Client::setlineCmd( std::string &line)
+{
+    lineCmd = line;
+}
 
-    std::string& Client::getlineCmd()
-    {
-        return lineCmd;
-    }
+std::string& Client::getlineCmd()
+{
+    return lineCmd;
+}
 
-    void Client::setfd( int fd)
-    {
-        this->fd = fd;
-    }
+void Client::setfd( int fd)
+{
+    this->fd = fd;
+}
 
-    int Client::getfd()
-    {
-        return this->fd;
-    }
+int Client::getfd()
+{
+    return this->fd;
+}
 
-    void Client::Set_isAuthenticated( bool flag)
-    {
-        isAuthenticated = flag;
-    }
+void Client::Set_isAuthenticated( bool flag)
+{
+    isAuthenticated = flag;
+}
 
-    int Client::Get_isAuthenticated()
-    {
-        return isAuthenticated;
-    }
+int Client::Get_isAuthenticated()
+{
+    return isAuthenticated;
+}
 
-    void Client::SetIsSetPass(bool flag)
-    {
-        isSetPass = flag ;
-    }
+void Client::SetIsSetPass(bool flag)
+{
+    isSetPass = flag ;
+}
 
-    bool Client::GetIsSetPass(){
-        return isSetPass;
-    }
+bool Client::GetIsSetPass(){
+    return isSetPass;
+}
 
-    void Client::SetIsSetNick(bool flag)
-    {
-        isSetNick= flag ;
-    }
+void Client::SetIsSetNick(bool flag)
+{
+    isSetNick= flag ;
+}
 
-    bool Client::GetIsSetNick(){
-        return isSetNick;
-    }
+bool Client::GetIsSetNick(){
+    return isSetNick;
+}
 
-    void Client::SetIsSetuser(bool flag)
-    {
-        isSetuser= flag ;
-    }
+void Client::SetIsSetuser(bool flag)
+{
+    isSetuser= flag ;
+}
 
-    bool Client::GetIsSetuser(){
-        return isSetuser;
-    }
+bool Client::GetIsSetuser(){
+    return isSetuser;
+}
 
-    std::string Client::get_nickname() 
-    {
-        return _nickname;
-    }
+std::string Client::get_nickname() 
+{
+    return _nickname;
+}
 
-    void Client::set_nickname(std::string nick) 
-    {
-        _nickname = nick;
-    }
+void Client::set_nickname(std::string nick) 
+{
+    _nickname = nick;
+}
 
-    void Client::set_hostname(std::string hostname){
-        _hostname = hostname;
-    }
+void Client::set_hostname(std::string hostname){
+    _hostname = hostname;
+}
 
-    std::string Client::get_hostname()
-    {
-        return _hostname;
-    }
-
-
- 
+std::string Client::get_hostname()
+{
+    return _hostname;
+}

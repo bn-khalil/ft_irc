@@ -1,6 +1,7 @@
 
 #include "Server.hpp"
-// #include "../commands/channel.hpp"
+#include <cctype>
+
 
 bool Server::isGetSignal = false;
 
@@ -26,32 +27,23 @@ void Server::receve_signal(int sign)
 
 bool isValidNickname(const std::string &nick)
 {
-    if (nick.empty())
+    if (nick.empty() || nick.length() > 100)
         return false;
 
-    std::string forbiddenStartChars = "0123456789$:#&";
-
-    if (forbiddenStartChars.find(nick[0]) != std::string::npos)
+    std::string forbiddenStart = "0123456789:#&";
+    if (forbiddenStart.find(nick[0]) != std::string::npos)
         return false;
 
-    std::string forbiddenChars = " \t\n\r\v\f,*?!@";
+    std::string validSpecial = "[]{}\\|";
 
     for (size_t i = 0; i < nick.size(); i++)
     {
-        for (size_t j = 0; j < forbiddenChars.size(); j++)
-        {
-            if (nick[i] == forbiddenChars[j])
-                return false;
-        }
-    }   
-    for  (int i =  0 ; nick[i] ; i++)
-    {
-        if (!isprint(nick[i]))
+        if (!isalnum(nick[i]) && validSpecial.find(nick[i]) == std::string::npos)
             return false;
     }
-
     return true;
 }
+
 
 void Server::NickCmd(Client &client, std::string nick_arg)
 {
@@ -139,10 +131,14 @@ void Server::AddClient()
     int ClientSocketFd = accept(serverId, (struct sockaddr *)&client_addr, &addr_len);
     if (ClientSocketFd < 0)
     {
-        std::cerr << "ClientSocketFd \n";
+        std::cerr << "failed to accept new client :"  <<  strerror(errno) << std::endl;
         return;
     }
-  
+    if (fcntl(ClientSocketFd, F_SETFL, O_NONBLOCK) < 0)
+    {
+        close(ClientSocketFd);
+        std::cerr << "Error: fcntl(O_NONBLOCK) failed : " <<  strerror(errno) << std::endl;
+    }
     std::string hostname = inet_ntoa(client_addr.sin_addr);
 
     pollfd ClientPollfd;

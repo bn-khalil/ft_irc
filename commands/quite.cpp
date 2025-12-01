@@ -1,5 +1,6 @@
 #include "channel.hpp"
 #include <unistd.h>
+#include "../server/Server.hpp"
 
 void Server::Quit(Client &c)
 {

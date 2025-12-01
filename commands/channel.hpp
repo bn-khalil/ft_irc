@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kben-tou <kben-tou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:27 by akella            #+#    #+#             */
-/*   Updated: 2025/11/30 20:58:51 by akella           ###   ########.fr       */
+/*   Updated: 2025/12/01 21:30:58 by kben-tou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 #include <vector>
 #include <cstdlib>
 #include <sys/socket.h>
-#include "../server/Server.hpp"
 #include "../server/Client.hpp"
 #include <sstream>
 

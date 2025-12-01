@@ -1,5 +1,6 @@
 #include "channel.hpp"
 #include <string>
+#include "../server/Server.hpp"
 
 void  Server::topic(Client &c) {
 

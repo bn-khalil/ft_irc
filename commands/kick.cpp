@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   kick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kben-tou <kben-tou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:07 by akella            #+#    #+#             */
-/*   Updated: 2025/11/30 20:54:28 by akella           ###   ########.fr       */
+/*   Updated: 2025/12/01 21:31:59 by kben-tou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "channel.hpp"
+#include "../server/Server.hpp"
 
 void Server::kick(Client &c)
 {

@@ -1,4 +1,5 @@
 #include "channel.hpp"
+#include "../server/Server.hpp"
 
 void Server::privmsg(Client &c) {
     std::string command = c.getlineCmd();

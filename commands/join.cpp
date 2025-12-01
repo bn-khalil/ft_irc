@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kben-tou <kben-tou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:12 by akella            #+#    #+#             */
-/*   Updated: 2025/12/01 10:52:42 by akella           ###   ########.fr       */
+/*   Updated: 2025/12/01 21:31:10 by kben-tou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "channel.hpp"
 #include <cctype>
 #include <cstddef>
+#include "../server/Server.hpp"
 
 
 bool Channel::whitespace_found(std::string str)

@@ -1,4 +1,5 @@
 #include "channel.hpp"
+#include "../server/Server.hpp"
 
 void Server::invit(Client &c)
 {

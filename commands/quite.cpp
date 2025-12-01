@@ -33,4 +33,5 @@ void Server::Quit(Client &c)
     }
     close(c.getfd());
     ClientsInfo.erase(c.getfd());
+    
 }

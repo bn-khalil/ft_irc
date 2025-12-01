@@ -279,8 +279,11 @@ void Server::ParseCmd(Client &client)
     }
     else if (cmds[0] == "join")
         join(client);
-    else if (cmds[0] == "quit")
+    else if (cmds[0] == "quit") 
+    {
+        std::cout << "🔴 Client Disconnected | FD: " << client.getfd() << " | Nick: " << client.get_nickname() << std::endl;
         Quit(client);
+    }
     else if (cmds[0] == "topic")
         topic(client);
     else if (cmds[0] == "privmsg")

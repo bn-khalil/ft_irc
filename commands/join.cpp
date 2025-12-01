@@ -6,7 +6,7 @@
 /*   By: akella <akella@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:12 by akella            #+#    #+#             */
-/*   Updated: 2025/11/30 20:37:46 by akella           ###   ########.fr       */
+/*   Updated: 2025/12/01 10:52:42 by akella           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 bool Channel::whitespace_found(std::string str)
 {
-    for(size_t i = 0; i <= str.size(); i++)
+    for(size_t i = 0; i < str.size(); i++)
     {
         if(std::isspace(str[i]))
             return true;

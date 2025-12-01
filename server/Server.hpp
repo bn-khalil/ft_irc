@@ -70,7 +70,6 @@ class Server
         static void receve_signal(int sign);
 		std::map<std::string,Channel> channel;
         Reply   error;
-        Channel *chan;
         Server(std::string &port,std::string &password);
         
 

@@ -160,7 +160,7 @@ void Bot::hundleLineMsg(std::string line)
             if (msg == "!help") 
                 to_send = "Available commands: !help, !hello, !tips";
             else if (msg == "!hello")
-                to_send = "W ," + sender;
+                to_send = "Hello " + sender + " I am a 42 IRC Bot";
             else if (msg == "!tips") {
                 std::string ad1 = "The only thing I know is that I know nothing.";
                 std::string ad2 = "Happiness depends upon ourselves.";

@@ -6,7 +6,7 @@
 /*   By: kben-tou <kben-tou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:27 by akella            #+#    #+#             */
-/*   Updated: 2025/11/29 21:45:32 by kben-tou         ###   ########.fr       */
+/*   Updated: 2025/12/01 21:30:58 by kben-tou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,12 @@
 #include <vector>
 #include <cstdlib>
 #include <sys/socket.h>
-#include "../server/Server.hpp"
 #include "../server/Client.hpp"
 #include <sstream>
+
+
+class Server;
+typedef struct modes_s modes_t;
 
 typedef struct old_channel_modes_s {
     std::string key;
@@ -51,6 +54,7 @@ class Channel
         unsigned int num_limite;
         time_t time_creat_channel;
         time_t time_last_topic;
+        std::string topicChanger;
         
     public :
         std::map<std::string, Client> get_operators_() { return operators_; };
@@ -71,7 +75,7 @@ class Channel
         void join(std::vector<std::string> cmds, Client &c);
         static std::vector<std::string> split_comma(std::string &strr, char d);
         static std::string to_lower(std::string str);
-        static bool tab_found(std::string str);
+        static bool whitespace_found(std::string str);
         std::string Get_key();
         std::string Set_key();
         bool Check_mode(char mode);
@@ -101,6 +105,8 @@ class Channel
         void setTimeTopic(time_t topicTime);
         time_t getTimeTopic();
         std::string fromTime(time_t time);
+        std::string getTopicChanger();
+        void setTopicChanger(std::string name);
 
 
 };

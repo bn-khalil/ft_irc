@@ -1,4 +1,20 @@
 #include "Bot.hpp"
+#include <cerrno>
+#include <string>
+#include <sys/fcntl.h>
+
+
+void    close_all_fds(void)
+{
+    int max_fd = OPEN_MAX;
+    int i = 3;
+
+    while (i < max_fd)
+    {
+        close(i);
+        i++;
+    }
+}
 
 int stringToPort(std::string string)
 {
@@ -23,7 +39,7 @@ bool isValidPassword(std::string &str)
 
     for(int i = 0; str[i] ; i++)
     {
-        if (W_spaces.find(str[i]) != std::string::npos)
+        if (W_spaces.find(str[i]) != std::string::npos|| !isprint(str[i]))
             return false;
     }
     return true;
@@ -31,19 +47,20 @@ bool isValidPassword(std::string &str)
 
 bool isValidNickname(const std::string &nick)
 {
-    if (nick.empty())
+    if (nick.empty() || nick.length() > 100)
         return false;
 
-    std::string forbiddenStartChars = "0123456789$:#&";
-
-    if (forbiddenStartChars.find(nick[0]) != std::string::npos)
+    std::string forbiddenStart = "0123456789:#&";
+    if (forbiddenStart.find(nick[0]) != std::string::npos)
         return false;
 
-    std::string forbiddenChars = " \t\n\r\v\f,*?!@";
+    std::string validSpecial = "[]{}\\|";
 
-    if (nick.find_first_of(forbiddenChars) != std::string::npos)
-        return false;
-
+    for (size_t i = 0; i < nick.size(); i++)
+    {
+        if (!isalnum(nick[i]) && validSpecial.find(nick[i]) == std::string::npos)
+            return false;
+    }
     return true;
 }
 
@@ -71,15 +88,24 @@ void Bot::connectServer()
     
     BotFd = socket(AF_INET, SOCK_STREAM, 0);
     if (BotFd < 0)
-        throw std::runtime_error("Socket creation failed");
+        throw std::runtime_error("Socket creation failed : " + std::string(strerror(errno)));
 
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(port);
     serv_addr.sin_addr.s_addr = inet_addr(serverIp.c_str());
 
+    
     if (connect(BotFd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-        throw std::runtime_error("Connection failed");
-
+    {
+        close(BotFd);
+        throw std::runtime_error("Connection failed : " + std::string(strerror(errno)) );
+    }
+    if (fcntl(BotFd,F_SETFL,O_NONBLOCK) < 0)
+    {
+        close(BotFd);
+        throw std::runtime_error( "Error: fcntl(O_NONBLOCK) failed : " + std::string(strerror(errno)));
+    }
+    
     std::cout << " Connected to server! " << std::endl;
     
     send(BotFd,authCmds.c_str(),authCmds.length(),0);
@@ -115,7 +141,8 @@ void Bot::run()
 
         if (bytesReceived <= 0)
         {
-            throw std::runtime_error("Error: Server disconnected.");
+            if (bytesReceived == 0 || (bytesReceived == -1 && errno != EAGAIN))
+                throw std::runtime_error("Error: Server disconnected. : " + std::string(strerror(errno)));
         }
 
         buffer.append(buffer_char);
@@ -144,9 +171,26 @@ void Bot::hundleLineMsg(std::string line)
             std::string to_send;
 
             if (msg == "!help") 
-                to_send = "Available commands: !help, !hello";
+                to_send = "Available commands: !help, !hello, !tips";
             else if (msg == "!hello")
-                to_send = "Available commands: !help, !hello";
+                to_send = "Hello " + sender + " I am a 42 IRC Bot";
+            else if (msg == "!tips") {
+                std::string ad1 = "The only thing I know is that I know nothing.";
+                std::string ad2 = "Happiness depends upon ourselves.";
+                std::string ad3 = "One cannot step into the same river twice.";
+                std::string ad4 = "The price of anything is the amount of life you exchange for it.";
+                int rn = std::time(0) % 4;
+                if (rn == 0)
+                    to_send = ad1;
+                else if (rn == 1)
+                    to_send = ad2;
+                else if (rn == 2)
+                    to_send = ad3;
+                else
+                    to_send = ad4;
+            }
+            else
+                to_send = "Available commands: !help, !hello, !tips";
             std::string cmd = "PRIVMSG " + sender + " :" + to_send + "\r\n";
             send(BotFd,cmd.c_str(),cmd.length(),0);
         }
@@ -169,4 +213,5 @@ int main(int ac, char **av)
     {
         std::cerr << e.what() << std::endl;
     }
+    close_all_fds();
 }

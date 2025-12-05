@@ -6,11 +6,12 @@
 /*   By: kben-tou <kben-tou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:07 by akella            #+#    #+#             */
-/*   Updated: 2025/11/29 18:26:18 by kben-tou         ###   ########.fr       */
+/*   Updated: 2025/12/01 21:31:59 by kben-tou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "channel.hpp"
+#include "../server/Server.hpp"
 
 void Server::kick(Client &c)
 {
@@ -31,15 +32,15 @@ void Server::kick(Client &c)
         return sendReply(c, error.ERR_NEEDMOREPARAMS(c.get_nickname(), "KICK"));
     }
     std::string reason = handle_the_resone(cmds, command, c);
-
-    if (!find_client_by_nickname(cmds[2]))
-    {
-        return sendReply(c, error.ERR_NOSUCHNICK(c.get_nickname(), cmds[2]));
-    }
     std::map<std::string, Channel>::iterator it = channel.find(toLower(cmds[1]));
+
     if (it == channel.end() || name_perfect(cmds))
     {
         return sendReply(c, error.ERR_NOSUCHCHANNEL(c.get_nickname(), cmds[1]));
+    }
+    if (!find_client_by_nickname(cmds[2]))
+    {
+        return sendReply(c, error.ERR_NOSUCHNICK(c.get_nickname(), reason));
     }
     else if (!it->second.isUserInChannel(c))
     {

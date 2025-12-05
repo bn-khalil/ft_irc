@@ -1,5 +1,6 @@
 #include "channel.hpp"
 #include <unistd.h>
+#include "../server/Server.hpp"
 
 void Server::Quit(Client &c)
 {
@@ -33,4 +34,5 @@ void Server::Quit(Client &c)
     }
     close(c.getfd());
     ClientsInfo.erase(c.getfd());
+    
 }

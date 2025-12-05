@@ -6,7 +6,7 @@
 /*   By: kben-tou <kben-tou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 12:05:30 by akella            #+#    #+#             */
-/*   Updated: 2025/11/29 18:20:31 by kben-tou         ###   ########.fr       */
+/*   Updated: 2025/11/30 13:05:03 by kben-tou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,4 +229,10 @@ std::string Channel::fromTime(time_t time) {
     std::stringstream s_object;
     s_object <<  time;
     return s_object.str();
+}
+std::string Channel::getTopicChanger() {
+    return this->topicChanger;
+}
+void Channel::setTopicChanger(std::string name) {
+    this->topicChanger = name;
 }

@@ -1,4 +1,5 @@
 #include "channel.hpp"
+#include "../server/Server.hpp"
 
 void Server::privmsg(Client &c) {
     std::string command = c.getlineCmd();
@@ -14,12 +15,12 @@ void Server::privmsg(Client &c) {
     
     std::vector<std::string> args = new_splite(command, ' ');
 
-    int dotsIndex = command.find(":");
+    int dotsIndex = command.find(" :");
     std::string message;
     if (dotsIndex < 0)
         message = args[args.size() - 1];
     else
-        message = command.substr(dotsIndex + 1);
+        message = command.substr(dotsIndex + 2);
 
     if (args.size() <= 1)
         sendReply(c, error.ERR_NORECIPIENT(c.get_nickname()));
@@ -44,7 +45,7 @@ void Server::privmsg(Client &c) {
                 
             if (!isChannel) {
                 Client *rcvClient = find_client_by_nickname(rcvNick);
-                if (!rcvClient) {
+                if (!rcvClient || rcvClient->Get_isAuthenticated() == false) {
                     sendReply(c, error.ERR_NOSUCHNICK(c.get_nickname(), rcvNick));
                     return;
                 }

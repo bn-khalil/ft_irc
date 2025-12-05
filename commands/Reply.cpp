@@ -19,9 +19,9 @@ std::string Reply::RPL_CREATED(const std::string& nick, const std::string& creat
 std::string Reply::RPL_MYINFO(const std::string& nick)
 {
     std::string version = "1.0";
-    std::string user_modes = "i"; 
-    std::string channel_modes = "itkol";
-    std::string msg = ":" + server_name + " 004 " + nick + " " + server_name + " " + version + " " + user_modes + " " + channel_modes;
+    std::string user_modes = "none"; 
+    std::string channel_modes = "i t k o l";
+    std::string msg = ":" + server_name + " 004 " + nick + " " + server_name + " " + version + " user modes " + user_modes + " channel modes " + channel_modes;
     return msg;
 }
 
@@ -65,7 +65,7 @@ std::string Reply::RPL_MODEOPTIONS(const std::string & prefix, const std::string
     return ":" + prefix + " MODE " + channel + " " + modes;
 }
 
-//------------------------------JOIN error------------------------------------------------------
+
 
 std::string Reply::ERR_BADCHANNELKEY(const std::string& nick, const std::string& channel)
 {
@@ -84,7 +84,7 @@ std::string Reply::ERR_CHANNELISFULL(const std::string& nick, const std::string&
 
 std::string Reply::MSG_JOIN(const std::string& user_prefix, const std::string& channel_name)
 {
-    return ":" + user_prefix + " JOIN :" + channel_name;
+    return ":" + user_prefix + " JOIN " + channel_name;
 }
 
 std::string Reply::RPL_NAMREPLY(const std::string& nick, const std::string& channel, const std::string& names_list)
@@ -94,15 +94,10 @@ std::string Reply::RPL_NAMREPLY(const std::string& nick, const std::string& chan
 
 std::string Reply::RPL_ENDOFNAMES(const std::string& nick, const std::string& channel)
 {
-    return ":" + server_name + " 366 " + nick + " " + channel + " :End of /NAMES list";
+    return ":" + server_name + " 366 " + nick + " " + channel + " :End of /NAMES list.";
 }
 
-std::string Reply::RPL_ENDOFINVIT(const std::string& nick, const std::string& channel)
-{
-    return ":" + server_name + " 337 " + nick + " : " + channel + " :End of /NAMES list";
-}
 
-//------------------------------KICK error------------------------------------------------------
 
 std::string Reply::ERR_USERNOTINCHANNEL(const std::string& nick, const std::string& target_nick, const std::string& channel)
 {
@@ -119,7 +114,7 @@ std::string Reply::MSG_PART(const std::string& user_prefix, const std::string& c
     return ":" + user_prefix + " PART " + channel + " :" + reason;
 }
 
-//------------------------------INVIT error------------------------------------------------------
+
 
 std::string Reply::ERR_USERONCHANNEL(const std::string& nick, const std::string& target_nick, const std::string& channel)
 {
@@ -136,7 +131,7 @@ std::string Reply::MSG_INVITE(const std::string& inviter_prefix, const std::stri
     return ":" + inviter_prefix + " INVITE " + target_nick + " :" + channel;
 }
 
-//------------------------------TOPIC error------------------------------------------------------
+
 
 std::string Reply::RPL_TOPIC(const std::string& nick, const std::string& channel, const std::string& topic)
 {
@@ -145,15 +140,15 @@ std::string Reply::RPL_TOPIC(const std::string& nick, const std::string& channel
 
 std::string Reply::RPL_TOPICREATED(const std::string& nick, const std::string& prefix, const std::string& topic)
 {
-    return ":" + prefix + " TOPIC " + nick + " :" + topic;
+    return ":" + prefix + " TOPIC "  + nick + " :" + topic;
 }
 std::string Reply::RPL_NOTOPIC(const std::string& nick, const std::string& channel)
 {
-    return ":" + server_name + " 331 " + nick + " " + channel + " :No topic is set";
+    return ":" + server_name + " 331 " + nick + " " + channel + " :No topic is set.";
 }
 
 /* ************************************************************************** */
-///just to compile 
+
 std::string Reply::ERR_NOSUCHNICK(const std::string& nick, const std::string& target)
 {
     return ":" + server_name + " 401 " + nick + " " + target + " :No such nick";
@@ -185,7 +180,7 @@ std::string Reply::ERR_UNKNOWNMODE(const std::string& nick, char mode)
     return ":" + server_name + " 472 " + nick + " " + m + " :is unknown mode char to me";
 }
 
-//------------------------------PRIVMSG error------------------------------------------------------
+
 
 std::string Reply::ERR_CANNOTSENDTOCHAN(const std::string & nick , const std::string & channel)
 {
@@ -230,11 +225,15 @@ std::string Reply::ERR_NICKNAMEINUSE(std::string nick, std::string used_nick, st
 }
 std::string Reply::ERR_ERRONEUSNICKNAME(std::string nick, std::string used_nick, std::string command)
 {
-    return ":" + server_name + " 433 " + nick + " " + used_nick + " " + command;
+    return ":" + server_name + " 432 " + nick + " " + used_nick + " " + command;
 }
 std::string Reply:: RPL_CREATIONTIME (const std::string& nick, const std::string& time, const std::string & channel)
 {
     return ":" + server_name + " 329 " + nick + " " + channel + " " + time;
+}
+std::string Reply:: RPL_TOPICWHOTIME (const std::string& nick, const std::string& time, const std::string & channel, const std::string & topicChanger)
+{
+    return ":" + server_name + " 333 " + nick + " " + channel + " " + topicChanger + " " + time;
 }
 std::string Reply:: RPL_CHANNELMODEIS(const std::string& nick, const std::string& modes, const std::string & channel)
 {

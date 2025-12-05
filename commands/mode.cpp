@@ -1,8 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   mode.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kben-tou <kben-tou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/01 11:42:47 by kben-tou          #+#    #+#             */
+/*   Updated: 2025/12/01 21:32:09 by kben-tou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "channel.hpp"
 #include <cctype>
 #include <cstddef>
 #include <map>
 #include <vector>
+#include "../server/Server.hpp"
 
 static bool isChannelModes(char m) {
     if (m == 'i' || m == 'o' || m == 'k' || m == 't' || m == 'l')
